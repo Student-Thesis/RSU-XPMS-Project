@@ -1,0 +1,447 @@
+/* Calendar Container */
+#calendar {
+  background: #fff !important;
+  padding: 20px;
+  border-radius: 10px;
+  min-height: 600px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  min-width: 300px;
+  width: 100%;
+  margin: 0;
+  max-width: 100%;
+}
+
+/* Expand width slightly on ultra-wide screens */
+@media (min-width: 1400px) {
+  #calendar {
+    max-width: 95%;
+  }
+}
+
+/* Text colors for calendar elements */
+.fc-toolbar-title,
+.fc-col-header-cell,
+.fc-daygrid-day-number,
+.fc-daygrid-day-top,
+.fc-daygrid-day {
+  color: #222 !important;
+}
+
+.fc-toolbar-title {
+  font-size: 24px;
+}
+
+#calendar.error {
+  color: red;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Override FullCalendar default spacing */
+.fc-header-toolbar {
+  padding: 10px 0;
+}
+
+.fc-button {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.fc-button:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.fc-event {
+  cursor: pointer;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  display: inline-block !important;
+  word-break: break-word !important;
+  padding: 2px 6px !important;
+}
+
+.fc-event .fc-event-title {
+  color: #ffffff !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Expanded view rendering fix */
+.fc .fc-scrollgrid,
+.fc .fc-scrollgrid-section,
+.fc .fc-daygrid-body,
+.fc .fc-daygrid-day-frame,
+.fc .fc-daygrid-day {
+  min-width: 0;
+  width: auto;
+  overflow: visible;
+}
+
+/* Make calendar container responsive inside layout */
+.padding_infor_info {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* Ensure calendar and layout backgrounds stay white */
+#calendar,
+.white_shd,
+.midde_cont,
+.container-fluid,
+#content {
+  background: #fff !important;
+}
+
+/* Dark mode override */
+@media (prefers-color-scheme: dark) {
+  #calendar,
+  .fc-theme-standard .fc-scrollgrid,
+  .fc-theme-standard .fc-list-day-cushion,
+  .fc-col-header-cell,
+  .fc-daygrid-day {
+    background: #fff !important;
+    color: #333 !important;
+  }
+
+  .fc-theme-standard .fc-popover {
+    background: #34495e;
+    border-color: #5a6c7d;
+  }
+
+  .fc-theme-standard .fc-popover-header {
+    background: #34495e;
+    color: #ffffff;
+  }
+
+  .fc-theme-standard td,
+  .fc-theme-standard th,
+  .fc-theme-standard .fc-scrollgrid {
+    border-color: #5a6c7d;
+  }
+
+  .fc-event .fc-event-title {
+    color: #ffffff !important;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7) !important;
+  }
+}
+
+/* Modal Styles */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #999;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.color-picker-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.color-option {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+}
+
+.color-option.selected {
+  border-color: #333;
+  transform: scale(1.2);
+}
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #545b62;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+.event-detail {
+  margin-bottom: 15px;
+}
+
+.event-detail-label {
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.event-detail-value {
+  color: #333;
+  padding: 8px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.event-color-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+/* Fix: Make FullCalendar truly expand with its parent container */
+#calendar {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto;
+}
+
+.fc {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.fc-scrollgrid, 
+.fc-scrollgrid-sync-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.fc-daygrid-body, 
+.fc-daygrid-day, 
+.fc-daygrid-day-frame {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+.fc-view-harness {
+  width: 100% !important;
+}
+
+.fc-daygrid {
+  width: 100% !important;
+}
+
+.fc-theme-standard td, 
+.fc-theme-standard th {
+  border: 1px solid #444; /* optional: for dark mode */
+}
+
+.fc-col-header-cell-cushion {
+  width: 100%;
+  display: block;
+  text-align: center;
+}
+
+/* Remove any container side-padding/margin */
+.container,
+.container-fluid,
+.white_shd {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+/* Make calendar take full width */
+#calendar {
+  width: 100% !important;
+}
+
+/* Force the header cells to match day grid columns */
+.fc .fc-col-header-cell {
+  flex: 1 1 0 !important;
+  max-width: none !important;
+}
+
+/* Also fix the inner cushion (text inside) */
+.fc .fc-col-header-cell-cushion {
+  width: 100% !important;
+  display: block;
+  text-align: center;
+}
+/* Add this to your existing CSS to fix the header alignment */
+
+/* Force header table to match day grid width */
+.fc .fc-col-header {
+  width: 100% !important;
+}
+
+.fc .fc-scrollgrid-sync-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+/* Make header cells expand to match day cells */
+.fc .fc-col-header-cell {
+  flex: 1 1 0 !important;
+  max-width: none !important;
+  width: auto !important;
+  min-width: 0 !important;
+}
+
+/* Center the text within each header cell */
+.fc .fc-col-header-cell-cushion {
+  width: 100% !important;
+  display: block !important;
+  text-align: center !important;
+  padding: 8px 4px !important;
+}
+
+/* Ensure the header row takes full width */
+.fc .fc-scrollgrid-section-header > * {
+  width: 100% !important;
+}
+
+/* Additional fix for table layout */
+.fc-theme-standard .fc-scrollgrid {
+  width: 100% !important;
+}
+
+.fc-col-header-cell {
+  position: relative;
+  display: table-cell !important;
+  vertical-align: middle;
+}

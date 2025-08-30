@@ -1,0 +1,411 @@
+/* Smooth transitions for all affected parts */
+.midde_cont, 
+.container-fluid, 
+.column_title, 
+.page_title, 
+.white_shd, 
+.full, 
+.table_section, 
+.card, 
+.card-body, 
+.filter-bar input, 
+.filter-bar select, 
+.custom-table td, 
+.custom-table th, 
+.page_title h2, 
+.btn, 
+.dropdown-menu {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Dark mode content area only */
+body.dark-mode .midde_cont,
+body.dark-mode .container-fluid,
+body.dark-mode .column_title,
+body.dark-mode .page_title,
+body.dark-mode .white_shd,
+body.dark-mode .full,
+body.dark-mode .table_section,
+body.dark-mode .card,
+body.dark-mode .card-body {
+  background-color: #1a1a1a !important;
+  color: #f1f1f1 !important;
+}
+
+/* Nuclear approach - Override everything except topbar and sidebar */
+body.dark-mode *:not(.topbar):not(.topbar *):not(.sidebar):not(.sidebar *):not(.navbar):not(.navbar *):not(.nav-sidebar):not(.nav-sidebar *):not(.side-nav):not(.side-nav *):not(.main-sidebar):not(.main-sidebar *):not(.header):not(.header *):not(.top-header):not(.top-header *):not(.navigation):not(.navigation *):not(#sidebar):not(#sidebar *):not([class*="sidebar"]):not([class*="sidebar"] *):not([id*="sidebar"]):not([id*="sidebar"] *) {
+  background-color: #1a1a1a !important;
+  color: #f1f1f1 !important;
+}
+
+/* Restore topbar and sidebar to original colors */
+body.dark-mode .topbar,
+body.dark-mode .topbar *,
+body.dark-mode .sidebar,
+body.dark-mode .sidebar *,
+body.dark-mode .navbar,
+body.dark-mode .navbar *,
+body.dark-mode .nav-sidebar,
+body.dark-mode .nav-sidebar *,
+body.dark-mode .side-nav,
+body.dark-mode .side-nav *,
+body.dark-mode .main-sidebar,
+body.dark-mode .main-sidebar *,
+body.dark-mode .header,
+body.dark-mode .header *,
+body.dark-mode .top-header,
+body.dark-mode .top-header *,
+body.dark-mode .navigation,
+body.dark-mode .navigation * {
+  background-color: revert !important;
+  color: revert !important;
+  background: revert !important;
+}
+
+
+
+/* Force override any remaining light backgrounds */
+body.dark-mode [style*="background-color: #f8f9fa"],
+body.dark-mode [style*="background-color: #ffffff"],
+body.dark-mode [style*="background-color: white"],
+body.dark-mode [style*="background-color: #fff"],
+body.dark-mode [style*="background: #f8f9fa"],
+body.dark-mode [style*="background: #ffffff"],
+body.dark-mode [style*="background: white"],
+body.dark-mode [style*="background: #fff"],
+body.dark-mode .bg-light,
+body.dark-mode .bg-white,
+body.dark-mode .background-white,
+body.dark-mode .white-bg,
+body.dark-mode .white_shd,
+body.dark-mode .light-bg {
+  background-color: #1a1a1a !important;
+  background: #1a1a1a !important;
+}
+
+/* Ensure body and html are dark */
+body.dark-mode,
+html.dark-mode {
+  background-color: #1a1a1a !important;
+  background: #1a1a1a !important;
+}
+
+/* Table styles */
+body.dark-mode .custom-table {
+  background-color: #1a1a1a !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .custom-table th {
+  background-color: #2c2c2c !important;
+  color: #f1f1f1 !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .custom-table td {
+  background-color: #1e1e1e !important;
+  color: #f1f1f1 !important;
+  border-color: #444 !important;
+}
+
+/* Table row hover effect */
+body.dark-mode .custom-table tbody tr:hover td {
+  background-color: #2a2a2a !important;
+}
+
+/* Filter bar styles */
+body.dark-mode .filter-bar input,
+body.dark-mode .filter-bar select {
+  background-color: #2a2a2a !important;
+  color: #f1f1f1 !important;
+  border: 1px solid #444 !important;
+}
+
+/* Input focus states */
+body.dark-mode .filter-bar input:focus,
+body.dark-mode .filter-bar select:focus {
+  background-color: #2a2a2a !important;
+  color: #f1f1f1 !important;
+  border-color: #666 !important;
+  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25) !important;
+}
+
+/* Placeholder text */
+body.dark-mode .filter-bar input::placeholder {
+  color: #999 !important;
+}
+
+/* Button styles */
+body.dark-mode .btn {
+  background-color: #2c2c2c !important;
+  color: #f1f1f1 !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .btn:hover {
+  background-color: #3a3a3a !important;
+  border-color: #666 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25) !important;
+}
+
+/* Primary button variant */
+body.dark-mode .btn-primary {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+}
+
+body.dark-mode .btn-primary:hover {
+  background-color: #218838 !important;
+  border-color: #1e7e34 !important;
+}
+
+/* Dropdown menu styles */
+body.dark-mode .dropdown-menu {
+  background-color: #2a2a2a !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .dropdown-menu .dropdown-item {
+  color: #f1f1f1 !important;
+}
+
+body.dark-mode .dropdown-menu .dropdown-item:hover,
+body.dark-mode .dropdown-menu .dropdown-item:focus {
+  background-color: #444 !important;
+  color: #ffffff !important;
+}
+
+/* Dropdown divider */
+body.dark-mode .dropdown-divider {
+  border-color: #444 !important;
+}
+
+/* Heading styles */
+body.dark-mode .page_title h2 {
+  color: #ffffff !important;
+}
+
+/* Text colors for various elements */
+body.dark-mode .text-muted {
+  color: #999 !important;
+}
+
+body.dark-mode .text-dark {
+  color: #f1f1f1 !important;
+}
+
+/* Form control improvements */
+body.dark-mode .form-control {
+  background-color: #2a2a2a !important;
+  color: #f1f1f1 !important;
+  border-color: #444 !important;
+}
+
+body.dark-mode .form-control:focus {
+  background-color: #2a2a2a !important;
+  color: #f1f1f1 !important;
+  border-color: #666 !important;
+  box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25) !important;
+}
+
+/* Select dropdown arrow fix for dark mode */
+body.dark-mode select.form-control,
+body.dark-mode select.filter-bar select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23f1f1f1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e") !important;
+}
+
+/* Change hamburger icon to green in dark mode - FORCE OVERRIDE */
+body.dark-mode .hamburger,
+body.dark-mode .hamburger-icon,
+body.dark-mode .menu-toggle,
+body.dark-mode .navbar-toggler,
+body.dark-mode .sidebar-toggle,
+body.dark-mode .nav-toggle,
+body.dark-mode [class*="hamburger"],
+body.dark-mode [class*="menu-toggle"],
+body.dark-mode .topbar .hamburger,
+body.dark-mode .topbar .menu-toggle,
+body.dark-mode .header .hamburger,
+body.dark-mode .header .menu-toggle,
+body.dark-mode .topbar i,
+body.dark-mode .header i,
+body.dark-mode .navbar i {
+  color: #28a745 !important;
+  fill: #28a745 !important;
+}
+
+body.dark-mode .hamburger span,
+body.dark-mode .hamburger-icon span,
+body.dark-mode .menu-toggle span,
+body.dark-mode .navbar-toggler span,
+body.dark-mode .sidebar-toggle span,
+body.dark-mode .nav-toggle span,
+body.dark-mode [class*="hamburger"] span,
+body.dark-mode [class*="menu-toggle"] span,
+body.dark-mode .hamburger::before,
+body.dark-mode .hamburger::after,
+body.dark-mode .hamburger-icon::before,
+body.dark-mode .hamburger-icon::after {
+  background-color: #28a745 !important;
+  color: #28a745 !important;
+}
+
+/* Target ALL icons in topbar/header to green */
+body.dark-mode .topbar *,
+body.dark-mode .header *,
+body.dark-mode .navbar * {
+  color: #28a745 !important;
+  fill: #28a745 !important;
+}
+
+/* Target SVG hamburger icons */
+body.dark-mode .hamburger svg,
+body.dark-mode .menu-toggle svg,
+body.dark-mode .navbar-toggler svg,
+body.dark-mode .topbar svg,
+body.dark-mode .header svg {
+  fill: #28a745 !important;
+  color: #28a745 !important;
+}
+
+body.dark-mode .hamburger svg path,
+body.dark-mode .menu-toggle svg path,
+body.dark-mode .navbar-toggler svg path,
+body.dark-mode .topbar svg path,
+body.dark-mode .header svg path {
+  fill: #28a745 !important;
+  stroke: #28a745 !important;
+}
+body.dark-mode select,
+body.dark-mode .filter-bar select {
+  background-color: #2a2a2a !important;
+  color: #f1f1f1 !important;
+  border: 1px solid #444 !important;
+  appearance: none;
+  padding-right: 2.5em;
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1em;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23f1f1f1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+}
+/* Make topbar visible over content but not over sidebar */
+body.dark-mode .topbar,
+body.dark-mode .navbar,
+body.dark-mode .top-header,
+body.dark-mode .header {
+  background-color: #1a1a1a !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); 
+  z-index: 1001 !important; 
+  position: fixed;
+  width: 100%;
+}
+
+/* Make sure sidebar is higher than topbar */
+body.dark-mode .sidebar,
+body.dark-mode .main-sidebar,
+body.dark-mode #sidebar {
+  z-index: 1002 !important;
+}
+
+/* --- FIX: Properly align notification and profile icons in topbar --- */
+body.dark-mode .right_topbar {
+  position: fixed;
+  top: 0;
+  right: 32px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  z-index: 1003;
+  padding: 0;
+}
+
+body.dark-mode.sidebar-expanded .right_topbar {
+  right: 24px;
+  padding-right: 0;
+}
+
+body.dark-mode .right_topbar .icon_info {
+  position: static;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0;
+  justify-content: flex-end;
+}
+/* this is for the toggle */
+
+body.dark-mode {
+  background-color: #121212;
+  color: #f1f1f1;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#darkModeToggle .toggle-slider {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: inherit;
+  transition: justify-content 0.3s ease;
+}
+
+#darkModeToggle .icon {
+  font-size: 20px;
+  transition: color 0.3s ease;
+}
+
+#darkModeToggle .moon {
+  color: #f1f1f1;
+}
+
+#darkModeToggle .sun {
+  color: #ffffff;
+}
+
+
+
+.darkmode-toggle {
+  position: fixed;
+  bottom: 30px;  
+  right: 30px;  
+  width: 50px;
+  height: 50px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  z-index: 9999;
+  transition: background-color 0.3s ease;
+}
+
+.darkmode-toggle:active {
+  cursor: grabbing;
+}
+
+.darkmode-toggle i {
+  font-size: 24px;
+  color: #555;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  background-color: #121212;
+  color: #f0f0f0;
+}
+
+body.dark-mode .darkmode-toggle {
+  background-color: #2a2a2a;
+}
+
+body.dark-mode .darkmode-toggle i {
+  transform: rotate(360deg);
+}
