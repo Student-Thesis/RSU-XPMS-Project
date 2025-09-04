@@ -8,11 +8,6 @@ class ProfileController extends Controller
 {
     public function index()
     {
-        return view('dashboard');
-    }
-
-    public function register()
-    {
-        return view('auth.register');
+        return view('profiles.index');
     }
 }

@@ -1,80 +1,37 @@
 @extends('layouts.app')
 
 @section('content')
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+    <!-- Content -->
+    <div id="content">
 
-            <!-- Content -->
-            <div id="content">
-                <!-- Topbar -->
-                <div class="topbar">
-                    <nav class="navbar navbar-expand-lg navbar-light">
-                        <div class="full">
-                            <button type="button" id="sidebarCollapse" class="sidebar_toggle"><i
-                                    class="fa fa-bars"></i></button>
-                            <div class="logo_section">
-                                <a href="index.html"><img class="img-responsive" src="images/logo/logo.png"
-                                        alt="#" /></a>
-                            </div>
-                            <div class="right_topbar">
-                                <div class="icon_info">
-                                    <ul>
-                                        <li><a href="#"><i class="fa fa-bell-o"></i><span
-                                                    class="badge">2</span></a></li>
-                                        <li><a href="#"><i class="fa fa-question-circle"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-envelope-o"></i><span
-                                                    class="badge">3</span></a></li>
-                                    </ul>
-                                    <ul class="user_profile_dd">
-                                        <li>
-                                            <a class="dropdown-toggle" data-toggle="dropdown">
-                                                <img class="img-responsive rounded-circle"
-                                                    src="images/layout_img/user_img.jpg" alt="#" />
-                                                <span class="name_user">John David</span>
-                                            </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="profile.html">My Profile</a>
-                                                <a class="dropdown-item" href="settings.html">Settings</a>
-                                                <a class="dropdown-item" href="help.html">Help</a>
-                                                <a class="dropdown-item" href="#"><span>Log Out</span> <i
-                                                        class="fa fa-sign-out"></i></a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </nav>
-                </div>
-                <!-- End Topbar -->
-
-                <!-- Main Content -->
-                <div class="midde_cont">
-                    <div class="container-fluid">
-                        <div class="row column_title">
-                            <div class="col-md-12">
-                                <div class="page_title">
-                                    <h2>Calendar</h2>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="white_shd full margin_bottom_30">
-                            <div class="full">
-                                <div class="full graph_head">
-                                    <div class="heading1 margin_0">
-                                        <h4>Project Events Calendar</h4>
-                                    </div>
-                                </div>
-                                <div class="full padding_infor_info">
-                                    <div id="calendar"></div>
-                                </div>
-                            </div>
+        @include('layouts.partials.topnav')
+        <!-- Main Content -->
+        <div class="midde_cont">
+            <div class="container-fluid">
+                <div class="row column_title">
+                    <div class="col-md-12">
+                        <div class="page_title">
+                            <h2>Calendar</h2>
                         </div>
                     </div>
                 </div>
-                <!-- End Main Content -->
+
+                <div class="white_shd full margin_bottom_30">
+                    <div class="full">
+                        <div class="full graph_head">
+                            <div class="heading1 margin_0">
+                                <h4>Project Events Calendar</h4>
+                            </div>
+                        </div>
+                        <div class="full padding_infor_info">
+                            <div id="calendar"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <!-- End Content -->
         </div>
+        <!-- End Main Content -->
     </div>
 
     <!-- Add Event Modal -->
@@ -88,8 +45,8 @@
                 <form id="eventForm">
                     <div class="form-group">
                         <label class="form-label">Project Title *</label>
-                        <input type="text" id="eventTitle" class="form-input"
-                            placeholder="Enter project title..." required>
+                        <input type="text" id="eventTitle" class="form-input" placeholder="Enter project title..."
+                            required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Description</label>
@@ -127,8 +84,8 @@
                     <div class="form-group">
                         <label class="form-label">Color</label>
                         <div class="color-picker-container">
-                            <div class="color-option selected" style="background-color: #007bff;"
-                                data-color="#007bff"></div>
+                            <div class="color-option selected" style="background-color: #007bff;" data-color="#007bff">
+                            </div>
                             <div class="color-option" style="background-color: #28a745;" data-color="#28a745"></div>
                             <div class="color-option" style="background-color: #dc3545;" data-color="#dc3545"></div>
                             <div class="color-option" style="background-color: #ffc107;" data-color="#ffc107"></div>
@@ -139,8 +96,7 @@
                         </div>
                     </div>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-secondary"
-                            onclick="closeAddEventModal()">Cancel</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeAddEventModal()">Cancel</button>
                         <button type="submit" class="btn btn-primary">Add Event</button>
                     </div>
                 </form>
@@ -166,27 +122,10 @@
             </div>
         </div>
     </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    <!-- End Main Content -->
-    </div>
-    <!-- End Content -->
-    </div>
-    </div>
+
 
     <!-- Scripts -->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/bootstrap-select.js"></script>
-    <script src="js/perfect-scrollbar.min.js"></script>
-    <script src="js/custom.js"></script>
-    <script src="js/settings.js"></script>
-
-    <!-- FullCalendar Scripts - Load these in the correct order -->
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+   
 
     <script>
         let currentCalendar;
@@ -329,11 +268,11 @@
           <div class="event-detail-value">${startDate.toLocaleDateString()}</div>
         </div>
         ${endDate ? `
-            <div class="event-detail">
-              <div class="event-detail-label">End Date:</div>
-              <div class="event-detail-value">${endDate.toLocaleDateString()}</div>
-            </div>
-            ` : ''}
+                        <div class="event-detail">
+                          <div class="event-detail-label">End Date:</div>
+                          <div class="event-detail-value">${endDate.toLocaleDateString()}</div>
+                        </div>
+                        ` : ''}
         <div class="event-detail">
           <div class="event-detail-label">Project Type:</div>
           <div class="event-detail-value">${event.extendedProps.type || 'Not specified'}</div>
