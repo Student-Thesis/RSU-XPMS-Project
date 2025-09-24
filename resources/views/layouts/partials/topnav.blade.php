@@ -24,6 +24,17 @@
                         <li>
                             <a href="{{ route('messages') }}"><i class="fa fa-envelope-o"></i><span class="badge">3</span></a>
                         </li>
+                        @deptcan('permissions.manage')
+                        @if($department)
+                            <li>
+                            <a
+                                href="{{ route('departments.permissions.edit', $department) }}"
+                                title="Edit Department Permissions">
+                                <i class="fa fa-cog"></i>
+                            </a>
+                            </li>
+                        @endif
+                        @enddeptcan
                     </ul>
 
                     <ul class="user_profile_dd">
