@@ -15,7 +15,9 @@
 
             <div class="row">
               <div class="col-md-12">
-                
+                  <a href="{{ route('departments.permissions.index') }}" class="btn btn-primary">
+                      <i class="fa fa-shield-alt"></i> Manage Department Permissions
+                  </a>
               </div>
             </div>
 

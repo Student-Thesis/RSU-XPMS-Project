@@ -15,26 +15,24 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="icon" href="" type="" />
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="css/responsive.css" />
-    <link rel="stylesheet" href="css/colors.css" />
-    <link rel="stylesheet" href="css/bootstrap-select.css" />
-    <link rel="stylesheet" href="css/perfect-scrollbar.css" />
-    <link rel="stylesheet" href="css/custom.css" />
+    <link rel="icon" href="{{ asset('public/images/favicon.ico') }}" type="image/x-icon" />
 
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ asset('public/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/css/responsive.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/css/colors.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/css/bootstrap-select.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/css/perfect-scrollbar.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/css/custom.css') }}" />
+    <link rel="stylesheet" href="{{ asset('public/css/settings.css') }}" /> 
+    <link rel="stylesheet" href="{{ asset('public/css/calendar.css') }}" />
 
-    <link rel="stylesheet" href="css/settings.css" /> 
-    <link rel="stylesheet" href="css/calendar.css" />
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-      <![endif]-->
+    <![endif]-->
 
-  
-
-    
 </head>
 
 <body class="dashboard dashboard_1">

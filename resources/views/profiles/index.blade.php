@@ -46,7 +46,7 @@
                                                     <div class="progress_bar">
                                                         <!-- Skill Bars -->
                                                         <span class="skill" style="width:85%;">Web
-                                                            Applications <span class="info_valume">85%</span></span>
+                                                            Applications <span class="info_valume">85%</span></span> 
                                                         <div class="progress skill-bar ">
                                                             <div class="progress-bar progress-bar-animated progress-bar-striped"
                                                                 role="progressbar" aria-valuenow="85" aria-valuemin="0"

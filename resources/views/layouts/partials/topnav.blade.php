@@ -5,11 +5,11 @@
                 <i class="fa fa-bars"></i>
             </button>
 
-            <div class="logo_section">
+            {{-- <div class="logo_section">
                 <a href="{{ route('dashboard') }}">
-                    <img class="img-responsive" src="images/logo/logo.png" alt="#" />
+                    <img class="img-responsive" src="public/images/logo/logo.png" alt="#" />
                 </a>
-            </div>
+            </div> --}}
 
             <div class="right_topbar">
                 <div class="icon_info">
@@ -28,14 +28,24 @@
 
                     <ul class="user_profile_dd">
                         <li class="dropdown">
+                           @php
+                                $u = auth()->user();
+                                $avatarUrl = $u?->avatar_path
+                                    ? asset('public/' . $u->avatar_path) 
+                                    : asset('public/images/layout_img/default_profile.png');
+                            @endphp
+
                             <a class="dropdown-toggle" href="#" id="userMenu" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <img class="img-responsive rounded-circle" src="images/layout_img/user_img.jpg"
-                                    alt="#" />
-                                <span class="name_user">John David</span>
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="img-responsive rounded-circle"
+                                    src="{{ $avatarUrl }}"
+                                    alt="Avatar" width="40" height="40"
+                                    style="object-fit: cover;" />
+                                <span class="name_user">{{ $u?->name ?? 'Guest User' }}</span>
                             </a>
+
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                                <a class="dropdown-item" href="{{ route('profile') }}">My Profile</a>
+                                <a class="dropdown-item" href="{{ route('profile.edit') }}">My Profile</a>
                                 <a class="dropdown-item" href="{{ route('settings') }}">Settings</a>
                                 <a class="dropdown-item" href="{{ route('help') }}">Help</a>
                                 <a class="dropdown-item" href="{{ route('logout') }}"
