@@ -17,7 +17,8 @@ class UsersTableSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'root@xpms.com'],
             [
-                'name'          => 'Root User',
+                'first_name'    => 'Root',
+                'last_name'     => 'User',
                 'password'      => Hash::make('root'),
                 'department_id' => 1,   // Admins department
                 'user_type'     => 'root'
@@ -28,7 +29,8 @@ class UsersTableSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'admin@xpms.com'],
             [
-                'name'          => 'Admin User',
+                'first_name'    => 'Admin',
+                'last_name'     => 'User',
                 'password'      => Hash::make('admin123'),
                 'department_id' => 1,   // Admins department
                 'user_type'     => 'admin'
@@ -39,7 +41,8 @@ class UsersTableSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'manager@xpms.com'],
             [
-                'name'          => 'Manager User',
+                'first_name'    => 'Manager',
+                'last_name'     => 'User',
                 'password'      => Hash::make('manager123'),
                 'department_id' => 2,   // Managers department
                 'user_type'     => 'manager'
@@ -50,7 +53,8 @@ class UsersTableSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'coordinator@xpms.com'],
             [
-                'name'          => 'Coordinator User',
+                'first_name'    => 'Coordinator',
+                'last_name'     => 'User',
                 'password'      => Hash::make('coordinator123'),
                 'department_id' => 3,   // Coordinators department
                 'user_type'     => 'coordinator'

@@ -12,13 +12,20 @@ return new class extends Migration {
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('user_type')->default('user'); // 'admin' or 'user'
-            $table->string('name');
+
+            // role / type
+            $table->string('user_type')->default('user'); // 'admin', 'user', etc.
+
+            // name split
+            $table->string('first_name');
+            $table->string('last_name');
+
+            // authentication
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
 
-            // Extra fields for profile
+            // extra profile fields
             $table->string('phone', 30)->nullable();
             $table->text('about')->nullable();
             $table->string('avatar_path')->nullable(); // store picture path

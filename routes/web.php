@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DepartmentPermissionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -13,6 +14,14 @@ Auth::routes();
 Route::get('/auth-register', [App\Http\Controllers\HomeController::class, 'register'])->name('auth.register');
 
 Route::middleware(['auth'])->group(function () {
+    // Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users')->middleware('deptperm:Users,view');
+    Route::get('/users',            [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/create',     [UserController::class, 'create'])->name('users.create');
+    Route::post('/users',           [UserController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}/edit',[UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}',     [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}',  [UserController::class, 'destroy'])->name('users.destroy');
+
     Route::get('/departments/permissions', [DepartmentPermissionController::class, 'index'])->name('departments.permissions.index')->middleware('deptperm:permissions,view');
     Route::post('/departments/permissions', [DepartmentPermissionController::class, 'store'])->name('departments.permissions.store')->middleware('deptperm:permissions,create');
     Route::get('/departments/{department}/permissions', [DepartmentPermissionController::class, 'edit'])->name('departments.permissions.edit')->middleware('deptperm:permissions,update');
@@ -28,9 +37,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/projects', [App\Http\Controllers\ProjectController::class, 'index'])->name('projects') ->middleware('deptperm:Projects,view');
     Route::get('/forms', [App\Http\Controllers\FormController::class, 'index'])->name('forms')->middleware('deptperm:Forms,view');
     Route::get('/faculty', [App\Http\Controllers\FacultyController::class, 'index'])->name('faculty')->middleware('deptperm:Faculty,view');
-    Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users')->middleware('deptperm:Users,view');
+   
     Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar')->middleware('deptperm:Calendar,view');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    
 });

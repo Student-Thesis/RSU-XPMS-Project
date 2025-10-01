@@ -28,12 +28,13 @@
 
                     <ul class="user_profile_dd">
                         <li class="dropdown">
-                           @php
-                                $u = auth()->user();
-                                $avatarUrl = $u?->avatar_path
-                                    ? asset('public/' . $u->avatar_path) 
-                                    : asset('public/images/layout_img/default_profile.png');
-                            @endphp
+                          @php
+    $u = auth()->user();
+    $avatarUrl = $u?->avatar_path
+        ? asset($basePath . '/' . $u->avatar_path)
+        : asset($basePath . '/images/layout_img/default_profile.png');
+@endphp
+
 
                             <a class="dropdown-toggle" href="#" id="userMenu" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">

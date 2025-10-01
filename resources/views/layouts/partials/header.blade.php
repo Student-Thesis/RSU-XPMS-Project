@@ -15,18 +15,18 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="icon" href="{{ asset('public/images/favicon.ico') }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset($basePath . '/images/favicon.ico') }}" type="image/x-icon" />
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="{{ asset('public/css/bootstrap.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('public/style.css') }}" />
-    <link rel="stylesheet" href="{{ asset('public/css/responsive.css') }}" />
-    <link rel="stylesheet" href="{{ asset('public/css/colors.css') }}" />
-    <link rel="stylesheet" href="{{ asset('public/css/bootstrap-select.css') }}" />
-    <link rel="stylesheet" href="{{ asset('public/css/perfect-scrollbar.css') }}" />
-    <link rel="stylesheet" href="{{ asset('public/css/custom.css') }}" />
-    <link rel="stylesheet" href="{{ asset('public/css/settings.css') }}" /> 
-    <link rel="stylesheet" href="{{ asset('public/css/calendar.css') }}" />
+    <link rel="stylesheet" href="{{ asset($basePath . '/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset($basePath . '/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset($basePath . '/css/responsive.css') }}" />
+    <link rel="stylesheet" href="{{ asset($basePath . '/css/colors.css') }}" />
+    <link rel="stylesheet" href="{{ asset($basePath . '/css/bootstrap-select.css') }}" />
+    <link rel="stylesheet" href="{{ asset($basePath . '/css/perfect-scrollbar.css') }}" />
+    <link rel="stylesheet" href="{{ asset($basePath . '/css/custom.css') }}" />
+    <link rel="stylesheet" href="{{ asset($basePath . '/css/settings.css') }}" /> 
+    <link rel="stylesheet" href="{{ asset($basePath . '/css/calendar.css') }}" />
 
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>

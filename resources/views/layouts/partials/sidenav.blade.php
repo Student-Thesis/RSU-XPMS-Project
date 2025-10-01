@@ -3,14 +3,17 @@
             <div class="sidebar_blog_1">
                 <div class="sidebar-header">
                     <div class="logo_section">
-                        <a href="index.html"><img class="logo_icon img-responsive" src="public/images/logo/logo.png"
-                                alt="#" /></a>
+                        <a href="{{ url('index.html') }}">
+    <img class="logo_icon img-responsive" src="{{ asset($basePath . '/images/logo/logo.png') }}" alt="Logo" />
+</a>
+
                     </div>
                 </div>
                 <div class="sidebar_user_info">
                     <div class="icon_setting"></div>
                     <div class="user_profle_side">
-                        <div class="user_img"><img class="img-responsive" src="public/images/logo/logo.jpg" alt="#" />
+                        <div class="user_img"><img class="img-responsive" src="{{ asset($basePath . '/images/logo/logo.jpg') }}" alt="Logo" />
+
                         </div>
                         <div class="user_info">
                             <h2>ESCEO</h2>
@@ -48,10 +51,10 @@
                         </a>
                         <ul class="collapse list-unstyled" id="userSubmenu">
                             <li>
-                                <a href="New_user.html"><i class="fa fa-plus-circle"></i> Add User</a>
+                                <a href="{{route('users.create')}}"><i class="fa fa-plus-circle"></i> Add User</a>
                             </li>
                             <li>
-                                <a href="{{route('users')}}"><i class="fa fa-list"></i> List of Users</a>
+                                <a href="{{route('users.index')}}"><i class="fa fa-list"></i> List of Users</a>
                             </li>
 
                         </ul>
