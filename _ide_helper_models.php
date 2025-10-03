@@ -60,6 +60,18 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm withoutTrashed()
+ */
+	class RecordForm extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * @property int $id
  * @property int|null $department_id
  * @property string $user_type

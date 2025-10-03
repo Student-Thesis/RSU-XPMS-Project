@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DepartmentPermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FormController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -27,6 +28,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/departments/{department}/permissions', [DepartmentPermissionController::class, 'edit'])->name('departments.permissions.edit')->middleware('deptperm:permissions,update');
     Route::put('/departments/{department}/permissions', [DepartmentPermissionController::class, 'update'])->name('departments.permissions.update')->middleware('deptperm:permissions,update');
 
+    Route::get('/forms', [FormController::class, 'index'])->name('forms.index');
+    Route::get('/forms/create', [FormController::class, 'create'])->name('forms.create');
+    Route::post('/forms', [FormController::class, 'store'])->name('forms.store');
+    Route::get('/forms/{form}/edit', [FormController::class, 'edit'])->name('forms.edit');
+    Route::put('/forms/{form}', [FormController::class, 'update'])->name('forms.update');
+    Route::delete('/forms/{form}', [FormController::class, 'destroy'])->name('forms.destroy');
 
     Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
     Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings');
@@ -35,7 +42,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications');
 
     Route::get('/projects', [App\Http\Controllers\ProjectController::class, 'index'])->name('projects') ->middleware('deptperm:Projects,view');
-    Route::get('/forms', [App\Http\Controllers\FormController::class, 'index'])->name('forms')->middleware('deptperm:Forms,view');
+    
     Route::get('/faculty', [App\Http\Controllers\FacultyController::class, 'index'])->name('faculty')->middleware('deptperm:Faculty,view');
    
     Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar')->middleware('deptperm:Calendar,view');

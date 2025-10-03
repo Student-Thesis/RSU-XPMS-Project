@@ -35,7 +35,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{route('forms')}}">
+                        <a href="{{route('forms.index')}}">
                             <i class="fa fa-edit orange_color"></i> <span>Forms</span>
                         </a>
                     </li>
