@@ -13,6 +13,13 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/auth-register', [App\Http\Controllers\HomeController::class, 'register'])->name('auth.register');
+Route::get('/proposals', [App\Http\Controllers\ProposalController::class, 'register'])->name('proposals.index');
+Route::post('/proposals', [App\Http\Controllers\ProposalController::class, 'store'])->name('proposals.store');
+
+Route::get('/agreement', [App\Http\Controllers\AgreementController::class, 'register'])->name('agreement.register');
+Route::post('/agreement', [App\Http\Controllers\AgreementController::class, 'store'])->name('agreement.store');
+
+Route::get('/notif-agreement', [App\Http\Controllers\NotificationsController::class, 'agreement'])->name('notifications.agreement');
 
 Route::middleware(['auth'])->group(function () {
     // Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users')->middleware('deptperm:Users,view');

@@ -87,62 +87,61 @@
                         <img src="/images/logo/logonobg.png" alt="Logo" class="mb-3" style="height: 100px;">
                         <h4>Login</h4>
                     </div>
-                   <form method="POST" action="{{ route('login') }}" class="p-4 border rounded bg-light">
-    @csrf
+                    <form method="POST" action="{{ route('login') }}" class="p-4 border rounded bg-light">
+                        @csrf
 
-    {{-- Email / Username --}}
-    <div class="mb-3">
-        <label for="email" class="form-label">{{ __('Email Address or Username') }}</label>
-        <input id="email" type="text"
-               class="form-control @error('email') is-invalid @enderror"
-               name="email" value="{{ old('email') }}" required autofocus>
+                        {{-- Email / Username --}}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">{{ __('Email Address or Username') }}</label>
+                            <input id="email" type="text"
+                                class="form-control @error('email') is-invalid @enderror" name="email"
+                                value="{{ old('email') }}" required autofocus>
 
-        @error('email')
-            <span class="invalid-feedback d-block">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
-    </div>
+                            @error('email')
+                                <span class="invalid-feedback d-block">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
 
-    {{-- Password --}}
-    <div class="mb-3">
-        <label for="password" class="form-label">{{ __('Password') }}</label>
-        <input id="password" type="password"
-               class="form-control @error('password') is-invalid @enderror"
-               name="password" required>
+                        {{-- Password --}}
+                        <div class="mb-3">
+                            <label for="password" class="form-label">{{ __('Password') }}</label>
+                            <input id="password" type="password"
+                                class="form-control @error('password') is-invalid @enderror" name="password" required>
 
-        @error('password')
-            <span class="invalid-feedback d-block">
-                <strong>{{ $message }}</strong>
-            </span>
-        @enderror
-    </div>
+                            @error('password')
+                                <span class="invalid-feedback d-block">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
 
-    {{-- Remember Me --}}
-    <div class="mb-3 form-check">
-        <input class="form-check-input" type="checkbox" name="remember" id="remember"
-               {{ old('remember') ? 'checked' : '' }}>
-        <label class="form-check-label" for="remember">
-            {{ __('Remember Me') }}
-        </label>
-    </div>
+                        {{-- Remember Me --}}
+                        <div class="mb-3 form-check">
+                            <input class="form-check-input" type="checkbox" name="remember" id="remember"
+                                {{ old('remember') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="remember">
+                                {{ __('Remember Me') }}
+                            </label>
+                        </div>
 
-    {{-- Login Button --}}
-    <div class="mb-3">
-        <button type="submit" class="btn btn-primary w-100">
-            {{ __('Login') }}
-        </button>
-    </div>
+                        {{-- Login Button --}}
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary w-100">
+                                {{ __('Login') }}
+                            </button>
+                        </div>
 
-    {{-- Links --}}
-    <div class="d-flex justify-content-between">
-        @if (Route::has('password.request'))
-            <a href="{{ route('password.request') }}">{{ __('Forgot Password?') }}</a>
-        @endif
+                        {{-- Links --}}
+                        <div class="d-flex justify-content-between">
+                            @if (Route::has('password.request'))
+                                <a href="{{ route('password.request') }}">{{ __('Forgot Password?') }}</a>
+                            @endif
 
-        <a href="{{ route('register') }}">{{ __('Create Account') }}</a>
-    </div>
-</form>
+                            <a href="{{ route('register') }}">{{ __('Create Account') }}</a>
+                        </div>
+                    </form>
 
 
                 </div>

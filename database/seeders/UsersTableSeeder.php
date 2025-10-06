@@ -17,48 +17,52 @@ class UsersTableSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'root@xpms.com'],
             [
-                'first_name'    => 'Root',
-                'last_name'     => 'User',
-                'password'      => Hash::make('root'),
-                'department_id' => 1,   // Admins department
-                'user_type'     => 'root'
-            ]
+                'username' => 'Root',
+                'first_name' => 'Root',
+                'last_name' => 'User',
+                'password' => Hash::make('root'),
+                'department_id' => 1, // Admins department
+                'user_type' => 'root',
+            ],
         );
 
         // Admin user
         User::updateOrCreate(
             ['email' => 'admin@xpms.com'],
             [
-                'first_name'    => 'Admin',
-                'last_name'     => 'User',
-                'password'      => Hash::make('admin123'),
-                'department_id' => 1,   // Admins department
-                'user_type'     => 'admin'
-            ]
+                'username' => 'Admin',
+                'first_name' => 'Admin',
+                'last_name' => 'User',
+                'password' => Hash::make('admin123'),
+                'department_id' => 1, // Admins department
+                'user_type' => 'admin',
+            ],
         );
 
         // Manager user
         User::updateOrCreate(
             ['email' => 'manager@xpms.com'],
             [
-                'first_name'    => 'Manager',
-                'last_name'     => 'User',
-                'password'      => Hash::make('manager123'),
-                'department_id' => 2,   // Managers department
-                'user_type'     => 'manager'
-            ]
+                'username' => 'Manager',
+                'first_name' => 'Manager',
+                'last_name' => 'User',
+                'password' => Hash::make('manager123'),
+                'department_id' => 2, // Managers department
+                'user_type' => 'manager',
+            ],
         );
 
         // Coordinator user
         User::updateOrCreate(
             ['email' => 'coordinator@xpms.com'],
             [
-                'first_name'    => 'Coordinator',
-                'last_name'     => 'User',
-                'password'      => Hash::make('coordinator123'),
-                'department_id' => 3,   // Coordinators department
-                'user_type'     => 'coordinator'
-            ]
+                'username' => 'Coordinator',
+                'first_name' => 'Coordinator',
+                'last_name' => 'User',
+                'password' => Hash::make('coordinator123'),
+                'department_id' => 3, // Coordinators department
+                'user_type' => 'coordinator',
+            ],
         );
     }
 }

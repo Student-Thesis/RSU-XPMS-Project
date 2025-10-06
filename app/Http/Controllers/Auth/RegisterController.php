@@ -7,33 +7,22 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
-
     use RegistersUsers;
 
     /**
-     * Where to redirect users after registration.
+     * Default redirect if no custom logic in registered().
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/proposals';
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -48,10 +37,13 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        Log::info('Validating registration data', ['data' => $data]);
+
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'username'       => ['required', 'string', 'max:50', 'unique:users'],
+            'email'      => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password'   => ['required', 'string', 'min:8', 'confirmed'],
+            'college'    => ['required', 'string', 'max:100'],
         ]);
     }
 
@@ -63,10 +55,44 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        try {
+            $user = User::create([
+                'username'       => $data['username'],
+                'first_name' => $data['first_name'] ?? '',
+                'last_name'  => $data['last_name'] ?? '',
+                'college'    => $data['college'],
+                'email'      => $data['email'],
+                'password'   => Hash::make($data['password']),
+                'user_type'  => 'user', // default role
+            ]);
+
+            Log::info('User registered successfully', ['id' => $user->id, 'email' => $user->email]);
+
+            return $user;
+        } catch (\Exception $e) {
+            Log::error('User registration failed', [
+                'error' => $e->getMessage(),
+                'data'  => $data
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * Redirect users after successful registration.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\Models\User $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    protected function registered(Request $request, $user)
+    {
+        if ($user) {
+            Log::info('Redirecting after registration', ['user_id' => $user->id]);
+            return redirect('/proposals');
+        }
+
+        Log::warning('Registration complete but no user instance found.');
+        return redirect('/register'); // fallback
     }
 }

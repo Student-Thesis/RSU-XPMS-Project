@@ -10,29 +10,35 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
+       Schema::create('users', function (Blueprint $table) {
+    $table->id();
 
-            // role / type
-            $table->string('user_type')->default('user'); // 'admin', 'user', etc.
+    // Role / type
+    $table->string('user_type')->default('user'); // 'admin', 'user', etc.
 
-            // name split
-            $table->string('first_name');
-            $table->string('last_name');
+    // Authentication
+    $table->string('username')->unique();  // login username
+    $table->string('email')->unique();
+    $table->timestamp('email_verified_at')->nullable();
+    $table->string('password');
 
-            // authentication
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+    // Name split
+    $table->string('first_name')->nullable();
+    $table->string('last_name')->nullable();
 
-            // extra profile fields
-            $table->string('phone', 30)->nullable();
-            $table->text('about')->nullable();
-            $table->string('avatar_path')->nullable(); // store picture path
+    // College (from select)
+    $table->string('college')->nullable();
 
-            $table->rememberToken();
-            $table->timestamps();
-        });
+    // Extra profile fields
+    $table->string('phone', 30)->nullable();
+    $table->text('about')->nullable();
+    $table->string('avatar_path')->nullable(); // profile picture path
+
+    // Session & timestamps
+    $table->rememberToken();
+    $table->timestamps();
+});
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();

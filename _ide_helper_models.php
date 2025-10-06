@@ -13,6 +13,15 @@
 
 namespace App\Models{
 /**
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement query()
+ */
+	class Agreement extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * @property int $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -60,10 +69,73 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @property int $id
+ * @property string $title
+ * @property string $classification
+ * @property string|null $team_members
+ * @property string|null $target_agenda
+ * @property string|null $location
+ * @property string|null $time_frame
+ * @property string|null $beneficiaries_who
+ * @property int|null $beneficiaries_how_many
+ * @property numeric|null $budget_ps
+ * @property numeric|null $budget_mooe
+ * @property numeric|null $budget_co
+ * @property string|null $partner
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereBeneficiariesHowMany($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereBeneficiariesWho($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereBudgetCo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereBudgetMooe($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereBudgetPs($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereClassification($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal wherePartner($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereTargetAgenda($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereTeamMembers($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereTimeFrame($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereUpdatedAt($value)
+ */
+	class Proposal extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property string $record_code
+ * @property string $title
+ * @property string $link_url
+ * @property int $maintenance_years
+ * @property int $preservation_years
+ * @property string|null $remarks
+ * @property int $display_order
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm whereDisplayOrder($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm whereLinkUrl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm whereMaintenanceYears($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm wherePreservationYears($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm whereRecordCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm whereRemarks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm withoutTrashed()
  */
@@ -75,11 +147,13 @@ namespace App\Models{
  * @property int $id
  * @property int|null $department_id
  * @property string $user_type
- * @property string $first_name
- * @property string $last_name
+ * @property string $username
  * @property string $email
  * @property \Illuminate\Support\Carbon|null $email_verified_at
  * @property string $password
+ * @property string|null $first_name
+ * @property string|null $last_name
+ * @property string|null $college
  * @property string|null $phone
  * @property string|null $about
  * @property string|null $avatar_path
@@ -95,6 +169,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAbout($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereAvatarPath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCollege($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereDepartmentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereEmail($value)
@@ -107,6 +182,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUserType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUsername($value)
  */
 	class User extends \Eloquent {}
 }

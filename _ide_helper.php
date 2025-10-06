@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 12.24.0.
+ * Generated for Laravel 12.32.5.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -1481,7 +1481,7 @@ namespace Illuminate\Support\Facades {
          * Assign a set of tags to a given binding.
          *
          * @param array|string $abstracts
-         * @param array|mixed $tags
+         * @param mixed $tags
          * @return void
          * @static
          */
@@ -3657,7 +3657,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Begin broadcasting an event.
          *
-         * @param mixed|null $event
+         * @param mixed $event
          * @return \Illuminate\Broadcasting\PendingBroadcast
          * @static
          */
@@ -4941,7 +4941,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Begin executing a new tags operation if the store supports it.
          *
-         * @param array|mixed $names
+         * @param mixed $names
          * @return \Illuminate\Cache\TaggedCache
          * @throws \BadMethodCallException
          * @static
@@ -6180,6 +6180,7 @@ namespace Illuminate\Support\Facades {
          * @param array<string, mixed> $data
          * @param array<string, mixed> $hidden
          * @return mixed
+         * @throws \Throwable
          * @static
          */
         public static function scope($callback, $data = [], $hidden = [])
@@ -6940,7 +6941,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get a database connection instance from the given configuration.
          *
-         * @param string $name
+         * @param \UnitEnum|string $name
          * @param array $config
          * @param bool $force
          * @return \Illuminate\Database\MySqlConnection
@@ -6955,7 +6956,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Disconnect from the given database and remove from local cache.
          *
-         * @param string|null $name
+         * @param \UnitEnum|string|null $name
          * @return void
          * @static
          */
@@ -6968,7 +6969,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Disconnect from the given database.
          *
-         * @param string|null $name
+         * @param \UnitEnum|string|null $name
          * @return void
          * @static
          */
@@ -6981,7 +6982,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Reconnect to the given database.
          *
-         * @param string|null $name
+         * @param \UnitEnum|string|null $name
          * @return \Illuminate\Database\Connection
          * @static
          */
@@ -6994,7 +6995,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the default database connection for the callback execution.
          *
-         * @param string $name
+         * @param \UnitEnum|string $name
          * @param callable $callback
          * @return mixed
          * @static
@@ -7601,7 +7602,7 @@ namespace Illuminate\Support\Facades {
          * Register a callback to be invoked when the connection queries for longer than a given amount of time.
          *
          * @param \DateTimeInterface|\Carbon\CarbonInterval|float|int $threshold
-         * @param (callable(\Illuminate\Database\Connection, class-string<\Illuminate\Database\Events\QueryExecuted>): mixed) $handler
+         * @param (callable(\Illuminate\Database\Connection, \Illuminate\Database\Events\QueryExecuted): mixed) $handler
          * @return void
          * @static
          */
@@ -8370,6 +8371,21 @@ namespace Illuminate\Support\Facades {
             //Method inherited from \Illuminate\Database\Connection 
             /** @var \Illuminate\Database\MySqlConnection $instance */
             $instance->afterCommit($callback);
+        }
+
+        /**
+         * Execute the callback after a transaction rolls back.
+         *
+         * @param callable $callback
+         * @return void
+         * @throws \RuntimeException
+         * @static
+         */
+        public static function afterRollBack($callback)
+        {
+            //Method inherited from \Illuminate\Database\Connection 
+            /** @var \Illuminate\Database\MySqlConnection $instance */
+            $instance->afterRollBack($callback);
         }
 
             }
@@ -9731,7 +9747,7 @@ namespace Illuminate\Support\Facades {
          * Inspect the user for the given ability.
          *
          * @param \UnitEnum|string $ability
-         * @param array|mixed $arguments
+         * @param mixed $arguments
          * @return \Illuminate\Auth\Access\Response
          * @static
          */
@@ -9745,7 +9761,7 @@ namespace Illuminate\Support\Facades {
          * Get the raw result from the authorization callback.
          *
          * @param string $ability
-         * @param array|mixed $arguments
+         * @param mixed $arguments
          * @return mixed
          * @throws \Illuminate\Auth\Access\AuthorizationException
          * @static
@@ -10155,6 +10171,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Http\Client\Response put(string $url, array|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable $data = [])
      * @method static \Illuminate\Http\Client\Response delete(string $url, array|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable $data = [])
      * @method static array pool(callable $callback)
+     * @method static \Illuminate\Http\Client\Batch batch(callable $callback)
      * @method static \Illuminate\Http\Client\Response send(string $method, string $url, array $options = [])
      * @method static \GuzzleHttp\Client buildClient()
      * @method static \GuzzleHttp\Client createClient(\GuzzleHttp\HandlerStack $handlerStack)
@@ -10166,6 +10183,7 @@ namespace Illuminate\Support\Facades {
      * @method static \GuzzleHttp\Psr7\RequestInterface runBeforeSendingCallbacks(\GuzzleHttp\Psr7\RequestInterface $request, array $options)
      * @method static array mergeOptions(array ...$options)
      * @method static \Illuminate\Http\Client\PendingRequest stub(callable $callback)
+     * @method static bool isAllowedRequestUrl(string $url)
      * @method static \Illuminate\Http\Client\PendingRequest async(bool $async = true)
      * @method static \GuzzleHttp\Promise\PromiseInterface|null getPromise()
      * @method static \Illuminate\Http\Client\PendingRequest truncateExceptionsAt(int $length)
@@ -10363,15 +10381,16 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
-         * Indicate that an exception should not be thrown if any request is not faked.
+         * Allow stray, unfaked requests entirely, or optionally allow only specific URLs.
          *
+         * @param array<int, string>|null $only
          * @return \Illuminate\Http\Client\Factory
          * @static
          */
-        public static function allowStrayRequests()
+        public static function allowStrayRequests($only = null)
         {
             /** @var \Illuminate\Http\Client\Factory $instance */
-            return $instance->allowStrayRequests();
+            return $instance->allowStrayRequests($only);
         }
 
         /**
@@ -11790,7 +11809,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Send the given notification to the given notifiable entities.
          *
-         * @param \Illuminate\Support\Collection|array|mixed $notifiables
+         * @param \Illuminate\Support\Collection|mixed $notifiables
          * @param mixed $notification
          * @return void
          * @static
@@ -11804,7 +11823,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Send the given notification immediately.
          *
-         * @param \Illuminate\Support\Collection|array|mixed $notifiables
+         * @param \Illuminate\Support\Collection|mixed $notifiables
          * @param mixed $notification
          * @param array|null $channels
          * @return void
@@ -15721,7 +15740,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Flash only some of the input to the session.
          *
-         * @param array|mixed $keys
+         * @param mixed $keys
          * @return void
          * @static
          */
@@ -15734,7 +15753,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Flash only some of the input to the session.
          *
-         * @param array|mixed $keys
+         * @param mixed $keys
          * @return void
          * @static
          */
@@ -15824,7 +15843,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get all of the input and files for the request.
          *
-         * @param array|mixed|null $keys
+         * @param mixed $keys
          * @return array
          * @static
          */
@@ -16265,7 +16284,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get a subset containing the provided keys with values from the instance data.
          *
-         * @param array|mixed $keys
+         * @param mixed $keys
          * @return array
          * @static
          */
@@ -16278,7 +16297,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get all of the data except for a specified array of items.
          *
-         * @param array|mixed $keys
+         * @param mixed $keys
          * @return array
          * @static
          */
@@ -17879,7 +17898,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes withoutOverlapping(int $expiresAt = 1440)
      * @method static void mergeAttributes(\Illuminate\Console\Scheduling\Event $event)
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes user(string $user)
-     * @method static \Illuminate\Console\Scheduling\PendingEventAttributes environments(array|mixed $environments)
+     * @method static \Illuminate\Console\Scheduling\PendingEventAttributes environments(mixed $environments)
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes evenInMaintenanceMode()
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes onOneServer()
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes runInBackground()
@@ -17927,7 +17946,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes saturdays()
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes sundays()
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes weekly()
-     * @method static \Illuminate\Console\Scheduling\PendingEventAttributes weeklyOn(array|mixed $dayOfWeek, string $time = '0:0')
+     * @method static \Illuminate\Console\Scheduling\PendingEventAttributes weeklyOn(mixed $dayOfWeek, string $time = '0:0')
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes monthly()
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes monthlyOn(int $dayOfMonth = 1, string $time = '0:0')
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes twiceMonthly(int $first = 1, int $second = 16, string $time = '0:0')
@@ -17936,7 +17955,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes quarterlyOn(int $dayOfQuarter = 1, string $time = '0:0')
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes yearly()
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes yearlyOn(int $month = 1, int|string $dayOfMonth = 1, string $time = '0:0')
-     * @method static \Illuminate\Console\Scheduling\PendingEventAttributes days(array|mixed $days)
+     * @method static \Illuminate\Console\Scheduling\PendingEventAttributes days(mixed $days)
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes timezone(\UnitEnum|\DateTimeZone|string $timezone)
      * @see \Illuminate\Console\Scheduling\Schedule
      */
@@ -18857,7 +18876,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the default session driver name.
          *
-         * @return string
+         * @return string|null
          * @static
          */
         public static function getDefaultDriver()
@@ -19269,7 +19288,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Reflash a subset of the current flash data.
          *
-         * @param array|mixed $keys
+         * @param mixed $keys
          * @return void
          * @static
          */
@@ -19290,6 +19309,18 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Session\Store $instance */
             $instance->flashInput($value);
+        }
+
+        /**
+         * Get the session cache instance.
+         *
+         * @return \Illuminate\Contracts\Cache\Repository
+         * @static
+         */
+        public static function cache()
+        {
+            /** @var \Illuminate\Session\Store $instance */
+            return $instance->cache();
         }
 
         /**
@@ -21666,7 +21697,7 @@ namespace Illuminate\Support\Facades {
          * Add a piece of shared data to the environment.
          *
          * @param array|string $key
-         * @param mixed|null $value
+         * @param mixed $value
          * @return mixed
          * @static
          */
@@ -22078,7 +22109,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string $key
          * @param mixed $default
-         * @return mixed|null
+         * @return mixed
          * @static
          */
         public static function getConsumableComponentData($key, $default = null)
@@ -23139,6 +23170,19 @@ namespace  {
         {
             /** @var \Illuminate\Database\Eloquent\Builder $instance */
             return $instance->withoutGlobalScopes($scopes);
+        }
+
+        /**
+         * Remove all global scopes except the given scopes.
+         *
+         * @param array $scopes
+         * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @static
+         */
+        public static function withoutGlobalScopesExcept($scopes = [])
+        {
+            /** @var \Illuminate\Database\Eloquent\Builder $instance */
+            return $instance->withoutGlobalScopesExcept($scopes);
         }
 
         /**
@@ -24957,7 +25001,7 @@ namespace  {
          *
          * @param mixed $relations
          * @param \Illuminate\Contracts\Database\Query\Expression|string $column
-         * @param string $function
+         * @param string|null $function
          * @return \Illuminate\Database\Eloquent\Builder<static>
          * @static
          */
@@ -27919,8 +27963,8 @@ namespace  {
     class Session extends \Illuminate\Support\Facades\Session {}
     class Storage extends \Illuminate\Support\Facades\Storage {}
     class Str extends \Illuminate\Support\Str {}
-    class URL extends \Illuminate\Support\Facades\URL {}
     class Uri extends \Illuminate\Support\Uri {}
+    class URL extends \Illuminate\Support\Facades\URL {}
     class Validator extends \Illuminate\Support\Facades\Validator {}
     class View extends \Illuminate\Support\Facades\View {}
     class Vite extends \Illuminate\Support\Facades\Vite {}
