@@ -13,9 +13,33 @@
 
 namespace App\Models{
 /**
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog query()
+ */
+	class ActivityLog extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property string $organization_name
+ * @property \Illuminate\Support\Carbon $date_signed
+ * @property string|null $mou_path
+ * @property string|null $moa_path
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereDateSigned($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereMoaPath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereMouPath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereOrganizationName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereUpdatedAt($value)
  */
 	class Agreement extends \Eloquent {}
 }
@@ -82,23 +106,72 @@ namespace App\Models{
  * @property numeric|null $budget_mooe
  * @property numeric|null $budget_co
  * @property string|null $partner
+ * @property string|null $leader
+ * @property string|null $college_campus
+ * @property bool $in_house
+ * @property bool $revised_proposal
+ * @property bool $ntp
+ * @property bool $endorsement
+ * @property bool $proposal_presentation
+ * @property bool $proposal_documents
+ * @property bool $program_proposal
+ * @property bool $project_proposal
+ * @property bool $moa_mou
+ * @property bool $activity_design
+ * @property bool $certificate_of_appearance
+ * @property bool $attendance_sheet
+ * @property bool $photos
+ * @property bool $terminal_report
+ * @property string|null $source_of_funds
+ * @property numeric|null $expenditure
+ * @property string|null $fund_utilization_rate
+ * @property string $status
+ * @property string|null $documentation_report
+ * @property string|null $code
+ * @property string|null $remarks
+ * @property string|null $drive_link
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read float $approved_budget
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereActivityDesign($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereAttendanceSheet($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereBeneficiariesHowMany($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereBeneficiariesWho($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereBudgetCo($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereBudgetMooe($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereBudgetPs($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereCertificateOfAppearance($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereClassification($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereCollegeCampus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereDocumentationReport($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereDriveLink($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereEndorsement($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereExpenditure($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereFundUtilizationRate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereInHouse($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereLeader($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereMoaMou($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereNtp($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal wherePartner($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal wherePhotos($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereProgramProposal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereProjectProposal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereProposalDocuments($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereProposalPresentation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereRemarks($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereRevisedProposal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereSourceOfFunds($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereTargetAgenda($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereTeamMembers($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereTerminalReport($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereTimeFrame($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereUpdatedAt($value)

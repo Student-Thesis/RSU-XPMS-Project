@@ -5,6 +5,7 @@ use App\Http\Controllers\DepartmentPermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FormController;
+use App\Http\Controllers\ProjectController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -30,10 +31,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/users/{user}',     [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}',  [UserController::class, 'destroy'])->name('users.destroy');
 
-    Route::get('/departments/permissions', [DepartmentPermissionController::class, 'index'])->name('departments.permissions.index')->middleware('deptperm:permissions,view');
-    Route::post('/departments/permissions', [DepartmentPermissionController::class, 'store'])->name('departments.permissions.store')->middleware('deptperm:permissions,create');
-    Route::get('/departments/{department}/permissions', [DepartmentPermissionController::class, 'edit'])->name('departments.permissions.edit')->middleware('deptperm:permissions,update');
-    Route::put('/departments/{department}/permissions', [DepartmentPermissionController::class, 'update'])->name('departments.permissions.update')->middleware('deptperm:permissions,update');
+    Route::get('/departments/permissions', [DepartmentPermissionController::class, 'index'])->name('departments.permissions.index');
+    Route::post('/departments/permissions', [DepartmentPermissionController::class, 'store'])->name('departments.permissions.store');
+    Route::get('/departments/{department}/permissions', [DepartmentPermissionController::class, 'edit'])->name('departments.permissions.edit');
+    Route::put('/departments/{department}/permissions', [DepartmentPermissionController::class, 'update'])->name('departments.permissions.update');
 
     Route::get('/forms', [FormController::class, 'index'])->name('forms.index');
     Route::get('/forms/create', [FormController::class, 'create'])->name('forms.create');
@@ -48,14 +49,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/messages', [App\Http\Controllers\MessageController::class, 'index'])->name('messages');
     Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications');
 
-    Route::get('/projects', [App\Http\Controllers\ProjectController::class, 'index'])->name('projects') ->middleware('deptperm:Projects,view');
+    Route::get('/projects', [ProjectController::class, 'index'])->name('projects');
+    Route::patch('/projects/{project}/inline', [ProjectController::class, 'inlineUpdate'])->name('projects.inline');
     
-    Route::get('/faculty', [App\Http\Controllers\FacultyController::class, 'index'])->name('faculty')->middleware('deptperm:Faculty,view');
+    Route::get('/faculty', [App\Http\Controllers\FacultyController::class, 'index'])->name('faculty');
    
-    Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar')->middleware('deptperm:Calendar,view');
+    Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // routes/web.php
+Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+Route::get('/notifications/load', [NotificationController::class, 'load'])->name('notifications.load');
+
 
     
 });
