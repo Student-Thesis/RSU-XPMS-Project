@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Proposal;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use App\Models\SettingsClassification;
+use App\Models\SettingsTargetAgenda;
 
 class ProposalController extends Controller
 {
     public function register()
     {
-        return view('proposals.register');
+        $classifications = SettingsClassification::active()->orderBy('name')->get();
+         $targetAgendas = SettingsTargetAgenda::active()->orderBy('name')->get();
+        return view('proposals.register', compact('classifications', 'targetAgendas'));
     }
 
     public function index()
@@ -65,6 +69,8 @@ class ProposalController extends Controller
             $parts = array_filter(array_map('trim', explode(',', $data['team_members'])));
             $data['team_members'] = implode(', ', $parts);
         }
+
+        $data['user_id'] = auth()->id();
 
         Proposal::create($data);
 

@@ -78,82 +78,111 @@
                     <form method="POST" action="{{ route('proposals.store') }}">
                         @csrf
 
+                        {{-- Title --}}
                         <div class="mb-2">
                             <label class="form-label">Title for Proposal</label>
-                            <input type="text" name="title" class="form-control" placeholder="Enter proposal title"
-                                required>
+                            <input type="text" name="title" class="form-control" value="{{ old('title') }}"
+                                placeholder="Enter proposal title" required>
                         </div>
 
+                        {{-- Classification (names, not slugs) --}}
                         <div class="mb-2">
                             <label class="form-label">Classification</label>
                             <select name="classification" class="form-select" required>
-                                <option value="" disabled selected>Choose classification</option>
-                                <option value="Project">Project</option>
-                                <option value="Program">Program</option>
+                                <option value="" disabled {{ old('classification') ? '' : 'selected' }}>
+                                    Choose classification
+                                </option>
+                                <option value="Project" {{ old('classification') === 'Project' ? 'selected' : '' }}>
+                                    Project</option>
+                                <option value="Program" {{ old('classification') === 'Program' ? 'selected' : '' }}>
+                                    Program</option>
                             </select>
                         </div>
 
+                        {{-- Team Members --}}
                         <div class="mb-2">
                             <label class="form-label">Team Member Name(s)</label>
                             <input type="text" name="team_members" class="form-control"
-                                placeholder="Separate multiple names with commas">
+                                value="{{ old('team_members') }}" placeholder="Separate multiple names with commas">
                         </div>
 
+                        {{-- Target Agenda (names, not slugs) --}}
                         <div class="mb-2">
                             <label class="form-label">Target Agenda</label>
-                            <input type="text" name="target_agenda" class="form-control"
-                                placeholder="e.g. Environmental Awareness">
+                            <select name="target_agenda" class="form-select">
+                                <option value="" disabled {{ old('target_agenda') ? '' : 'selected' }}>
+                                    Choose target agenda
+                                </option>
+                                @foreach ($targetAgendas as $agenda)
+                                    <option value="{{ $agenda->name }}"
+                                        {{ old('target_agenda') === $agenda->name ? 'selected' : '' }}>
+                                        {{ $agenda->name }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
 
+                        {{-- Location --}}
                         <div class="mb-2">
                             <label class="form-label">Location</label>
-                            <input type="text" name="location" class="form-control" placeholder="Enter location">
+                            <input type="text" name="location" class="form-control" value="{{ old('location') }}"
+                                placeholder="Enter location">
                         </div>
 
+                        {{-- Time Frame (string per validator) --}}
                         <div class="mb-2">
                             <label class="form-label">Required Time Frame</label>
-                            <input type="text" name="time_frame" class="form-control" placeholder="e.g. 1 month">
+                            <input type="date" name="time_frame" class="form-control"
+                                value="{{ old('time_frame') }}" placeholder="e.g. 1 month or Oct–Dec 2025">
                         </div>
 
+                        {{-- Target Beneficiaries --}}
                         <div class="form-section-title">Target Beneficiaries</div>
                         <div class="row g-2">
                             <div class="col-md-6">
                                 <label class="form-label">Who?</label>
                                 <input type="text" name="beneficiaries_who" class="form-control"
-                                    placeholder="e.g. Farmers, Students">
+                                    value="{{ old('beneficiaries_who') }}" placeholder="e.g. Farmers, Students">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">How many?</label>
                                 <input type="number" name="beneficiaries_how_many" class="form-control"
-                                    placeholder="e.g. 100" min="0">
+                                    value="{{ old('beneficiaries_how_many') }}" placeholder="e.g. 100" min="0">
                             </div>
                         </div>
 
+                        {{-- Budget --}}
                         <div class="form-section-title">Budget Requirements</div>
                         <div class="row g-2">
                             <div class="col-md-4">
                                 <label class="form-label">PS</label>
-                                <input type="text" name="budget_ps" class="form-control" placeholder="Enter PS">
+                                <input type="text" name="budget_ps" class="form-control"
+                                    value="{{ old('budget_ps') }}" placeholder="Enter PS">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">MOOE</label>
-                                <input type="text" name="budget_mooe" class="form-control" placeholder="Enter MOOE">
+                                <input type="text" name="budget_mooe" class="form-control"
+                                    value="{{ old('budget_mooe') }}" placeholder="Enter MOOE">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">CO</label>
-                                <input type="text" name="budget_co" class="form-control" placeholder="Enter CO">
+                                <input type="text" name="budget_co" class="form-control"
+                                    value="{{ old('budget_co') }}" placeholder="Enter CO">
                             </div>
                         </div>
 
+                        {{-- Partner --}}
                         <div class="mt-3 mb-2">
                             <label class="form-label">Partner (if any)</label>
-                            <input type="text" name="partner" class="form-control" placeholder="e.g. LGU, DepEd">
+                            <input type="text" name="partner" class="form-control" value="{{ old('partner') }}"
+                                placeholder="e.g. LGU, DepEd">
                         </div>
 
                         <div class="d-grid mt-3">
-                            <button type="submit" class="btn auth-btn">Submit Proposal</button>
+                            <button type="submit" class="btn btn-primary">Submit Proposal</button>
                         </div>
                     </form>
+
 
 
                 </div>

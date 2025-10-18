@@ -1,12 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
-    <!-- Content -->
-    <div id="content">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
 
+    <div id="content">
         @include('layouts.partials.topnav')
-        <!-- Main Content -->
+
         <div class="midde_cont">
             <div class="container-fluid">
                 <div class="row column_title">
@@ -31,7 +30,6 @@
                 </div>
             </div>
         </div>
-        <!-- End Main Content -->
     </div>
 
     <!-- Add Event Modal -->
@@ -45,8 +43,7 @@
                 <form id="eventForm">
                     <div class="form-group">
                         <label class="form-label">Project Title *</label>
-                        <input type="text" id="eventTitle" class="form-input" placeholder="Enter project title..."
-                            required>
+                        <input type="text" id="eventTitle" class="form-input" placeholder="Enter project title..." required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Description</label>
@@ -84,8 +81,7 @@
                     <div class="form-group">
                         <label class="form-label">Color</label>
                         <div class="color-picker-container">
-                            <div class="color-option selected" style="background-color: #007bff;" data-color="#007bff">
-                            </div>
+                            <div class="color-option selected" style="background-color: #007bff;" data-color="#007bff"></div>
                             <div class="color-option" style="background-color: #28a745;" data-color="#28a745"></div>
                             <div class="color-option" style="background-color: #dc3545;" data-color="#dc3545"></div>
                             <div class="color-option" style="background-color: #ffc107;" data-color="#ffc107"></div>
@@ -112,9 +108,7 @@
                     <h3 class="modal-title">Project Event Details</h3>
                     <button class="close-btn" onclick="closeViewEventModal()">&times;</button>
                 </div>
-                <div id="eventDetails">
-                    <!-- Event details will be populated here -->
-                </div>
+                <div id="eventDetails"></div>
                 <div class="btn-group">
                     <button type="button" class="btn btn-danger" onclick="deleteEvent()">Delete Event</button>
                     <button type="button" class="btn btn-secondary" onclick="closeViewEventModal()">Close</button>
@@ -123,10 +117,7 @@
         </div>
     </div>
 
-
-    <!-- Scripts -->
-   
-
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
     <script>
         let currentCalendar;
         let currentSelectedEvent;
@@ -138,17 +129,17 @@
             if (calendarEl) {
                 try {
                     currentCalendar = new FullCalendar.Calendar(calendarEl, {
-                        initialView: 'dayGridMonth',
+                        initialView: 'dayGridMonth', // ✅ Only month view
                         selectable: true,
                         editable: true,
                         headerToolbar: {
                             left: 'prev,next today',
                             center: 'title',
-                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                            right: 'dayGridMonth' // ✅ Removed week/day options
                         },
                         height: 'auto',
-                        // Sample events for demonstration
-                        events: [{
+                        events: [
+                            {
                                 id: 'sample1',
                                 title: 'Website Development',
                                 start: '2025-07-10',
@@ -192,27 +183,19 @@
                         },
                         eventDidMount: function(info) {
                             if (info.event.extendedProps.description) {
-                                info.el.setAttribute('title', info.event.title + '\n' + info.event
-                                    .extendedProps.description);
+                                info.el.setAttribute('title', info.event.title + '\n' + info.event.extendedProps.description);
                             }
                         }
                     });
 
                     currentCalendar.render();
-                    console.log('Calendar loaded successfully');
 
                 } catch (e) {
                     console.error('Calendar loading error:', e);
-                    calendarEl.classList.add('error');
-                    calendarEl.innerHTML =
-                        '<div style="padding: 20px; text-align: center;"><h3>Failed to load calendar</h3><p>Error: ' +
-                        e.message + '</p></div>';
+                    calendarEl.innerHTML = '<div style="padding: 20px; text-align: center;"><h3>Failed to load calendar</h3><p>Error: ' + e.message + '</p></div>';
                 }
-            } else {
-                console.error('Calendar element not found');
             }
 
-            // Initialize color picker
             setupColorPicker();
         });
 
@@ -220,9 +203,7 @@
             const colorOptions = document.querySelectorAll('.color-option');
             colorOptions.forEach(option => {
                 option.addEventListener('click', function() {
-                    // Remove selected class from all options
                     colorOptions.forEach(opt => opt.classList.remove('selected'));
-                    // Add selected class to clicked option
                     this.classList.add('selected');
                     selectedColor = this.dataset.color;
                 });
@@ -238,7 +219,6 @@
         function closeAddEventModal() {
             document.getElementById('addEventModal').style.display = 'none';
             document.getElementById('eventForm').reset();
-            // Reset color selection
             document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
             document.querySelector('.color-option[data-color="#007bff"]').classList.add('selected');
             selectedColor = '#007bff';
@@ -247,45 +227,43 @@
         function showEventDetails(event) {
             const modal = document.getElementById('viewEventModal');
             const detailsContainer = document.getElementById('eventDetails');
-
             const startDate = new Date(event.start);
             const endDate = event.end ? new Date(event.end) : null;
 
             detailsContainer.innerHTML = `
-        <div class="event-detail">
-          <div class="event-detail-label">Project Title:</div>
-          <div class="event-detail-value">
-            <span class="event-color-indicator" style="background-color: ${event.color || '#007bff'}"></span>
-            ${event.title}
-          </div>
-        </div>
-        <div class="event-detail">
-          <div class="event-detail-label">Description:</div>
-          <div class="event-detail-value">${event.extendedProps.description || 'No description provided'}</div>
-        </div>
-        <div class="event-detail">
-          <div class="event-detail-label">Start Date:</div>
-          <div class="event-detail-value">${startDate.toLocaleDateString()}</div>
-        </div>
-        ${endDate ? `
-                        <div class="event-detail">
-                          <div class="event-detail-label">End Date:</div>
-                          <div class="event-detail-value">${endDate.toLocaleDateString()}</div>
-                        </div>
-                        ` : ''}
-        <div class="event-detail">
-          <div class="event-detail-label">Project Type:</div>
-          <div class="event-detail-value">${event.extendedProps.type || 'Not specified'}</div>
-        </div>
-        <div class="event-detail">
-          <div class="event-detail-label">Priority:</div>
-          <div class="event-detail-value">
-            <span style="color: ${getPriorityColor(event.extendedProps.priority)}; font-weight: bold;">
-              ${event.extendedProps.priority || 'Medium'}
-            </span>
-          </div>
-        </div>
-      `;
+                <div class="event-detail">
+                    <div class="event-detail-label">Project Title:</div>
+                    <div class="event-detail-value">
+                        <span class="event-color-indicator" style="background-color: ${event.color || '#007bff'}"></span>
+                        ${event.title}
+                    </div>
+                </div>
+                <div class="event-detail">
+                    <div class="event-detail-label">Description:</div>
+                    <div class="event-detail-value">${event.extendedProps.description || 'No description provided'}</div>
+                </div>
+                <div class="event-detail">
+                    <div class="event-detail-label">Start Date:</div>
+                    <div class="event-detail-value">${startDate.toLocaleDateString()}</div>
+                </div>
+                ${endDate ? `
+                <div class="event-detail">
+                    <div class="event-detail-label">End Date:</div>
+                    <div class="event-detail-value">${endDate.toLocaleDateString()}</div>
+                </div>` : ''}
+                <div class="event-detail">
+                    <div class="event-detail-label">Project Type:</div>
+                    <div class="event-detail-value">${event.extendedProps.type || 'Not specified'}</div>
+                </div>
+                <div class="event-detail">
+                    <div class="event-detail-label">Priority:</div>
+                    <div class="event-detail-value">
+                        <span style="color: ${getPriorityColor(event.extendedProps.priority)}; font-weight: bold;">
+                            ${event.extendedProps.priority || 'Medium'}
+                        </span>
+                    </div>
+                </div>
+            `;
 
             modal.style.display = 'block';
         }
@@ -304,20 +282,14 @@
 
         function getPriorityColor(priority) {
             switch (priority) {
-                case 'Critical':
-                    return '#dc3545';
-                case 'High':
-                    return '#fd7e14';
-                case 'Medium':
-                    return '#ffc107';
-                case 'Low':
-                    return '#28a745';
-                default:
-                    return '#6c757d';
+                case 'Critical': return '#dc3545';
+                case 'High': return '#fd7e14';
+                case 'Medium': return '#ffc107';
+                case 'Low': return '#28a745';
+                default: return '#6c757d';
             }
         }
 
-        // Handle form submission
         document.getElementById('eventForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -340,28 +312,19 @@
                         priority: priority
                     }
                 };
-
-                if (endDate) {
-                    eventData.end = endDate;
-                }
-
+                if (endDate) eventData.end = endDate;
                 currentCalendar.addEvent(eventData);
                 closeAddEventModal();
             }
         });
 
-        // Close modals when clicking outside
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('modal-overlay')) {
-                if (e.target.id === 'addEventModal') {
-                    closeAddEventModal();
-                } else if (e.target.id === 'viewEventModal') {
-                    closeViewEventModal();
-                }
+                if (e.target.id === 'addEventModal') closeAddEventModal();
+                else if (e.target.id === 'viewEventModal') closeViewEventModal();
             }
         });
 
-        // Close modals with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeAddEventModal();

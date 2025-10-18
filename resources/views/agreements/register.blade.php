@@ -17,17 +17,9 @@
         }
 
         @keyframes gradientShift {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .card {
@@ -59,11 +51,11 @@
             box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
         }
 
-        .form-section-title {
-            font-weight: 600;
-            margin-top: 25px;
-            margin-bottom: 10px;
-            color: #333;
+        small.file-hint {
+            display: block;
+            color: #555;
+            font-size: 0.85rem;
+            margin-top: 3px;
         }
     </style>
 </head>
@@ -92,21 +84,21 @@
                         <div class="mb-3">
                             <label class="form-label">MOU Document</label>
                             <input type="file" name="mouFile" class="form-control"
-                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" data-max-size="10240">
+                            <small class="file-hint text-muted">Max file size: 10 MB (PDF, DOC, DOCX, JPG, PNG)</small>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">MOA Document</label>
                             <input type="file" name="moaFile" class="form-control"
-                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" data-max-size="10240">
+                            <small class="file-hint text-muted">Max file size: 10 MB (PDF, DOC, DOCX, JPG, PNG)</small>
                         </div>
 
                         <div class="d-grid mt-3">
-                            <button type="submit" class="btn auth-btn">Submit Documents</button>
+                            <button type="submit" class="btn btn-success">Submit Documents</button>
                         </div>
                     </form>
-
-
                 </div>
             </div>
         </div>
@@ -114,6 +106,20 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Client-side file size validation
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', e => {
+                const maxMB = parseInt(input.dataset.maxSize, 10);
+                const file = input.files[0];
+                if (file && file.size > maxMB * 1024 * 1024) {
+                    alert(`File too large! Maximum allowed size is ${maxMB} MB.`);
+                    input.value = '';
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

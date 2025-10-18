@@ -16,43 +16,64 @@
                 </div>
 
                 <!-- Filters + Search -->
-                <div class="row">
-                    <div class="col-md-4">
+                <form method="GET" action="{{ route('projects') }}" class="row align-items-end g-3 mb-3">
+                    <div class="col-md-3">
                         <label><strong>Search:</strong></label>
-                        <input type="text" id="searchInput" class="form-control" placeholder="Search anything..."
-                            onkeyup="filterTable()">
+                        <input type="text" name="q" value="{{ $q ?? '' }}" class="form-control"
+                            placeholder="Search anything...">
                     </div>
-                    <div class="col-md-4">
+
+                    <div class="col-md-3">
                         <label><strong>Filter by College/Campus:</strong></label>
-                        <select id="collegeFilter" class="form-control" onchange="filterTable()">
-                            <option value="All">All</option>
-                            <option value="CAS">CAS</option>
-                            <option value="CBA">CBA</option>
-                            <option value="CET">CET</option>
-                            <option value="CAFES">CAFES</option>
-                            <option value="CCMADI">CCMADI</option>
-                            <option value="CED">CED</option>
-                            <option value="GEPS">GEPS</option>
-                            <option value="CALATRAVA CAMPUS">CALATRAVA CAMPUS</option>
-                            <option value="STA. MARIA CAMPUS">STA. MARIA CAMPUS</option>
-                            <option value="SANTA FE CAMPUS">SANTA FE CAMPUS</option>
-                            <option value="SAN ANDRES CAMPUS">SAN ANDRES CAMPUS</option>
-                            <option value="SAN AGUSTIN CAMPUS">SAN AGUSTIN CAMPUS</option>
-                            <option value="ROMBLON CAMPUS">ROMBLON CAMPUS</option>
-                            <option value="CAJIDIOCAN CAMPUS">CAJIDIOCAN CAMPUS</option>
-                            <option value="SAN FERNANDO CAMPUS">SAN FERNANDO CAMPUS</option>
+                        <select name="college" class="form-control">
+                            <option value="All" {{ ($college ?? '') === 'All' ? 'selected' : '' }}>All</option>
+                            <option value="CAS" {{ ($college ?? '') === 'CAS' ? 'selected' : '' }}>CAS</option>
+                            <option value="CBA" {{ ($college ?? '') === 'CBA' ? 'selected' : '' }}>CBA</option>
+                            <option value="CET" {{ ($college ?? '') === 'CET' ? 'selected' : '' }}>CET</option>
+                            <option value="CAFES" {{ ($college ?? '') === 'CAFES' ? 'selected' : '' }}>CAFES</option>
+                            <option value="CCMADI" {{ ($college ?? '') === 'CCMADI' ? 'selected' : '' }}>CCMADI</option>
+                            <option value="CED" {{ ($college ?? '') === 'CED' ? 'selected' : '' }}>CED</option>
+                            <option value="GEPS" {{ ($college ?? '') === 'GEPS' ? 'selected' : '' }}>GEPS</option>
+                            <option value="CALATRAVA CAMPUS"
+                                {{ ($college ?? '') === 'CALATRAVA CAMPUS' ? 'selected' : '' }}>CALATRAVA CAMPUS</option>
+                            <option value="STA. MARIA CAMPUS"
+                                {{ ($college ?? '') === 'STA. MARIA CAMPUS' ? 'selected' : '' }}>STA. MARIA CAMPUS</option>
+                            <option value="SANTA FE CAMPUS" {{ ($college ?? '') === 'SANTA FE CAMPUS' ? 'selected' : '' }}>
+                                SANTA FE CAMPUS</option>
+                            <option value="SAN ANDRES CAMPUS"
+                                {{ ($college ?? '') === 'SAN ANDRES CAMPUS' ? 'selected' : '' }}>SAN ANDRES CAMPUS</option>
+                            <option value="SAN AGUSTIN CAMPUS"
+                                {{ ($college ?? '') === 'SAN AGUSTIN CAMPUS' ? 'selected' : '' }}>SAN AGUSTIN CAMPUS
+                            </option>
+                            <option value="ROMBLON CAMPUS" {{ ($college ?? '') === 'ROMBLON CAMPUS' ? 'selected' : '' }}>
+                                ROMBLON CAMPUS</option>
+                            <option value="CAJIDIOCAN CAMPUS"
+                                {{ ($college ?? '') === 'CAJIDIOCAN CAMPUS' ? 'selected' : '' }}>CAJIDIOCAN CAMPUS</option>
+                            <option value="SAN FERNANDO CAMPUS"
+                                {{ ($college ?? '') === 'SAN FERNANDO CAMPUS' ? 'selected' : '' }}>SAN FERNANDO CAMPUS
+                            </option>
                         </select>
                     </div>
-                    <div class="col-md-4">
+
+                    <div class="col-md-3">
                         <label><strong>Filter by Status:</strong></label>
-                        <select id="statusFilter" class="form-control" onchange="filterTable()">
-                            <option value="All">All</option>
-                            <option value="Ongoing">Ongoing</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Cancelled">Cancelled</option>
+                        <select name="status" class="form-control">
+                            <option value="All" {{ ($status ?? '') === 'All' ? 'selected' : '' }}>All</option>
+                            <option value="Ongoing" {{ ($status ?? '') === 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
+                            <option value="Completed" {{ ($status ?? '') === 'Completed' ? 'selected' : '' }}>Completed
+                            </option>
+                            <option value="Cancelled" {{ ($status ?? '') === 'Cancelled' ? 'selected' : '' }}>Cancelled
+                            </option>
                         </select>
                     </div>
-                </div>
+
+                    <div class="col-md-3 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary w-100" style="margin-top: 26px;">
+                            <i class="fa fa-filter"></i> Filter
+                        </button>
+                    </div>
+                </form>
+
 
                 <div class="table-responsive" style="margin-top: 20px;">
                     <table id="proposalTable" class="table table-bordered table-striped text-center align-middle">
@@ -77,8 +98,6 @@
                                 <th>Activity Design</th>
                                 <th>Certificate of Appearance</th>
                                 <th>Attendance Sheet</th>
-                                <th>Photos</th>
-                                <th>Terminal Report</th>
                                 <th>Approved Budget</th>
                                 <th>Source of Funds</th>
                                 <th>Expenditure</th>
@@ -89,20 +108,17 @@
                                 <th>Code</th>
                                 <th>Remarks</th>
                                 <th>Drive Link</th>
+                                <th style="min-width:130px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($proposals as $proposal)
                                 @php
                                     $leader = $proposal->leader ?? '—';
-                                    $collegeCampus = $proposal->location ?? '—'; // mapping 'location' => College/Campus
+                                    $collegeCampus = $proposal->location ?? '—';
                                     $team = $proposal->team_members ?: '—';
                                     $agenda = $proposal->target_agenda ?: '—';
                                     $approvedBudget = number_format($proposal->approved_budget, 2);
-                                    // Temporary defaults for fields not in DB yet:
-                                    $statusText = 'Ongoing';
-                                    $fundUtilRate = '—';
-                                    $sourceOfFunds = $proposal->partner ?: '—';
                                     $code =
                                         optional($proposal->created_at)->format('Y') .
                                         '-' .
@@ -113,7 +129,6 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $proposal->title }}</td>
 
-                                    {{-- Classification (optional inline edit – you can wire it the same way if you want) --}}
                                     <td>
                                         <input list="classification-list" class="form-control inline-edit"
                                             data-col="classification" value="{{ $proposal->classification }}"
@@ -127,143 +142,20 @@
                                     <td>{{ $leader }}</td>
                                     <td>{{ $team }}</td>
                                     <td>{{ $collegeCampus }}</td>
-                                    <td class="agenda-education">{{ $agenda }}</td>
+                                    <td>{{ $agenda }}</td>
 
-                                    {{-- YES/NO columns – repeat pattern and just change data-col --}}
-                                    {{-- In-House --}}
-                                    <td>
-                                        <select class="dropdown-yesno {{ $proposal->in_house ? 'yes' : 'no' }}"
-                                            data-col="in_house" onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->in_house ? 'selected' : '' }}>No</option>
-                                            <option {{ $proposal->in_house ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
+                                    {{-- YES/NO fields --}}
+                                    @foreach (['in_house', 'revised_proposal', 'ntp', 'endorsement', 'proposal_presentation', 'proposal_documents', 'program_proposal', 'project_proposal', 'moa_mou', 'activity_design', 'certificate_of_appearance', 'attendance_sheet'] as $field)
+                                        <td>
+                                            <select class="dropdown-yesno {{ $proposal->$field ? 'yes' : 'no' }}"
+                                                data-col="{{ $field }}" onchange="updateDropdownColor(this)">
+                                                <option {{ !$proposal->$field ? 'selected' : '' }}>No</option>
+                                                <option {{ $proposal->$field ? 'selected' : '' }}>Yes</option>
+                                            </select>
+                                        </td>
+                                    @endforeach
 
-                                    {{-- Revised Proposal --}}
-                                    <td>
-                                        <select class="dropdown-yesno {{ $proposal->revised_proposal ? 'yes' : 'no' }}"
-                                            data-col="revised_proposal" onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->revised_proposal ? 'selected' : '' }}>No</option>
-                                            <option {{ $proposal->revised_proposal ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
-
-                                    {{-- NTP --}}
-                                    <td>
-                                        <select class="dropdown-yesno {{ $proposal->ntp ? 'yes' : 'no' }}" data-col="ntp"
-                                            onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->ntp ? 'selected' : '' }}>No</option>
-                                            <option {{ $proposal->ntp ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
-
-                                    {{-- Endorsement --}}
-                                    <td>
-                                        <select class="dropdown-yesno {{ $proposal->endorsement ? 'yes' : 'no' }}"
-                                            data-col="endorsement" onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->endorsement ? 'selected' : '' }}>No</option>
-                                            <option {{ $proposal->endorsement ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
-
-                                    {{-- Proposal Presentation --}}
-                                    <td>
-                                        <select
-                                            class="dropdown-yesno {{ $proposal->proposal_presentation ? 'yes' : 'no' }}"
-                                            data-col="proposal_presentation" onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->proposal_presentation ? 'selected' : '' }}>No</option>
-                                            <option {{ $proposal->proposal_presentation ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
-
-                                    {{-- Proposal Documents --}}
-                                    <td>
-                                        <select class="dropdown-yesno {{ $proposal->proposal_documents ? 'yes' : 'no' }}"
-                                            data-col="proposal_documents" onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->proposal_documents ? 'selected' : '' }}>No</option>
-                                            <option {{ $proposal->proposal_documents ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
-
-                                    {{-- Program Proposal --}}
-                                    <td>
-                                        <select class="dropdown-yesno {{ $proposal->program_proposal ? 'yes' : 'no' }}"
-                                            data-col="program_proposal" onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->program_proposal ? 'selected' : '' }}>No</option>
-                                            <option {{ $proposal->program_proposal ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
-
-                                    {{-- Project Proposal --}}
-                                    <td>
-                                        <select class="dropdown-yesno {{ $proposal->project_proposal ? 'yes' : 'no' }}"
-                                            data-col="project_proposal" onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->project_proposal ? 'selected' : '' }}>No</option>
-                                            <option {{ $proposal->project_proposal ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
-
-                                    {{-- MOA/MOU --}}
-                                    <td>
-                                        <select class="dropdown-yesno {{ $proposal->moa_mou ? 'yes' : 'no' }}"
-                                            data-col="moa_mou" onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->moa_mou ? 'selected' : '' }}>No</option>
-                                            <option {{ $proposal->moa_mou ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
-
-                                    {{-- Activity Design --}}
-                                    <td>
-                                        <select class="dropdown-yesno {{ $proposal->activity_design ? 'yes' : 'no' }}"
-                                            data-col="activity_design" onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->activity_design ? 'selected' : '' }}>No</option>
-                                            <option {{ $proposal->activity_design ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
-
-                                    {{-- Certificate of Appearance --}}
-                                    <td>
-                                        <select
-                                            class="dropdown-yesno {{ $proposal->certificate_of_appearance ? 'yes' : 'no' }}"
-                                            data-col="certificate_of_appearance" onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->certificate_of_appearance ? 'selected' : '' }}>No
-                                            </option>
-                                            <option {{ $proposal->certificate_of_appearance ? 'selected' : '' }}>Yes
-                                            </option>
-                                        </select>
-                                    </td>
-
-                                    {{-- Attendance Sheet --}}
-                                    <td>
-                                        <select class="dropdown-yesno {{ $proposal->attendance_sheet ? 'yes' : 'no' }}"
-                                            data-col="attendance_sheet" onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->attendance_sheet ? 'selected' : '' }}>No</option>
-                                            <option {{ $proposal->attendance_sheet ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
-
-                                    {{-- Photos --}}
-                                    <td>
-                                        <select class="dropdown-yesno {{ $proposal->photos ? 'yes' : 'no' }}"
-                                            data-col="photos" onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->photos ? 'selected' : '' }}>No</option>
-                                            <option {{ $proposal->photos ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
-
-                                    {{-- Terminal Report --}}
-                                    <td>
-                                        <select class="dropdown-yesno {{ $proposal->terminal_report ? 'yes' : 'no' }}"
-                                            data-col="terminal_report" onchange="updateDropdownColor(this)">
-                                            <option {{ !$proposal->terminal_report ? 'selected' : '' }}>No</option>
-                                            <option {{ $proposal->terminal_report ? 'selected' : '' }}>Yes</option>
-                                        </select>
-                                    </td>
-
-                                    {{-- Approved Budget (computed) – shown only --}}
                                     <td>{{ $approvedBudget }}</td>
-
-                                    {{-- The following are editable text/number cells --}}
                                     <td contenteditable="true" class="inline-cell" data-col="source_of_funds">
                                         {{ $proposal->source_of_funds ?? '—' }}</td>
                                     <td contenteditable="true" class="inline-cell" data-col="expenditure">
@@ -272,7 +164,6 @@
                                         {{ $proposal->fund_utilization_rate ?? '—' }}</td>
                                     <td>{{ $proposal->partner ?: '—' }}</td>
 
-                                    {{-- Status (dropdown) --}}
                                     <td>
                                         <select class="form-control inline-select" data-col="status">
                                             @foreach (['Ongoing', 'Completed', 'Cancelled'] as $st)
@@ -291,23 +182,55 @@
                                         {{ $proposal->remarks ?? '—' }}</td>
                                     <td contenteditable="true" class="inline-cell" data-col="drive_link">
                                         {{ $proposal->drive_link ?? '—' }}</td>
-                                </tr>
 
+                                    {{-- ✅ Properly aligned Actions cell --}}
+                                  <td class="text-nowrap" style="padding: 2px 4px; vertical-align: middle;">
+    <a href="{{ route('projects.edit', $proposal->id) }}"
+        class="btn btn-warning btn-xs me-1 p-1" style="font-size: 12px; line-height: 1;">
+        <i class="fa fa-edit"></i>
+    </a>
+    <button type="button" class="btn btn-danger btn-xs p-1 btn-delete"
+        data-id="{{ $proposal->id }}"
+        data-action="{{ route('projects.destroy', $proposal->id) }}"
+        style="font-size: 12px; line-height: 1;">
+        <i class="fa fa-trash"></i>
+    </button>
+
+    <form id="delete-form-{{ $proposal->id }}"
+        action="{{ route('projects.destroy', $proposal->id) }}"
+        method="POST" class="d-none">
+        @csrf
+        @method('DELETE')
+    </form>
+</td>
+
+                                </tr>
                             @empty
                                 <tr>
                                     <td colspan="30" class="text-muted">No proposals found.</td>
                                 </tr>
                             @endforelse
                         </tbody>
-
                     </table>
                 </div>
             </div>
         </div>
     </div>
 
+    <style>
+    .table td .btn-xs {
+        padding: 5px !important;
+        font-size: 12px !important;
+        line-height: 1 !important;
+    }
+    .table td {
+        padding: 4px 6px !important;
+        vertical-align: middle !important;
+    }
+</style>
+
+
     {{-- Inline update script --}}
-    {{-- Inline update script (with SweetAlert2 confirmation + revert) --}}
     <script>
         const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
@@ -486,5 +409,32 @@
             }
         }, true);
     </script>
+
+    <script>
+        document.addEventListener('click', async (e) => {
+            const btn = e.target.closest('.btn-delete');
+            if (!btn) return;
+
+            const id = btn.dataset.id;
+            const form = document.getElementById(`delete-form-${id}`);
+
+            const {
+                isConfirmed
+            } = await Swal.fire({
+                title: 'Delete proposal?',
+                text: 'This action cannot be undone.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it',
+                cancelButtonText: 'Cancel'
+            });
+
+            if (!isConfirmed) return;
+
+            // Submit the hidden form (standard DELETE with CSRF)
+            form.submit();
+        });
+    </script>
+
 
 @endsection

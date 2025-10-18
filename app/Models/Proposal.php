@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 class Proposal extends Model
 {
     protected $fillable = [
-        'title','classification','team_members','leader','target_agenda','location','college_campus',
+        'user_id','title','classification','team_members','leader','target_agenda','location','college_campus',
         'time_frame','beneficiaries_who','beneficiaries_how_many',
         'budget_ps','budget_mooe','budget_co','partner',
         'in_house','revised_proposal','ntp','endorsement','proposal_presentation','proposal_documents',

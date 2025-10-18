@@ -9,6 +9,11 @@ return new class extends Migration {
     {
         Schema::create('agreements', function (Blueprint $table) {
             $table->id();
+            
+            $table->foreignId('user_id')
+                  ->constrained('users')
+                  ->onDelete('cascade'); // Delete proposals if user is deleted
+
             $table->string('organization_name');
             $table->date('date_signed');
             $table->string('mou_path')->nullable(); // storage path to MOU file

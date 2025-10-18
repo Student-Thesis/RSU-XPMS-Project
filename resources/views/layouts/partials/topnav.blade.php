@@ -8,9 +8,9 @@
             <div class="right_topbar">
                 <div class="icon_info">
                     <ul>
-                        <li>
+                        {{-- <li>
                             <a href="#"><i class="fa fa-question-circle"></i></a>
-                        </li>
+                        </li> --}}
 
                         {{-- 🔔 Notifications --}}
                         <li class="nav-item dropdown">
@@ -40,12 +40,12 @@
 
 
                         {{-- ✉️ Messages --}}
-                        <li>
+                        {{-- <li>
                             <a href="{{ route('messages') }}">
                                 <i class="fa fa-envelope-o"></i>
                                 <span class="badge">3</span>
                             </a>
-                        </li>
+                        </li> --}}
                     </ul>
 
                     {{-- 👤 User Profile --}}
@@ -74,7 +74,7 @@
                                     <span>Log Out</span> <i class="fa fa-sign-out"></i>
                                 </a>
 
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">   
                                     @csrf
                                 </form>
                             </div>

@@ -46,18 +46,6 @@
             box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
         }
 
-        .auth-btn {
-            background: linear-gradient(to right, #f44336, #2196f3, #4caf50, #ffeb3b);
-            background-size: 200%;
-            color: #fff;
-            border: none;
-            transition: background-position 0.3s ease;
-        }
-
-        .auth-btn:hover {
-            background-position: right center;
-        }
-
         .password-wrapper {
             position: relative;
         }
@@ -129,27 +117,33 @@
                         <div class="mb-3 position-relative">
                             <input type="password" name="password" id="passwordInput"
                                 class="form-control @error('password') is-invalid @enderror" placeholder="Password"
-                                required>
+                                minlength="8" required>
                             <button type="button"
                                 class="btn btn-sm position-absolute top-50 end-0 translate-middle-y me-2"
                                 style="border:none;background:transparent" onclick="togglePassword()">
                                 <i class="bi bi-eye-slash" id="toggleIcon"></i>
                             </button>
+                            <div id="passwordFeedback" class="text-danger small mt-1 d-none">
+                                Password must be at least 8 characters.
+                            </div>
                             @error('password')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
                         </div>
 
-                        {{-- Confirm Password (matches Laravel "confirmed" rule) --}}
+                        {{-- Confirm Password --}}
                         <div class="mb-3">
                             <input type="password" name="password_confirmation" class="form-control"
                                 placeholder="Confirm Password" required>
                         </div>
 
-                        {{-- Submit (full width) --}}
+                        {{-- Submit --}}
                         <div class="d-grid mb-3">
-                            <button type="submit" class="btn btn-primary auth-btn">Next</button>
+                            <button type="submit" id="submitBtn" class="btn btn-primary" disabled>Next</button>
                         </div>
+
+
+
 
                         {{-- Already have an account --}}
                         <div class="text-center">
@@ -186,6 +180,38 @@
             }
         }
     </script>
+
+    <script>
+        const passwordInput = document.getElementById("passwordInput");
+        const submitBtn = document.getElementById("submitBtn");
+        const feedback = document.getElementById("passwordFeedback");
+
+        passwordInput.addEventListener("input", function() {
+            if (passwordInput.value.length < 8) {
+                passwordInput.classList.add("is-invalid");
+                feedback.classList.remove("d-none");
+                submitBtn.disabled = true;
+            } else {
+                passwordInput.classList.remove("is-invalid");
+                feedback.classList.add("d-none");
+                submitBtn.disabled = false;
+            }
+        });
+
+        function togglePassword() {
+            const toggleIcon = document.getElementById("toggleIcon");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                toggleIcon.classList.remove("bi-eye-slash");
+                toggleIcon.classList.add("bi-eye");
+            } else {
+                passwordInput.type = "password";
+                toggleIcon.classList.remove("bi-eye");
+                toggleIcon.classList.add("bi-eye-slash");
+            }
+        }
+    </script>
+
 </body>
 
 </html>

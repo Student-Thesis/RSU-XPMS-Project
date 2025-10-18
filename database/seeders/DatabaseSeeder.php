@@ -16,7 +16,9 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             UsersTableSeeder::class,
             RecordFormSeeder::class,
-            ProposalSeeder::class
+            // ProposalSeeder::class,
+            SettingsClassificationSeeder::class,
+            SettingsTargetAgendaSeeder::class,
         ]);
     }
 }

@@ -14,37 +14,39 @@ return new class extends Migration
         Schema::create('proposals', function (Blueprint $table) {
             $table->id();
 
+            // 🔹 Reference to the user who created the proposal
+            $table->foreignId('user_id')
+                  ->constrained('users')
+                  ->onDelete('cascade'); // Delete proposals if user is deleted
+
             // ===== Basic details (from form) =====
-            $table->string('title');                                    // Proposal title
-            $table->enum('classification', ['Project', 'Program']);     // Project or Program
-            $table->text('team_members')->nullable();                   // Comma-separated names
-            $table->string('target_agenda')->nullable();                // Agenda focus
-            $table->string('location')->nullable();                     // Location (can be campus name)
-            $table->string('time_frame')->nullable();                   // Required time frame (e.g. 1 month)
+            $table->string('title');
+            $table->enum('classification', ['Project', 'Program']);
+            $table->text('team_members')->nullable();
+            $table->string('target_agenda')->nullable();
+            $table->string('location')->nullable();
+            $table->string('time_frame')->nullable();
 
             // Beneficiaries
-            $table->string('beneficiaries_who')->nullable();            // e.g. Farmers, Students
+            $table->string('beneficiaries_who')->nullable();
             $table->integer('beneficiaries_how_many')->nullable();
 
-            // Budget (from form)
-            $table->decimal('budget_ps',   12, 2)->nullable();          // PS budget
-            $table->decimal('budget_mooe', 12, 2)->nullable();          // MOOE budget
-            $table->decimal('budget_co',   12, 2)->nullable();          // CO budget
-            // Note: "Approved Budget" can be computed as ps+mooe+co on the model/view side
+            // Budget
+            $table->decimal('budget_ps', 12, 2)->nullable();
+            $table->decimal('budget_mooe', 12, 2)->nullable();
+            $table->decimal('budget_co', 12, 2)->nullable();
 
-            // Partner (from form)
-            $table->string('partner')->nullable();                      // Partner org(s)
+            // Partner
+            $table->string('partner')->nullable();
 
-            // ===== Additional columns used by the table view =====
+            // ===== Additional columns =====
+            $table->string('leader')->nullable();
+            $table->string('college_campus')->nullable();
 
-            // Display/roster info
-            $table->string('leader')->nullable();                       // Program/Project Leader (optional)
-            $table->string('college_campus')->nullable();               // Explicit College/Campus (if different from 'location')
-
-            // Milestone/checklist flags (Yes/No columns in the table)
+            // Milestones
             $table->boolean('in_house')->default(false);
             $table->boolean('revised_proposal')->default(false);
-            $table->boolean('ntp')->default(false);                     // Notice to Proceed
+            $table->boolean('ntp')->default(false);
             $table->boolean('endorsement')->default(false);
             $table->boolean('proposal_presentation')->default(false);
             $table->boolean('proposal_documents')->default(false);
@@ -57,23 +59,21 @@ return new class extends Migration
             $table->boolean('photos')->default(false);
             $table->boolean('terminal_report')->default(false);
 
-            // Finance/display fields (table columns)
-            $table->string('source_of_funds')->nullable();              // e.g., External Donor, GAA, etc.
-            $table->decimal('expenditure', 12, 2)->nullable();          // Amount spent so far
-            $table->string('fund_utilization_rate')->nullable();        // e.g., "80%" (store as text or compute)
+            // Finance/display fields
+            $table->string('source_of_funds')->nullable();
+            $table->decimal('expenditure', 12, 2)->nullable();
+            $table->string('fund_utilization_rate')->nullable();
 
             // Status & docs
-            $table->enum('status', ['Ongoing', 'Completed', 'Cancelled'])
-                  ->default('Ongoing');
-            $table->string('documentation_report')->nullable();         // e.g., "Available" or a short note
-            $table->string('code')->nullable();                         // e.g., "2025-001"
-            $table->text('remarks')->nullable();                        // Free-form notes/remarks
-            $table->string('drive_link')->nullable();                   // URL to Drive folder/files
+            $table->enum('status', ['Ongoing', 'Completed', 'Cancelled'])->default('Ongoing');
+            $table->string('documentation_report')->nullable();
+            $table->string('code')->nullable();
+            $table->text('remarks')->nullable();
+            $table->string('drive_link')->nullable();
 
-            // Tracking
             $table->timestamps();
 
-            // Optional helpful indexes
+            // Helpful indexes
             $table->index(['classification']);
             $table->index(['status']);
             $table->index(['college_campus']);

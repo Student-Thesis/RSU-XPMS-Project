@@ -13,10 +13,30 @@
 
 namespace App\Models{
 /**
+ * @property string $id
+ * @property string|null $user_id
+ * @property string $action
+ * @property string|null $model_type
+ * @property string|null $model_id
+ * @property array<array-key, mixed>|null $changes
+ * @property string|null $ip_address
+ * @property string|null $user_agent
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereAction($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereChanges($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereIpAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereModelId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereModelType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereUserAgent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereUserId($value)
  */
 	class ActivityLog extends \Eloquent {}
 }
@@ -94,6 +114,7 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property int $user_id
  * @property string $title
  * @property string $classification
  * @property string|null $team_members
@@ -175,6 +196,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereTimeFrame($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereUserId($value)
  */
 	class Proposal extends \Eloquent {}
 }
@@ -213,6 +235,60 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|RecordForm withoutTrashed()
  */
 	class RecordForm extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $slug
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsClassification withoutTrashed()
+ */
+	class SettingsClassification extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $slug
+ * @property bool $is_active
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda active()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda whereIsActive($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|SettingsTargetAgenda withoutTrashed()
+ */
+	class SettingsTargetAgenda extends \Eloquent {}
 }
 
 namespace App\Models{
