@@ -11,14 +11,17 @@ class DepartmentPermissionController extends Controller
 {
     public function index()
     {
-        $permissions = DepartmentPermission::with('department')
-            ->orderBy('department_id')->orderBy('resource')
+        // ✅ Only departments that have at least one permission
+        $departments = Department::withCount('permissions')
+            ->whereHas('permissions')
+            ->orderBy('name')
             ->paginate(20);
 
-        $departments = Department::orderBy('name')->get(['id','name']);
+        // Keep a list of resources if you want to show a legend or count per dept on index
+        $resources = ['project','invoice','customer'];
 
-        // Keep your view name if you like; just be consistent with what you created
-        return view('permissions.index', compact('permissions', 'departments'));
+        // view now expects $departments (NOT $permissions)
+        return view('permissions.index', compact('departments', 'resources'));
     }
 
     public function store(Request $request)
@@ -41,13 +44,12 @@ class DepartmentPermissionController extends Controller
             $data
         );
 
-        // ✅ use your new route name
         return redirect()->route('departments.permissions.index')->with('ok', 'Permission saved.');
     }
 
-    public function edit(Department $department)
+    public function show(Department $department)
     {
-        // customize your resource list here (or pull from config)
+        // ✅ Read-only matrix for “Show” page
         $resources = ['project','invoice','customer'];
 
         $existing = DepartmentPermission::where('department_id', $department->id)
@@ -65,7 +67,28 @@ class DepartmentPermissionController extends Controller
             ];
         }
 
-        // ✅ this view must use $department / $resources / $matrix (no $dept_permission)
+        return view('permissions.show', compact('department','resources','matrix'));
+    }
+
+    public function edit(Department $department)
+    {
+        $resources = ['project','invoice','customer'];
+
+        $existing = DepartmentPermission::where('department_id', $department->id)
+            ->get()
+            ->keyBy('resource');
+
+        $matrix = [];
+        foreach ($resources as $res) {
+            $row = $existing->get($res);
+            $matrix[$res] = [
+                'can_view'   => (bool) optional($row)->can_view,
+                'can_create' => (bool) optional($row)->can_create,
+                'can_update' => (bool) optional($row)->can_update,
+                'can_delete' => (bool) optional($row)->can_delete,
+            ];
+        }
+
         return view('permissions.edit', compact('department','resources','matrix'));
     }
 
@@ -76,7 +99,7 @@ class DepartmentPermissionController extends Controller
         ]);
 
         $perms = $data['permissions'] ?? [];
-        $resources = ['project','invoice','customer']; // same list as in edit()
+        $resources = ['project','invoice','customer'];
 
         DB::transaction(function () use ($department, $perms, $resources) {
             foreach ($resources as $res) {
@@ -110,7 +133,6 @@ class DepartmentPermissionController extends Controller
     public function destroy(DepartmentPermission $dept_permission)
     {
         $dept_permission->delete();
-        // ✅ use new route name
         return redirect()->route('departments.permissions.index')->with('ok', 'Permission deleted.');
     }
 }

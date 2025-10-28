@@ -33,10 +33,28 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/agreement', [App\Http\Controllers\AgreementController::class, 'store'])->name('agreement.store');
     Route::get('/notif-agreement', [App\Http\Controllers\NotificationsController::class, 'agreement'])->name('notifications.agreement');
 
-    Route::get('/departments/permissions', [DepartmentPermissionController::class, 'index'])->name('departments.permissions.index');
-    Route::post('/departments/permissions', [DepartmentPermissionController::class, 'store'])->name('departments.permissions.store');
-    Route::get('/departments/{department}/permissions', [DepartmentPermissionController::class, 'edit'])->name('departments.permissions.edit');
-    Route::put('/departments/{department}/permissions', [DepartmentPermissionController::class, 'update'])->name('departments.permissions.update');
+// routes/web.php
+Route::prefix('departments/permissions')->name('departments.permissions.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\DepartmentPermissionController::class, 'index'])
+        ->name('index');
+
+    // Read-only “show” per department
+    Route::get('{department}', [\App\Http\Controllers\DepartmentPermissionController::class, 'show'])
+        ->name('show');
+
+    Route::get('{department}/edit', [\App\Http\Controllers\DepartmentPermissionController::class, 'edit'])
+        ->name('edit');
+
+    Route::put('{department}', [\App\Http\Controllers\DepartmentPermissionController::class, 'update'])
+        ->name('update');
+
+    // If you keep store/destroy for individual rows:
+    Route::post('/', [\App\Http\Controllers\DepartmentPermissionController::class, 'store'])
+        ->name('store');
+    Route::delete('{dept_permission}', [\App\Http\Controllers\DepartmentPermissionController::class, 'destroy'])
+        ->name('destroy');
+});
+
 
     Route::get('/forms', [FormController::class, 'index'])->name('forms.index');
     Route::get('/forms/create', [FormController::class, 'create'])->name('forms.create');
