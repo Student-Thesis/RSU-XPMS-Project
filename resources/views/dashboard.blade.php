@@ -26,7 +26,7 @@
                             <div class="counter_no">
                                 <div>
                                     <p class="total_no">{{ number_format($kpi['involved_extension_total']) }}</p>
-                                    <p class="head_couter">No. Of Involved in Extension (60% - 173)</p>
+                                    <p class="head_couter">No. Of Involved in Extension</p>
                                 </div>
                             </div>
                         </div>
@@ -40,7 +40,7 @@
                             <div class="counter_no">
                                 <div>
                                     <p class="total_no">{{ number_format($kpi['iec_developed_total']) }}</p>
-                                    <p class="head_couter">No. Of IEC Materials Developed (25)</p>
+                                    <p class="head_couter">No. Of IEC Materials Developed</p>
                                 </div>
                             </div>
                         </div>
@@ -54,7 +54,7 @@
                             <div class="counter_no">
                                 <div>
                                     <p class="total_no">{{ number_format($kpi['iec_reproduced_total']) }}</p>
-                                    <p class="head_couter">No. Of IEC Materials Reproduced (600)</p>
+                                    <p class="head_couter">No. Of IEC Materials Reproduced</p>
                                 </div>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                             <div class="counter_no">
                                 <div>
                                     <p class="total_no">{{ number_format($kpi['iec_distributed_total']) }}</p>
-                                    <p class="head_couter">No. OF IEC Materials Distributed (600)</p>
+                                    <p class="head_couter">No. OF IEC Materials Distributed</p>
                                 </div>
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                             <div class="counter_no">
                                 <div>
                                     <p class="total_no">{{ number_format($kpi['proposals_approved_total']) }}</p>
-                                    <p class="head_couter">No. Of Quality Extension Proposal Approved (13)</p>
+                                    <p class="head_couter">No. Of Quality Extension Proposal Approved</p>
                                 </div>
                             </div>
                         </div>
