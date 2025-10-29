@@ -50,7 +50,7 @@ class DepartmentPermissionController extends Controller
     public function show(Department $department)
     {
         // ✅ Read-only matrix for “Show” page
-        $resources = ['project','invoice','customer'];
+         $resources = ['project','forms','faculty','users','calendar'];
 
         $existing = DepartmentPermission::where('department_id', $department->id)
             ->get()
@@ -72,7 +72,7 @@ class DepartmentPermissionController extends Controller
 
     public function edit(Department $department)
     {
-        $resources = ['project','invoice','customer'];
+        $resources = ['project','forms','faculty','users','calendar'];
 
         $existing = DepartmentPermission::where('department_id', $department->id)
             ->get()
