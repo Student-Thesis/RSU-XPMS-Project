@@ -18,7 +18,7 @@ class DepartmentPermissionController extends Controller
             ->paginate(20);
 
         // Keep a list of resources if you want to show a legend or count per dept on index
-        $resources = ['project','invoice','customer'];
+        $resources = ['project','forms','faculty','users','calendar'];
 
         // view now expects $departments (NOT $permissions)
         return view('permissions.index', compact('departments', 'resources'));
