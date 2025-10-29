@@ -15,327 +15,156 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- KPI Row 1 --}}
                 <div class="row column1">
                     <div class="col-md-6 col-lg-3">
                         <div class="full counter_section margin_bottom_30">
                             <div class="couter_icon">
-                                <div>
-                                    <i class="fa fa-user yellow_color"></i>
-                                </div>
+                                <div><i class="fa fa-user yellow_color"></i></div>
                             </div>
                             <div class="counter_no">
                                 <div>
-                                    <p class="total_no">2500</p>
+                                    <p class="total_no">{{ number_format($kpi['involved_extension_total']) }}</p>
                                     <p class="head_couter">No. Of Involved in Extension (60% - 173)</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-6 col-lg-3">
                         <div class="full counter_section margin_bottom_30">
                             <div class="couter_icon">
-                                <div>
-                                    <i class="fa fa-clock-o blue1_color"></i>
-                                </div>
+                                <div><i class="fa fa-clock-o blue1_color"></i></div>
                             </div>
                             <div class="counter_no">
                                 <div>
-                                    <p class="total_no">123.50</p>
+                                    <p class="total_no">{{ number_format($kpi['iec_developed_total']) }}</p>
                                     <p class="head_couter">No. Of IEC Materials Developed (25)</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-6 col-lg-3">
                         <div class="full counter_section margin_bottom_30">
                             <div class="couter_icon">
-                                <div>
-                                    <i class="fa fa-cloud-download green_color"></i>
-                                </div>
+                                <div><i class="fa fa-cloud-download green_color"></i></div>
                             </div>
                             <div class="counter_no">
                                 <div>
-                                    <p class="total_no">1,805</p>
+                                    <p class="total_no">{{ number_format($kpi['iec_reproduced_total']) }}</p>
                                     <p class="head_couter">No. Of IEC Materials Reproduced (600)</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-6 col-lg-3">
                         <div class="full counter_section margin_bottom_30">
                             <div class="couter_icon">
-                                <div>
-                                    <i class="fa fa-comments-o red_color"></i>
-                                </div>
+                                <div><i class="fa fa-comments-o red_color"></i></div>
                             </div>
                             <div class="counter_no">
                                 <div>
-                                    <p class="total_no">54</p>
-                                    <p class="head_couter">No. OF IEC Materials Distrubuted (600)</p>
+                                    <p class="total_no">{{ number_format($kpi['iec_distributed_total']) }}</p>
+                                    <p class="head_couter">No. OF IEC Materials Distributed (600)</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="full counter_section margin_bottom_30">
-                        <div class="couter_icon">
-                            <div>
-                                <i class="fa fa-comments-o red_color"></i>
-                            </div>
-                        </div>
-                        <div class="counter_no">
-                            <div>
-                                <p class="total_no">54</p>
-                                <p class="head_couter">No. Of Quility Extension Proposal Approved(13)</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-
-
-            <!-- graph -->
-            <div class="row column2 graph margin_bottom_30">
-                <div class="col-md-l2 col-lg-12">
-                    <div class="white_shd full">
-                        <div class="full graph_head">
-                            <div class="heading1 margin_0">
-                                <h2>This well be replaced by the chart of the ESCEO..</h2>
+                {{-- KPI Row 2 (single tile you had) --}}
+                <div class="row column1">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="full counter_section margin_bottom_30">
+                            <div class="couter_icon">
+                                <div><i class="fa fa-check-square-o red_color"></i></div>
                             </div>
-                        </div>
-                        <div class="full graph_revenue">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="content">
-                                        <div class="area_chart">
-                                            <canvas height="120" id="canvas"></canvas>
-                                        </div>
-                                    </div>
+                            <div class="counter_no">
+                                <div>
+                                    <p class="total_no">{{ number_format($kpi['proposals_approved_total']) }}</p>
+                                    <p class="head_couter">No. Of Quality Extension Proposal Approved (13)</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- end graph -->
 
-            <div class="row column3">
-
-                <!-- testimonial -->
-                <div class="col-md-6">
-                    <div class="dark_bg full margin_bottom_30">
-                        <div class="full graph_head">
-                            <div class="heading1 margin_0">
-                                <h2>THIS IS TO SHOW PROJECTS NEARING DEADLINE</h2>
-                            </div>
-                        </div>
-                        <div class="full graph_revenue">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="content testimonial">
-                                        <div id="testimonial_slider" class="carousel slide" data-ride="carousel">
-                                            <!-- Wrapper for carousel items -->
-                                            <div class="carousel-inner">
-                                                <div class="item carousel-item active">
-                                                    <div class="img-box"><img src="" alt="">
-                                                    </div>
-                                                    <p class="testimonial">Sed ut perspiciatis unde omnis iste
-                                                        natus error sit voluptatem accusantium doloremque
-                                                        laudantium, totam rem aperiam, eaque ipsa quae..</p>
-                                                    <p class="overview"><b>Michael Stuart</b>Seo Founder</p>
-                                                </div>
-                                                <div class="item carousel-item">
-                                                    <div class="img-box"><img src="" alt="">
-                                                    </div>
-                                                    <p class="testimonial">Sed ut perspiciatis unde omnis iste
-                                                        natus error sit voluptatem accusantium doloremque
-                                                        laudantium, totam rem aperiam, eaque ipsa quae..</p>
-                                                    <p class="overview"><b>Michael Stuart</b>Seo Founder</p>
-                                                </div>
-                                                <div class="item carousel-item">
-                                                    <div class="img-box"><img src="" alt="">
-                                                    </div>
-                                                    <p class="testimonial">Sed ut perspiciatis unde omnis iste
-                                                        natus error sit voluptatem accusantium doloremque
-                                                        laudantium, totam rem aperiam, eaque ipsa quae..</p>
-                                                    <p class="overview"><b>Michael Stuart</b>Seo Founder</p>
-                                                </div>
-                                            </div>
-
-                                            <!-- Carousel controls -->
-                                            <a class="carousel-control left carousel-control-prev"
-                                                href="#testimonial_slider" data-slide="prev">
-                                                <i class="fa fa-angle-left"></i>
-                                            </a>
-                                            <a class="carousel-control right carousel-control-next"
-                                                href="#testimonial_slider" data-slide="next">
-                                                <i class="fa fa-angle-right"></i>
-                                            </a>
-
-                                        </div>
-                                    </div>
+                {{-- Chart --}}
+                <div class="row column2 graph margin_bottom_30">
+                    <div class="col-md-l2 col-lg-12">
+                        <div class="white_shd full">
+                            <div class="full graph_head">
+                                <div class="heading1 margin_0">
+                                    <h2>Quarterly Trends (Involved in Extension vs IEC Developed)</h2>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- end testimonial -->
-
-                <!-- progress bar -->
-                <div class="col-md-6">
-                    <div class="white_shd full margin_bottom_30">
-                        <div class="full graph_head">
-                            <div class="heading1 margin_0">
-                                <h2>Progress Bar</h2>
-                            </div>
-                        </div>
-                        <div class="full progress_bar_inner">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="progress_bar">
-                                        <!-- Skill Bars -->
-                                        <span class="skill" style="width:73%;"> Progress 1<span
-                                                class="info_valume">73%</span></span>
-                                        <div class="progress skill-bar ">
-                                            <div class="progress-bar progress-bar-animated progress-bar-striped"
-                                                role="progressbar" aria-valuenow="73" aria-valuemin="0"
-                                                aria-valuemax="100" style="width: 73%;">
-                                            </div>
-                                        </div>
-                                        <span class="skill" style="width:62%;">Progress 2 <span
-                                                class="info_valume">62%</span></span>
-                                        <div class="progress skill-bar">
-                                            <div class="progress-bar progress-bar-animated progress-bar-striped"
-                                                role="progressbar" aria-valuenow="62" aria-valuemin="0"
-                                                aria-valuemax="100" style="width: 62%;">
-                                            </div>
-                                        </div>
-                                        <span class="skill" style="width:54%;">Progress 3 <span
-                                                class="info_valume">54%</span></span>
-                                        <div class="progress skill-bar">
-                                            <div class="progress-bar progress-bar-animated progress-bar-striped"
-                                                role="progressbar" aria-valuenow="54" aria-valuemin="0"
-                                                aria-valuemax="100" style="width: 54%;">
-                                            </div>
-                                        </div>
-                                        <span class="skill" style="width:82%;">Progress 4<span
-                                                class="info_valume">82%</span></span>
-                                        <div class="progress skill-bar">
-                                            <div class="progress-bar progress-bar-animated progress-bar-striped"
-                                                role="progressbar" aria-valuenow="82" aria-valuemin="0"
-                                                aria-valuemax="100" style="width: 82%;">
-                                            </div>
-                                        </div>
-                                        <span class="skill" style="width:48%;">Other <span
-                                                class="info_valume">48%</span></span>
-                                        <div class="progress skill-bar">
-                                            <div class="progress-bar progress-bar-animated progress-bar-striped"
-                                                role="progressbar" aria-valuenow="48" aria-valuemin="0"
-                                                aria-valuemax="100" style="width: 48%;">
+                            <div class="full graph_revenue">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="content">
+                                            <div class="area_chart">
+                                                <canvas height="120" id="canvas"></canvas>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            {{-- If you have more series later (reproduced/distributed), we can add easily --}}
                         </div>
                     </div>
                 </div>
-                <!-- end progress bar -->
-
-            </div>
-            <div class="row column4 graph">
-                <div class="col-md-6">
-                    <div class="dash_blog">
-                        <div class="dash_blog_inner">
-                            <div class="dash_head">
-                                <h3><span><i class="fa fa-calendar"></i> 6 July 2018</span><span class="plus_green_bt"><a
-                                            href="#">+</a></span></h3>
-                            </div>
-                            <div class="list_cont">
-                                <p>table that shows recently added</p>
-                            </div>
-                            <div class="task_list_main">
-                                <ul class="task_list">
-                                    <li><a href="#">Meeting about plan for Admin Template
-                                            2018</a><br><strong>10:00 AM</strong></li>
-                                    <li><a href="#">Create new task for Dashboard</a><br><strong>10:00
-                                            AM</strong></li>
-                                    <li><a href="#">Meeting about plan for Admin Template
-                                            2018</a><br><strong>11:00 AM</strong></li>
-                                    <li><a href="#">Create new task for Dashboard</a><br><strong>10:00
-                                            AM</strong></li>
-                                    <li><a href="#">Meeting about plan for Admin Template
-                                            2018</a><br><strong>02:00 PM</strong></li>
-                                </ul>
-                            </div>
-                            <div class="read_more">
-                                <div class="center"><a class="main_bt read_bt" href="#">Read More</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="dash_blog">
-                        <div class="dash_blog_inner">
-                            <div class="dash_head">
-                                <h3><span><i class="fa fa-comments-o"></i> Notif for users confirmed</span><span
-                                        class="plus_green_bt"><a href="#">+</a></span></h3>
-                            </div>
-                            <div class="list_cont">
-                                <p>User confirmation</p>
-                            </div>
-                            <div class="msg_list_main">
-                                <ul class="msg_list">
-                                    <li>
-                                        <span><img src="images/layout_img/msg2.png" class="img-responsive"
-                                                alt="#" /></span>
-                                        <span>
-                                            <span class="name_user">John Smith</span>
-                                            <span class="msg_user">Sed ut perspiciatis unde omnis.</span>
-                                            <span class="time_ago">12 min ago</span>
-                                        </span>
-                                    </li>
-                                    <li>
-                                        <span><img src="images/layout_img/msg3.png" class="img-responsive"
-                                                alt="#" /></span>
-                                        <span>
-                                            <span class="name_user">John Smith</span>
-                                            <span class="msg_user">On the other hand, we denounce.</span>
-                                            <span class="time_ago">12 min ago</span>
-                                        </span>
-                                    </li>
-                                    <li>
-                                        <span><img src="images/layout_img/msg2.png" class="img-responsive"
-                                                alt="#" /></span>
-                                        <span>
-                                            <span class="name_user">John Smith</span>
-                                            <span class="msg_user">Sed ut perspiciatis unde omnis.</span>
-                                            <span class="time_ago">12 min ago</span>
-                                        </span>
-                                    </li>
-                                    <li>
-                                        <span><img src="images/layout_img/msg3.png" class="img-responsive"
-                                                alt="#" /></span>
-                                        <span>
-                                            <span class="name_user">John Smith</span>
-                                            <span class="msg_user">On the other hand, we denounce.</span>
-                                            <span class="time_ago">12 min ago</span>
-                                        </span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="read_more">
-                                <div class="center"><a class="main_bt read_bt" href="#">Read More</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- end graph -->
             </div>
         </div>
-        <!-- footer -->
-
-
     </div>
 @endsection
+
+@push('scripts')
+    {{-- Chart.js CDN (lightweight) --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" integrity="sha384-7l8B6hN2l8Y9v9C3kI6k1T3H2X6KQmY0eZ2E69+JdF4qzC7z1tQdY/7mQ8h1aQ5x" crossorigin="anonymous"></script>
+    <script>
+        (function () {
+            const ctx = document.getElementById('canvas').getContext('2d');
+
+            const labels = ['Q1','Q2','Q3','Q4'];
+
+            const involved = @json($chart['ext']);
+            const developed = @json($chart['dev']);
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Involved in Extension',
+                            data: involved,
+                            fill: false,
+                            tension: 0.25,
+                        },
+                        {
+                            label: 'IEC Developed',
+                            data: developed,
+                            fill: false,
+                            tension: 0.25,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 } }
+                    }
+                }
+            });
+        })();
+    </script>
+@endpush
