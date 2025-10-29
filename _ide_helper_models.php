@@ -44,6 +44,7 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property int $user_id
  * @property string $organization_name
  * @property \Illuminate\Support\Carbon $date_signed
  * @property string|null $mou_path
@@ -60,6 +61,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereMouPath($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereOrganizationName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereUserId($value)
  */
 	class Agreement extends \Eloquent {}
 }
@@ -109,6 +111,15 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DepartmentPermission whereUpdatedAt($value)
  */
 	class DepartmentPermission extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty query()
+ */
+	class Faculty extends \Eloquent {}
 }
 
 namespace App\Models{

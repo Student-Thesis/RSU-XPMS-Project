@@ -8,6 +8,7 @@ use App\Http\Controllers\FormController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SettingsClassificationController;
 use App\Http\Controllers\SettingsTargetAgendaController;
+use App\Http\Controllers\FacultyController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -77,7 +78,12 @@ Route::prefix('departments/permissions')->name('departments.permissions.')->grou
     Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
 
-    Route::get('/faculty', [App\Http\Controllers\FacultyController::class, 'index'])->name('faculty');
+    Route::get('/faculties', [FacultyController::class, 'index'])->name('faculties.index');
+    Route::get('/faculties/create', [FacultyController::class, 'create'])->name('faculties.create');
+    Route::post('/faculties', [FacultyController::class, 'store'])->name('faculties.store');
+    Route::get('/faculties/{faculty}/edit', [FacultyController::class, 'edit'])->name('faculties.edit');
+    Route::put('/faculties/{faculty}', [FacultyController::class, 'update'])->name('faculties.update');
+    Route::delete('/faculties/{faculty}', [FacultyController::class, 'destroy'])->name('faculties.destroy');
 
     Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar');
 

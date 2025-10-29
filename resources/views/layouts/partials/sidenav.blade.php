@@ -14,7 +14,7 @@
                     <div class="icon_setting"></div>
                     <div class="user_profle_side">
                         <div class="user_img"><img class="img-responsive"
-                                src="{{ asset($basePath . '/images/logo/logo.jpg') }}" alt="Logo" />
+                                src="{{ asset($basePath . '/images/logo/logo.jpg') }}" alt="Logo" /> 
 
                         </div>
                         <div class="user_info">
@@ -44,8 +44,8 @@
                         </a>
                     </li>
 
-                    <li class="{{ request()->routeIs('faculty') ? 'active' : '' }}">
-                        <a href="{{ route('faculty') }}">
+                    <li class="{{ request()->routeIs('faculties') ? 'active' : '' }}">
+                        <a href="{{ route('faculties.index') }}">
                             <i class="fa fa-edit yellow_color"></i> <span>Faculty</span>
                         </a>
                     </li>
