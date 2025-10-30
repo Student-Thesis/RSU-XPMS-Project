@@ -1,4 +1,4 @@
-{{-- resources/views/profile/edit.blade.php --}}
+{{-- resources/views/profiles/edit.blade.php --}}
 @extends('layouts.app')
 
 @section('content')
@@ -35,7 +35,7 @@
                     <div class="white_shd full margin_bottom_30">
                         <div class="full graph_head">
                             <div class="heading1 margin_0">
-                                <h2>User profile</h2>
+                                <h2>User Profile</h2>
                             </div>
                         </div>
                         <div class="full padding_infor_info">
@@ -47,19 +47,18 @@
 
                                 <div class="row">
                                     <div class="col-lg-4 text-center mb-3">
-                                        {{-- Avatar preview --}}
                                         @php
-                                            $u = auth()->user();
-                                            // $u->avatar_path will now be like: "avatars/root-user-YPoP6OGd.jpg"
+                                            $u = $user ?? auth()->user();
+                                            // if you saved like "avatars/xxx.jpg" in DB
                                             $avatarUrl = $u?->avatar_path
-                                                ? asset('public/' . $u->avatar_path)  // load from public/
-                                                : asset('public/images/layout_img/default_profile.png');
+                                                ? asset($u->avatar_path)
+                                                : asset('images/layout_img/default_profile.png');
                                         @endphp
 
                                         <img width="180" class="rounded-circle"
-                                            src="{{ $avatarUrl }}"
-                                            alt="Avatar"
-                                            style="object-fit:cover;height:180px;">
+                                             src="{{ $avatarUrl }}"
+                                             alt="Avatar"
+                                             style="object-fit:cover;height:180px;">
 
                                         <div class="custom-file text-left mt-3">
                                             <input type="file" name="avatar" id="avatar" class="custom-file-input">
@@ -68,26 +67,72 @@
                                         </div>
                                     </div>
 
-
                                     <div class="col-lg-8">
                                         <div class="form-group">
-                                            <label for="name">Full Name</label>
-                                            <input type="text" id="name" name="name" class="form-control" value="{{ old('name', $user->name) }}" required>
+                                            <label for="first_name">First Name</label>
+                                            <input type="text"
+                                                   id="first_name"
+                                                   name="first_name"
+                                                   class="form-control"
+                                                   value="{{ old('first_name', $user->first_name) }}">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="last_name">Last Name</label>
+                                            <input type="text"
+                                                   id="last_name"
+                                                   name="last_name"
+                                                   class="form-control"
+                                                   value="{{ old('last_name', $user->last_name) }}">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="username">Username</label>
+                                            <input type="text"
+                                                   id="username"
+                                                   name="username"
+                                                   class="form-control"
+                                                   value="{{ old('username', $user->username) }}">
                                         </div>
 
                                         <div class="form-group">
                                             <label for="email">Email</label>
-                                            <input type="email" id="email" name="email" class="form-control" value="{{ old('email', $user->email) }}" readonly>
+                                            <input type="email"
+                                                   id="email"
+                                                   name="email"
+                                                   class="form-control"
+                                                   value="{{ old('email', $user->email) }}"
+                                                   readonly>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="phone">Phone</label>
-                                            <input type="text" id="phone" name="phone" class="form-control" value="{{ old('phone', $user->phone) }}">
+                                            <input type="text"
+                                                   id="phone"
+                                                   name="phone"
+                                                   class="form-control"
+                                                   value="{{ old('phone', $user->phone) }}">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="college">College / Department</label>
+                                            <input type="text"
+                                                   id="college"
+                                                   name="college"
+                                                   class="form-control"
+                                                   value="{{ old('college', $user->college) }}">
+                                            {{-- 
+                                                If you later want to use the real department_id FK,
+                                                replace this with a <select> and loop departments.
+                                            --}}
                                         </div>
 
                                         <div class="form-group">
                                             <label for="about">About</label>
-                                            <textarea id="about" name="about" rows="4" class="form-control">{{ old('about', $user->about) }}</textarea>
+                                            <textarea id="about"
+                                                      name="about"
+                                                      rows="4"
+                                                      class="form-control">{{ old('about', $user->about) }}</textarea>
                                         </div>
 
                                         <button class="btn btn-primary">
@@ -96,9 +141,6 @@
                                     </div>
                                 </div>
                             </form>
-
-                            {{-- Your existing display blocks can remain below (Recent Activity / Projects / Profile tabs) --}}
-                            {{-- ... keep your original content if you like ... --}}
 
                         </div>
                     </div>
@@ -113,6 +155,7 @@
                     </p>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

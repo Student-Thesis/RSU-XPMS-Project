@@ -74,6 +74,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\DepartmentPermission> $permissions
  * @property-read int|null $permissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\User> $users
+ * @property-read int|null $users_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Department newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Department newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Department query()
@@ -115,9 +117,119 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * @property int $id
+ * @property string $campus_college
+ * @property int $num_faculties
+ * @property int $involved_extension_total
+ * @property int $involved_extension_q1
+ * @property int $involved_extension_q2
+ * @property int $involved_extension_q3
+ * @property int $involved_extension_q4
+ * @property int $iec_developed_total
+ * @property int $iec_developed_q1
+ * @property int $iec_developed_q2
+ * @property int $iec_developed_q3
+ * @property int $iec_developed_q4
+ * @property int $iec_reproduced_total
+ * @property int $iec_reproduced_q1
+ * @property int $iec_reproduced_q2
+ * @property int $iec_reproduced_q3
+ * @property int $iec_reproduced_q4
+ * @property int $iec_distributed_total
+ * @property int $iec_distributed_q1
+ * @property int $iec_distributed_q2
+ * @property int $iec_distributed_q3
+ * @property int $iec_distributed_q4
+ * @property int $proposals_approved_total
+ * @property int $proposals_approved_q1
+ * @property int $proposals_approved_q2
+ * @property int $proposals_approved_q3
+ * @property int $proposals_approved_q4
+ * @property int $proposals_implemented_total
+ * @property int $proposals_implemented_q1
+ * @property int $proposals_implemented_q2
+ * @property int $proposals_implemented_q3
+ * @property int $proposals_implemented_q4
+ * @property int $proposals_documented_total
+ * @property int $proposals_documented_q1
+ * @property int $proposals_documented_q2
+ * @property int $proposals_documented_q3
+ * @property int $proposals_documented_q4
+ * @property int $community_served_total
+ * @property int $community_served_q1
+ * @property int $community_served_q2
+ * @property int $community_served_q3
+ * @property int $community_served_q4
+ * @property int $beneficiaries_assistance_total
+ * @property int $beneficiaries_assistance_q1
+ * @property int $beneficiaries_assistance_q2
+ * @property int $beneficiaries_assistance_q3
+ * @property int $beneficiaries_assistance_q4
+ * @property int $moa_mou_total
+ * @property int $moa_mou_q1
+ * @property int $moa_mou_q2
+ * @property int $moa_mou_q3
+ * @property int $moa_mou_q4
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereBeneficiariesAssistanceQ1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereBeneficiariesAssistanceQ2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereBeneficiariesAssistanceQ3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereBeneficiariesAssistanceQ4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereBeneficiariesAssistanceTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereCampusCollege($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereCommunityServedQ1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereCommunityServedQ2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereCommunityServedQ3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereCommunityServedQ4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereCommunityServedTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecDevelopedQ1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecDevelopedQ2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecDevelopedQ3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecDevelopedQ4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecDevelopedTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecDistributedQ1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecDistributedQ2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecDistributedQ3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecDistributedQ4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecDistributedTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecReproducedQ1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecReproducedQ2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecReproducedQ3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecReproducedQ4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereIecReproducedTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereInvolvedExtensionQ1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereInvolvedExtensionQ2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereInvolvedExtensionQ3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereInvolvedExtensionQ4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereInvolvedExtensionTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereMoaMouQ1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereMoaMouQ2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereMoaMouQ3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereMoaMouQ4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereMoaMouTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereNumFaculties($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsApprovedQ1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsApprovedQ2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsApprovedQ3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsApprovedQ4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsApprovedTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsDocumentedQ1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsDocumentedQ2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsDocumentedQ3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsDocumentedQ4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsDocumentedTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsImplementedQ1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsImplementedQ2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsImplementedQ3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsImplementedQ4($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereProposalsImplementedTotal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Faculty whereUpdatedAt($value)
  */
 	class Faculty extends \Eloquent {}
 }
@@ -321,6 +433,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Department|null $department
+ * @property-read string $full_name
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection<int, \Illuminate\Notifications\DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])

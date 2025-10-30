@@ -19,7 +19,8 @@ class DepartmentPermission extends Model
         'can_delete' => 'boolean',
     ];
 
-    public function department() {
+      public function department()
+    {
         return $this->belongsTo(Department::class);
     }
 }

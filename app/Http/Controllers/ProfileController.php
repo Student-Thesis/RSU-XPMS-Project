@@ -27,12 +27,15 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'about' => ['nullable', 'string', 'max:2000'],
-            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp'], // 3MB
-        ]);
+    $validated = $request->validate([
+        'first_name' => ['nullable', 'string', 'max:255'],
+        'last_name'  => ['nullable', 'string', 'max:255'],
+        'username'   => ['nullable', 'string', 'max:150'],
+        'phone'      => ['nullable', 'string', 'max:30'],
+        'college'    => ['nullable', 'string', 'max:255'],
+        'about'      => ['nullable', 'string', 'max:2000'],
+        'avatar'     => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp'],
+    ]);
 
         // Debug log to see if file arrived
         Log::info('Profile update request', [
@@ -65,11 +68,14 @@ class ProfileController extends Controller
             $user->avatar_path = 'avatars/' . $name;
         }
 
-        $user->name = $validated['name'];
-        $user->phone = $validated['phone'] ?? $user->phone;
-        $user->about = $validated['about'] ?? $user->about;
-        $user->save();
+        $user->first_name = $validated['first_name'] ?? $user->first_name;
+    $user->last_name  = $validated['last_name'] ?? $user->last_name;
+    $user->username   = $validated['username'] ?? $user->username;
+    $user->phone      = $validated['phone'] ?? $user->phone;
+    $user->college    = $validated['college'] ?? $user->college;
+    $user->about      = $validated['about'] ?? $user->about;
+    $user->save();
 
-        return back()->with('success', 'Profile updated successfully.');
+    return back()->with('success', 'Profile updated successfully.');
     }
 }

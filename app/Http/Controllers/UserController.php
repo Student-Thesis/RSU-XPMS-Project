@@ -11,17 +11,17 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $q    = trim($request->get('q', ''));
+        $q = trim($request->get('q', ''));
         $role = $request->get('role', '');
 
         $users = User::query()
             ->when($q, function ($qr) use ($q) {
                 $qr->where(function ($w) use ($q) {
                     $w->where('first_name', 'like', "%{$q}%")
-                      ->orWhere('last_name',  'like', "%{$q}%")
-                      ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$q}%"])
-                      ->orWhere('email',      'like', "%{$q}%")
-                      ->orWhere('phone',      'like', "%{$q}%");
+                        ->orWhere('last_name', 'like', "%{$q}%")
+                        ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$q}%"])
+                        ->orWhere('email', 'like', "%{$q}%")
+                        ->orWhere('phone', 'like', "%{$q}%");
                 });
             })
             ->when($role && $role !== 'all', fn($qr) => $qr->where('user_type', $role))
@@ -31,19 +31,19 @@ class UserController extends Controller
             ->withQueryString();
 
         $roles = [
-            'all'             => 'All Roles',
-            'admin'           => 'Admin',
-            'user'            => 'User',
-            'coordinator'          => 'Coordinator',
+            'all' => 'All Roles',
+            'admin' => 'Admin',
+            'user' => 'User',
+            'coordinator' => 'Coordinator',
             'manager' => 'Project Manager',
         ];
 
-        return view('users.index', compact('users','q','role','roles'));
+        return view('users.index', compact('users', 'q', 'role', 'roles'));
     }
 
     public function create()
     {
-        $roles = ['admin','user','coordinator','manager'];
+        $roles = ['admin', 'user', 'coordinator', 'manager'];
         return view('users.create', compact('roles'));
     }
 
@@ -51,14 +51,14 @@ class UserController extends Controller
     {
         // Validate with split names
         $validated = $request->validate([
-             'user_type'  => ['required', Rule::in(['admin','user','coordinator','manager'])],
-            'first_name' => ['required','string','max:255'],
-            'last_name'  => ['required','string','max:255'],
-            'email'      => ['required','email:rfc,dns','unique:users,email'],
-            'password'   => ['required','string','min:8','confirmed'],
-            'phone'      => ['nullable','string','max:30'],
-            'about'      => ['nullable','string'],
-            'avatar'     => ['nullable','image'],
+            'user_type' => ['required', Rule::in(['admin', 'user', 'coordinator', 'manager'])],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email:rfc,dns', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'about' => ['nullable', 'string'],
+            'avatar' => ['nullable', 'image'],
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -66,9 +66,9 @@ class UserController extends Controller
         // Save avatar directly to /public/avatars
         if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
-            $filename = uniqid('avatar_').'.'.$file->getClientOriginalExtension();
+            $filename = uniqid('avatar_') . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('avatars'), $filename);
-            $validated['avatar_path'] = 'avatars/'.$filename;
+            $validated['avatar_path'] = 'avatars/' . $filename;
         }
 
         User::create($validated);
@@ -78,43 +78,66 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-       $roles = ['admin','user','coordinator','manager'];
-        return view('users.edit', compact('user','roles'));
+        // static departments (exclude Admin = 1)
+        $departments = [
+            2 => 'Manager',
+            3 => 'Coordinator',
+            4 => 'User',
+        ];
+
+        return view('users.edit', compact('user', 'departments'));
     }
 
     public function update(Request $request, User $user)
     {
+        // we validate department_id instead of user_type
         $validated = $request->validate([
-            'user_type'  => ['required', Rule::in(['admin','user','coordinator','manager'])],
-            'first_name' => ['required','string','max:255'],
-            'last_name'  => ['required','string','max:255'],
-            'email'      => ['required','email:rfc,dns', Rule::unique('users','email')->ignore($user->id)],
-            'phone'      => ['nullable','string','max:30'],
-            'about'      => ['nullable','string'],
-            'avatar'     => ['nullable','image'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email:rfc,dns', Rule::unique('users', 'email')->ignore($user->id)],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'about' => ['nullable', 'string'],
+            'department_id' => ['required', 'integer', Rule::in([2, 3, 4])], // only these 3
+            'password' => ['nullable', 'confirmed', 'min:8'],
+            'avatar' => ['nullable', 'image'],
         ]);
 
+        // map dept -> user_type (keep DB consistent)
+        $deptToType = [
+            2 => 'Manager',
+            3 => 'Coordinator',
+            4 => 'User',
+        ];
+        $validated['user_type'] = $deptToType[$validated['department_id']] ?? 'User';
+
+        // handle password (optional)
         if (!empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
         } else {
             unset($validated['password']);
         }
 
+        // handle avatar (optional)
         if ($request->hasFile('avatar')) {
             if ($user->avatar_path && file_exists(public_path($user->avatar_path))) {
                 @unlink(public_path($user->avatar_path));
             }
             $file = $request->file('avatar');
-            $filename = uniqid('avatar_').'.'.$file->getClientOriginalExtension();
+            $filename = uniqid('avatar_') . '.' . $file->getClientOriginalExtension();
+
+            // make sure folder exists
+            if (!is_dir(public_path('avatars'))) {
+                mkdir(public_path('avatars'), 0755, true);
+            }
+
             $file->move(public_path('avatars'), $filename);
-            $validated['avatar_path'] = 'avatars/'.$filename;
+            $validated['avatar_path'] = 'avatars/' . $filename;
         }
 
         $user->update($validated);
 
         return redirect()->route('users.index')->with('success', 'User updated.');
     }
-
     public function destroy(User $user)
     {
         if ($user->avatar_path && file_exists(public_path($user->avatar_path))) {

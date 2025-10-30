@@ -1,6 +1,5 @@
 <?php
 
-// database/seeders/DepartmentSeeder.php
 namespace Database\Seeders;
 
 use App\Models\Department;
@@ -11,32 +10,76 @@ class DepartmentSeeder extends Seeder
 {
     public function run(): void
     {
-        $admin   = Department::firstOrCreate(['name' => 'Admins']);
-        $manager = Department::firstOrCreate(['name' => 'Managers']);
-        $coor    = Department::firstOrCreate(['name' => 'Coordinators']);
+        // create base departments
+        $admin       = Department::firstOrCreate(['name' => 'Admins']);
+        $manager     = Department::firstOrCreate(['name' => 'Managers']);
+        $coordinator = Department::firstOrCreate(['name' => 'Coordinators']);
+        $user        = Department::firstOrCreate(['name' => 'Users']); // renamed to plural to match others
 
-        // Coordinators: can view Projects only
-        DepartmentPermission::updateOrCreate(
-            ['department_id' => $coor->id, 'resource' => 'Projects'],
-            ['can_view' => true]
-        );
+        // master list of resources we used in routes
+        $resources = [
+            'users',
+            'project',
+            'forms',
+            'faculty',
+            'calendar',
+            'notifications',
+            'settings',
+            'messages',
+            // also protect permission UI itself
+            'department_permissions',
+        ];
 
-        // Managers: full on Forms
-        DepartmentPermission::updateOrCreate(
-            ['department_id' => $manager->id, 'resource' => 'Forms'],
-            ['can_view' => true, 'can_create' => true, 'can_update' => true, 'can_delete' => true]
-        );
+        /* ========== ADMINS: full access ========== */
+        foreach ($resources as $res) {
+            DepartmentPermission::updateOrCreate(
+                ['department_id' => $admin->id, 'resource' => $res],
+                [
+                    'can_view'   => true,
+                    'can_create' => true,
+                    'can_update' => true,
+                    'can_delete' => true,
+                ]
+            );
+        }
 
-        // Admins: full on Faculty
-        DepartmentPermission::updateOrCreate(
-            ['department_id' => $admin->id, 'resource' => 'Faculty'],
-            ['can_view' => true, 'can_create' => true, 'can_update' => true, 'can_delete' => true]
-        );
+        /* ========== MANAGERS: all except delete ========== */
+        foreach ($resources as $res) {
+            DepartmentPermission::updateOrCreate(
+                ['department_id' => $manager->id, 'resource' => $res],
+                [
+                    'can_view'   => true,
+                    'can_create' => true,
+                    'can_update' => true,
+                    'can_delete' => false,
+                ]
+            );
+        }
 
-        // Admins: full on Users
-        DepartmentPermission::updateOrCreate(
-            ['department_id' => $admin->id, 'resource' => 'Users'],
-            ['can_view' => true, 'can_create' => true, 'can_update' => true, 'can_delete' => true]
-        );
+        /* ========== COORDINATORS: all except delete ========== */
+        foreach ($resources as $res) {
+            DepartmentPermission::updateOrCreate(
+                ['department_id' => $coordinator->id, 'resource' => $res],
+                [
+                    'can_view'   => true,
+                    'can_create' => true,
+                    'can_update' => true,
+                    'can_delete' => false,
+                ]
+            );
+        }
+
+        /* ========== USERS: view only ========== */
+        foreach ($resources as $res) {
+            DepartmentPermission::updateOrCreate(
+                ['department_id' => $user->id, 'resource' => $res],
+                [
+                    'can_view'   => true,
+                    'can_create' => false,
+                    'can_update' => false,
+                    'can_delete' => false,
+                ]
+            );
+        }
     }
 }

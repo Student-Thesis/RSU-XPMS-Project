@@ -12,4 +12,9 @@ class Department extends Model
     public function permissions() {
         return $this->hasMany(DepartmentPermission::class);
     }
+
+     public function users()
+    {
+        return $this->hasMany(User::class);   // users.department_id
+    }
 }

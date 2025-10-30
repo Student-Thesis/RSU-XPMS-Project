@@ -9,6 +9,14 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SettingsClassificationController;
 use App\Http\Controllers\SettingsTargetAgendaController;
 use App\Http\Controllers\FacultyController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProposalController;
+use App\Http\Controllers\AgreementController;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\HelpController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\SettingsController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -18,86 +26,96 @@ Auth::routes();
 
 Route::get('/auth-register', [App\Http\Controllers\HomeController::class, 'register'])->name('auth.register');
 
+
 Route::middleware(['auth'])->group(function () {
-    // Route::get('/users', [App\Http\Controllers\UserController::class, 'index'])->name('users')->middleware('deptperm:Users,view');
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
-    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
-    Route::post('/users', [UserController::class, 'store'])->name('users.store');
-    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
-    Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
-    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-    Route::get('/proposals', [App\Http\Controllers\ProposalController::class, 'register'])->name('proposals.index');
-    Route::post('/proposals', [App\Http\Controllers\ProposalController::class, 'store'])->name('proposals.store');
+    /* ================== USERS ================== */
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/',             [UserController::class, 'index'])->middleware('dept.can:users,view')->name('index');
+        Route::get('/create',       [UserController::class, 'create'])->middleware('dept.can:users,create')->name('create');
+        Route::post('/',            [UserController::class, 'store'])->middleware('dept.can:users,create')->name('store');
+        Route::get('/{user}/edit',  [UserController::class, 'edit'])->middleware('dept.can:users,update')->name('edit');
+        Route::put('/{user}',       [UserController::class, 'update'])->middleware('dept.can:users,update')->name('update');
+        Route::delete('/{user}',    [UserController::class, 'destroy'])->middleware('dept.can:users,delete')->name('destroy');
+    });
 
-    Route::get('/agreement', [App\Http\Controllers\AgreementController::class, 'register'])->name('agreement.register');
-    Route::post('/agreement', [App\Http\Controllers\AgreementController::class, 'store'])->name('agreement.store');
-    Route::get('/notif-agreement', [App\Http\Controllers\NotificationsController::class, 'agreement'])->name('notifications.agreement');
+    /* ================== PROPOSALS ================== */
+    Route::get('/proposals',  [ProposalController::class, 'register'])->name('proposals.index');
+    Route::post('/proposals', [ProposalController::class, 'store'])->name('proposals.store');
 
-// routes/web.php
-Route::prefix('departments/permissions')->name('departments.permissions.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\DepartmentPermissionController::class, 'index'])
-        ->name('index');
+    /* ================== AGREEMENT / NOTIF ================== */
+    Route::get('/agreement',        [AgreementController::class, 'register'])->name('agreement.register');
+    Route::post('/agreement',       [AgreementController::class, 'store'])->name('agreement.store');
+    Route::get('/notif-agreement',  [\App\Http\Controllers\NotificationsController::class, 'agreement'])->name('notifications.agreement');
 
-    // Read-only “show” per department
-    Route::get('{department}', [\App\Http\Controllers\DepartmentPermissionController::class, 'show'])
-        ->name('show');
+    /* ================== DEPARTMENT PERMISSIONS ================== */
+    Route::prefix('departments/permissions')->name('departments.permissions.')->group(function () {
+        Route::get('/',                    [DepartmentPermissionController::class, 'index'])->middleware('dept.can:users,view')->name('index');
+        Route::post('/',                   [DepartmentPermissionController::class, 'store'])->middleware('dept.can:users,create')->name('store');
+        Route::get('{department}',         [DepartmentPermissionController::class, 'show'])->middleware('dept.can:users,view')->name('show');
+        Route::get('{department}/edit',    [DepartmentPermissionController::class, 'edit'])->middleware('dept.can:users,update')->name('edit');
+        Route::put('{department}',         [DepartmentPermissionController::class, 'update'])->middleware('dept.can:users,update')->name('update');
+        Route::delete('{dept_permission}', [DepartmentPermissionController::class, 'destroy'])->middleware('dept.can:users,delete')->name('destroy');
+    });
 
-    Route::get('{department}/edit', [\App\Http\Controllers\DepartmentPermissionController::class, 'edit'])
-        ->name('edit');
+    /* ================== FORMS ================== */
+    Route::prefix('forms')->name('forms.')->group(function () {
+        Route::get('/',            [FormController::class, 'index'])->middleware('dept.can:forms,view')->name('index');
+        Route::get('/create',      [FormController::class, 'create'])->middleware('dept.can:forms,create')->name('create');
+        Route::post('/',           [FormController::class, 'store'])->middleware('dept.can:forms,create')->name('store');
+        Route::get('/{form}/edit', [FormController::class, 'edit'])->middleware('dept.can:forms,update')->name('edit');
+        Route::put('/{form}',      [FormController::class, 'update'])->middleware('dept.can:forms,update')->name('update');
+        Route::delete('/{form}',   [FormController::class, 'destroy'])->middleware('dept.can:forms,delete')->name('destroy');
+    });
 
-    Route::put('{department}', [\App\Http\Controllers\DepartmentPermissionController::class, 'update'])
-        ->name('update');
+    /* ================== DASHBOARD / STATIC PAGES ================== */
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
+    Route::get('/settings',  [SettingsController::class, 'index'])->middleware('dept.can:settings,view')->name('settings');
+    Route::get('/help',      [HelpController::class, 'index'])->middleware('dept.can:help,view')->name('help');
+    Route::get('/messages',  [MessageController::class, 'index'])->middleware('dept.can:messages,view')->name('messages');
 
-    // If you keep store/destroy for individual rows:
-    Route::post('/', [\App\Http\Controllers\DepartmentPermissionController::class, 'store'])
-        ->name('store');
-    Route::delete('{dept_permission}', [\App\Http\Controllers\DepartmentPermissionController::class, 'destroy'])
-        ->name('destroy');
-});
+    /* ================== NOTIFICATIONS ================== */
+    Route::get('/notifications',      [NotificationController::class, 'index'])->middleware('dept.can:notifications,view')->name('notifications');
+    Route::get('/notifications/load', [NotificationController::class, 'load'])->middleware('dept.can:notifications,view')->name('notifications.load');
 
+    /* ================== PROJECTS ================== */
+    Route::prefix('projects')->group(function () {
+        Route::get('/',                   [ProjectController::class, 'index'])->middleware('dept.can:project,view')->name('projects');
+        Route::patch('/{project}/inline', [ProjectController::class, 'inlineUpdate'])->middleware('dept.can:project,update')->name('projects.inline');
+        Route::get('/create',             [ProjectController::class, 'create'])->middleware('dept.can:project,create')->name('projects.create');
+        Route::post('/',                  [ProjectController::class, 'store'])->middleware('dept.can:project,create')->name('projects.store');
+        Route::get('/{project}/edit',     [ProjectController::class, 'edit'])->middleware('dept.can:project,update')->name('projects.edit');
+        Route::put('/{project}',          [ProjectController::class, 'update'])->middleware('dept.can:project,update')->name('projects.update');
+        Route::delete('/{project}',       [ProjectController::class, 'destroy'])->middleware('dept.can:project,delete')->name('projects.destroy');
+    });
 
-    Route::get('/forms', [FormController::class, 'index'])->name('forms.index');
-    Route::get('/forms/create', [FormController::class, 'create'])->name('forms.create');
-    Route::post('/forms', [FormController::class, 'store'])->name('forms.store');
-    Route::get('/forms/{form}/edit', [FormController::class, 'edit'])->name('forms.edit');
-    Route::put('/forms/{form}', [FormController::class, 'update'])->name('forms.update');
-    Route::delete('/forms/{form}', [FormController::class, 'destroy'])->name('forms.destroy');
+    /* ================== FACULTIES ================== */
+    Route::prefix('faculties')->name('faculties.')->group(function () {
+        Route::get('/',               [FacultyController::class, 'index'])->middleware('dept.can:faculty,view')->name('index');
+        Route::get('/create',         [FacultyController::class, 'create'])->middleware('dept.can:faculty,create')->name('create');
+        Route::post('/',              [FacultyController::class, 'store'])->middleware('dept.can:faculty,create')->name('store');
+        Route::get('/{faculty}/edit', [FacultyController::class, 'edit'])->middleware('dept.can:faculty,update')->name('edit');
+        Route::put('/{faculty}',      [FacultyController::class, 'update'])->middleware('dept.can:faculty,update')->name('update');
+        Route::delete('/{faculty}',   [FacultyController::class, 'destroy'])->middleware('dept.can:faculty,delete')->name('destroy');
+    });
 
-    Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
-    Route::get('/settings', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings');
-    Route::get('/help', [App\Http\Controllers\HelpController::class, 'index'])->name('help');
-    Route::get('/messages', [App\Http\Controllers\MessageController::class, 'index'])->name('messages');
-    Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications');
+    /* ================== CALENDAR ================== */
+    Route::get('/calendar', [CalendarController::class, 'index'])->middleware('dept.can:calendar,view')->name('calendar');
 
-    Route::get('/projects', [ProjectController::class, 'index'])->name('projects');
-    Route::patch('/projects/{project}/inline', [ProjectController::class, 'inlineUpdate'])->name('projects.inline');
-    Route::get('/projects/create', [ProjectController::class, 'create'])->name('projects.create');
-    Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
-    Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
-    Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
-    Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
-
-    Route::get('/faculties', [FacultyController::class, 'index'])->name('faculties.index');
-    Route::get('/faculties/create', [FacultyController::class, 'create'])->name('faculties.create');
-    Route::post('/faculties', [FacultyController::class, 'store'])->name('faculties.store');
-    Route::get('/faculties/{faculty}/edit', [FacultyController::class, 'edit'])->name('faculties.edit');
-    Route::put('/faculties/{faculty}', [FacultyController::class, 'update'])->name('faculties.update');
-    Route::delete('/faculties/{faculty}', [FacultyController::class, 'destroy'])->name('faculties.destroy');
-
-    Route::get('/calendar', [App\Http\Controllers\CalendarController::class, 'index'])->name('calendar');
-
+    /* ================== PROFILE ================== */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
-    // routes/web.php
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
-    Route::get('/notifications/load', [NotificationController::class, 'load'])->name('notifications.load');
+    /* ================== SETTINGS RESOURCES ================== */
+    Route::resource('settings_classifications', SettingsClassificationController::class)
+        ->middleware('dept.can:settings,update');
+    Route::patch('settings_classifications/{settings_classification}/toggle',
+        [SettingsClassificationController::class, 'toggle'])->middleware('dept.can:settings,update')->name('settings_classifications.toggle');
+    Route::get('api/settings_classifications',
+        [SettingsClassificationController::class, 'listJson'])->middleware('dept.can:settings,view')->name('settings_classifications.listJson');
 
-    Route::resource('settings_classifications', SettingsClassificationController::class);
-    Route::patch('settings_classifications/{settings_classification}/toggle', [SettingsClassificationController::class, 'toggle'])->name('settings_classifications.toggle');
-    Route::get('api/settings_classifications', [SettingsClassificationController::class, 'listJson'])->name('settings_classifications.listJson');
-
-    Route::resource('settings_target_agendas', SettingsTargetAgendaController::class);
-    Route::get('api/settings_target_agendas', [SettingsTargetAgendaController::class, 'listJson'])->name('settings_target_agendas.listJson');
+    Route::resource('settings_target_agendas', SettingsTargetAgendaController::class)
+        ->middleware('dept.can:settings,update');
+    Route::get('api/settings_target_agendas',
+        [SettingsTargetAgendaController::class, 'listJson'])->middleware('dept.can:settings,view')->name('settings_target_agendas.listJson');
 });
