@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Proposal;
+use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
@@ -13,9 +15,9 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
-        $q = $request->input('q');
+        $q       = $request->input('q');
         $college = $request->input('college');
-        $status = $request->input('status');
+        $status  = $request->input('status');
 
         $proposals = Proposal::query()
             ->where('user_id', Auth::id()) // show only current user's data
@@ -43,7 +45,7 @@ class ProjectController extends Controller
     {
         $request->validate([
             'column' => 'required|string',
-            'value' => 'nullable',
+            'value'  => 'nullable',
         ]);
 
         // Ensure user owns the record
@@ -52,10 +54,20 @@ class ProjectController extends Controller
         }
 
         $column = $request->column;
-        $value = $request->value;
+        $value  = $request->value;
+
+        $before = $project->getOriginal($column);
 
         // Update the requested column
         $project->update([$column => $value]);
+
+        // 🔐 log inline update
+        $this->logActivity('Inline Updated Project Proposal', [
+            'proposal_id' => $project->id,
+            'column'      => $column,
+            'old'         => $before,
+            'new'         => $value,
+        ]);
 
         return response()->json(['success' => true]);
     }
@@ -69,67 +81,80 @@ class ProjectController extends Controller
     {
         // Validate (only 'title' is required; the rest are nullable)
         $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'classification' => ['nullable', 'string', 'max:100'],
-            'leader' => ['nullable', 'string', 'max:255'],
-            'team_members' => ['nullable', 'string'], // comma-separated or any text
-            'location' => ['nullable', 'string', 'max:255'],
-            'target_agenda' => ['nullable', 'string', 'max:255'],
+            'title'                 => ['required', 'string', 'max:255'],
+            'classification'        => ['nullable', 'string', 'max:100'],
+            'leader'                => ['nullable', 'string', 'max:255'],
+            'team_members'          => ['nullable', 'string'],
+            'location'              => ['nullable', 'string', 'max:255'],
+            'target_agenda'         => ['nullable', 'string', 'max:255'],
 
-            // Yes/No flags (nullable so missing fields won't fail; cast below)
-            'in_house' => ['nullable', 'in:0,1'],
-            'revised_proposal' => ['nullable', 'in:0,1'],
-            'ntp' => ['nullable', 'in:0,1'],
-            'endorsement' => ['nullable', 'in:0,1'],
+            'in_house'              => ['nullable', 'in:0,1'],
+            'revised_proposal'      => ['nullable', 'in:0,1'],
+            'ntp'                   => ['nullable', 'in:0,1'],
+            'endorsement'           => ['nullable', 'in:0,1'],
             'proposal_presentation' => ['nullable', 'in:0,1'],
-            'proposal_documents' => ['nullable', 'in:0,1'],
-            'program_proposal' => ['nullable', 'in:0,1'],
-            'project_proposal' => ['nullable', 'in:0,1'],
-            'moa_mou' => ['nullable', 'in:0,1'],
-            'activity_design' => ['nullable', 'in:0,1'],
+            'proposal_documents'    => ['nullable', 'in:0,1'],
+            'program_proposal'      => ['nullable', 'in:0,1'],
+            'project_proposal'      => ['nullable', 'in:0,1'],
+            'moa_mou'               => ['nullable', 'in:0,1'],
+            'activity_design'       => ['nullable', 'in:0,1'],
             'certificate_of_appearance' => ['nullable', 'in:0,1'],
-            'attendance_sheet' => ['nullable', 'in:0,1'],
+            'attendance_sheet'      => ['nullable', 'in:0,1'],
 
-            // Money / numbers
-            'approved_budget' => ['nullable', 'numeric', 'min:0'],
-            'expenditure' => ['nullable', 'numeric', 'min:0'],
-            'fund_utilization_rate' => ['nullable', 'string', 'max:50'], // allow "65%" or text
+            'approved_budget'       => ['nullable', 'numeric', 'min:0'],
+            'expenditure'           => ['nullable', 'numeric', 'min:0'],
+            'fund_utilization_rate' => ['nullable', 'string', 'max:50'],
 
-            // Misc
-            'source_of_funds' => ['nullable', 'string', 'max:255'],
-            'partner' => ['nullable', 'string', 'max:255'],
-            'status' => ['nullable', 'string', 'max:50'], // Ongoing|Completed|Cancelled
-            'documentation_report' => ['nullable', 'string'],
-            'code' => ['nullable', 'string', 'max:50'],
-            'remarks' => ['nullable', 'string'],
-            'drive_link' => ['nullable', 'url'], // allow only valid URLs if provided
+            'source_of_funds'       => ['nullable', 'string', 'max:255'],
+            'partner'               => ['nullable', 'string', 'max:255'],
+            'status'                => ['nullable', 'string', 'max:50'],
+            'documentation_report'  => ['nullable', 'string'],
+            'code'                  => ['nullable', 'string', 'max:50'],
+            'remarks'               => ['nullable', 'string'],
+            'drive_link'            => ['nullable', 'url'],
         ]);
 
         // Attach creator
         $validated['user_id'] = auth()->id();
 
-        // Normalize boolean flags (store as ints 0/1 or true/false depending on your casts)
-        $flagFields = ['in_house', 'revised_proposal', 'ntp', 'endorsement', 'proposal_presentation', 'proposal_documents', 'program_proposal', 'project_proposal', 'moa_mou', 'activity_design', 'certificate_of_appearance', 'attendance_sheet'];
+        // Normalize boolean flags
+        $flagFields = [
+            'in_house',
+            'revised_proposal',
+            'ntp',
+            'endorsement',
+            'proposal_presentation',
+            'proposal_documents',
+            'program_proposal',
+            'project_proposal',
+            'moa_mou',
+            'activity_design',
+            'certificate_of_appearance',
+            'attendance_sheet'
+        ];
         foreach ($flagFields as $f) {
-            // If missing, leave null; if present, cast to 0/1
             if ($request->has($f)) {
                 $validated[$f] = $request->boolean($f) ? 1 : 0;
             }
         }
 
-        // Optional: sanitize numeric strings like "1,234.56"
+        // sanitize numeric strings
         foreach (['approved_budget', 'expenditure'] as $money) {
             if (isset($validated[$money])) {
                 $validated[$money] = (float) str_replace([',', ' '], '', (string) $validated[$money]);
             }
         }
 
-        // Default status if omitted
         if (empty($validated['status'])) {
             $validated['status'] = 'Ongoing';
         }
 
-        Proposal::create($validated);
+        $proposal = Proposal::create($validated);
+
+        // 🔐 log create
+        $this->logActivity('Created Project Proposal', [
+            'proposal' => $proposal->toArray(),
+        ]);
 
         return redirect()->route('projects')->with('success', 'Proposal created successfully!');
     }
@@ -156,15 +181,26 @@ class ProjectController extends Controller
         }
 
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'classification' => 'nullable|string|max:100',
-            'location' => 'nullable|string|max:255',
-            'target_agenda' => 'nullable|string|max:255',
+            'title'           => 'required|string|max:255',
+            'classification'  => 'nullable|string|max:100',
+            'location'        => 'nullable|string|max:255',
+            'target_agenda'   => 'nullable|string|max:255',
             'approved_budget' => 'nullable|numeric|min:0',
-            'status' => 'nullable|string|max:50',
+            'status'          => 'nullable|string|max:50',
         ]);
 
+        $before = $project->toArray();
+
         $project->update($validated);
+
+        $after = $project->fresh()->toArray();
+
+        // 🔐 log update
+        $this->logActivity('Updated Project Proposal', [
+            'proposal_id' => $project->id,
+            'before'      => $before,
+            'after'       => $after,
+        ]);
 
         return redirect()->route('projects')->with('success', 'Project updated successfully!');
     }
@@ -178,8 +214,34 @@ class ProjectController extends Controller
             abort(403);
         }
 
+        $dump = $project->toArray();
         $project->delete();
 
+        // 🔐 log delete
+        $this->logActivity('Deleted Project Proposal', [
+            'proposal' => $dump,
+        ]);
+
+        // note: your route name here was 'projects.index' in original
         return redirect()->route('projects.index')->with('success', 'Project deleted successfully.');
+    }
+
+    /**
+     * Local logger (no trait)
+     */
+    protected function logActivity(string $action, array $changes = []): void
+    {
+        ActivityLog::create([
+            'id'          => (string) Str::uuid(),
+            'user_id'     => Auth::id(),
+            'action'      => $action,
+            'model_type'  => Proposal::class,
+            'model_id'    => $changes['proposal']['id']
+                             ?? $changes['proposal_id']
+                             ?? null,
+            'changes'     => $changes,
+            'ip_address'  => request()->ip(),
+            'user_agent'  => request()->userAgent(),
+        ]);
     }
 }

@@ -11,29 +11,60 @@
                         {{-- <li>
                             <a href="#"><i class="fa fa-question-circle"></i></a>
                         </li> --}}
+{{-- 🔔 Notifications --}}
+<li class="nav-item dropdown position-static">
+    <a href="#" class="nav-link" data-bs-toggle="dropdown" data-boundary="viewport">
+        <i class="fa fa-bell-o"></i>
+        <span class="badge">{{ $notificationCount ?? \App\Models\ActivityLog::count() }}</span>
+    </a>
 
-                        {{-- 🔔 Notifications --}}
-                        <li class="nav-item dropdown position-static">
-                            <a href="#" class="nav-link" data-bs-toggle="dropdown" data-boundary="viewport">
-                                <i class="fa fa-bell-o"></i>
-                                <span class="badge">{{ $notificationCount ?? \App\Models\ActivityLog::count() }}</span>
-                            </a>
+    <div id="notification-dropdown"
+         class="dropdown-menu dropdown-menu-end dropdown-menu-start shadow-sm"
+         style="width:350px; max-height:300px; overflow-y:auto; right:0; left:auto;">
+        <span class="dropdown-header small fw-bold px-3">Notifications</span>
 
-                            <div id="notification-dropdown" class="dropdown-menu dropdown-menu-end shadow-sm"
-                                style="width:350px; max-height:300px; overflow-y:auto;">
-                                <span class="dropdown-header">Notifications</span>
+        @forelse ($notifications ?? [] as $note)
+            <a href="#"
+               class="dropdown-item py-2 d-flex justify-content-between align-items-start">
+                <span class="small">
+                    <i class="fa fa-info-circle me-2 text-secondary"></i>
+                    {{ $note->action }}
+                </span>
+                <span class="text-muted text-xs">{{ $note->created_at->diffForHumans() }}</span>
+            </a>
+        @empty
+            <span class="dropdown-item text-muted small">No notifications</span>
+        @endforelse
+    </div>
+</li>
+<style>
+    /* Force dropdown to open toward the left */
+#notification-dropdown {
+    left: auto !important;
+    right: 0 !important;
+    transform: translateX(-60%); /* adjust this if still too far right */
+}
 
-                                @forelse ($notifications ?? [] as $note)
-                                    <a href="#"
-                                        class="dropdown-item d-flex justify-content-between align-items-start">
-                                        <span><i class="fa fa-info-circle me-2"></i> {{ $note->action }}</span>
-                                        <span class="text-muted text-sm">{{ $note->created_at->diffForHumans() }}</span>
-                                    </a>
-                                @empty
-                                    <span class="dropdown-item text-muted">No notifications</span>
-                                @endforelse
-                            </div>
-                        </li>
+/* Smaller font for notification items */
+#notification-dropdown .dropdown-item span {
+    font-size: 0.8rem;
+    line-height: 1.2;
+}
+
+#notification-dropdown .dropdown-header {
+    font-size: 0.85rem;
+    background: #f8f9fa;
+    color: #555;
+}
+
+/* Make badge smaller and better aligned */
+.nav-link .badge {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    vertical-align: top;
+}
+
+</style>
 
                         {{-- ✉️ Messages --}}
                         {{-- <li>

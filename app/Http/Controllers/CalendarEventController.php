@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityLog;
 use App\Models\CalendarEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CalendarEventController extends Controller
 {
@@ -25,7 +27,6 @@ class CalendarEventController extends Controller
             })
             ->get();
 
-        // map to FullCalendar format
         return $events->map(function (CalendarEvent $event) {
             return [
                 'id'    => $event->id,
@@ -75,6 +76,11 @@ class CalendarEventController extends Controller
 
         $event = CalendarEvent::create($validated);
 
+        // 🔐 log here
+        $this->logActivity('Created Calendar Event', [
+            'event' => $event->toArray(),
+        ]);
+
         return response()->json([
             'message' => 'Event created.',
             'event'   => [
@@ -112,9 +118,16 @@ class CalendarEventController extends Controller
             'visibility'  => 'nullable|in:public,private',
         ]);
 
-        $validated['updated_by'] = Auth::id();
+        $old = $event->toArray();
 
+        $validated['updated_by'] = Auth::id();
         $event->update($validated);
+
+        // 🔐 log here
+        $this->logActivity('Updated Calendar Event', [
+            'old' => $old,
+            'new' => $event->fresh()->toArray(),
+        ]);
 
         return response()->json(['message' => 'Event updated.']);
     }
@@ -125,7 +138,14 @@ class CalendarEventController extends Controller
     public function destroy(CalendarEvent $event)
     {
         $this->authorizeOwner($event);
+
+        $eventData = $event->toArray();
         $event->delete();
+
+        // 🔐 log here
+        $this->logActivity('Deleted Calendar Event', [
+            'event' => $eventData,
+        ]);
 
         return response()->json(['message' => 'Event deleted.']);
     }
@@ -138,5 +158,23 @@ class CalendarEventController extends Controller
         if ($event->created_by !== Auth::id()) {
             abort(403, 'You do not own this event.');
         }
+    }
+
+    /**
+     * 🧾 Local logging method (no trait)
+     * Logs only from this controller.
+     */
+    protected function logActivity(string $action, array $changes = []): void
+    {
+        ActivityLog::create([
+            'id'          => Str::uuid(),
+            'user_id'     => Auth::id(),
+            'action'      => $action,
+            'model_type'  => CalendarEvent::class,
+            'model_id'    => $changes['event']['id'] ?? null,
+            'changes'     => $changes,
+            'ip_address'  => request()->ip(),
+            'user_agent'  => request()->userAgent(),
+        ]);
     }
 }

@@ -50,17 +50,25 @@
                         </a>
                     </li>
 
-                    <li class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
-                        <a href="#userSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                            <i class="fa fa-users blue2_color"></i> <span>Users</span>
-                        </a>
-                        <ul class="collapse list-unstyled {{ request()->routeIs('users.*') ? 'show' : '' }}"
-                            id="userSubmenu">
-                            <li><a href="{{ route('users.create') }}"><i class="fa fa-user-plus"></i> Add User</a></li>
-                            <li><a href="{{ route('users.index') }}"><i class="fa fa-list-ul"></i> List of Users</a>
-                            </li>
-                        </ul>
-                    </li>
+                    @php
+                        $userType = auth()->user()->user_type ?? null;
+                    @endphp
+
+                    @if (in_array($userType, ['root', 'admin']))
+                        <li class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
+                            <a href="#userSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                                <i class="fa fa-users blue2_color"></i> <span>Users</span>
+                            </a>
+                            <ul class="collapse list-unstyled {{ request()->routeIs('users.*') ? 'show' : '' }}"
+                                id="userSubmenu">
+                                <li><a href="{{ route('users.create') }}"><i class="fa fa-user-plus"></i> Add User</a>
+                                </li>
+                                <li><a href="{{ route('users.index') }}"><i class="fa fa-list-ul"></i> List of
+                                        Users</a></li>
+                            </ul>
+                        </li>
+                    @endif
+
 
                     <li class="{{ request()->routeIs('calendar') ? 'active' : '' }}">
                         <a href="{{ route('calendar') }}">

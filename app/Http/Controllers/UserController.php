@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $q = trim($request->get('q', ''));
+        $q    = trim($request->get('q', ''));
         $role = $request->get('role', '');
 
         $users = User::query()
@@ -31,11 +34,11 @@ class UserController extends Controller
             ->withQueryString();
 
         $roles = [
-            'all' => 'All Roles',
-            'admin' => 'Admin',
-            'user' => 'User',
-            'coordinator' => 'Coordinator',
-            'manager' => 'Project Manager',
+            'all'        => 'All Roles',
+            'admin'      => 'Admin',
+            'user'       => 'User',
+            'coordinator'=> 'Coordinator',
+            'manager'    => 'Project Manager',
         ];
 
         return view('users.index', compact('users', 'q', 'role', 'roles'));
@@ -49,29 +52,38 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        // Validate with split names
         $validated = $request->validate([
-            'user_type' => ['required', Rule::in(['admin', 'user', 'coordinator', 'manager'])],
+            'user_type'  => ['required', Rule::in(['admin', 'user', 'coordinator', 'manager'])],
             'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email:rfc,dns', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'about' => ['nullable', 'string'],
-            'avatar' => ['nullable', 'image'],
+            'last_name'  => ['required', 'string', 'max:255'],
+            'email'      => ['required', 'email:rfc,dns', 'unique:users,email'],
+            'password'   => ['required', 'string', 'min:8', 'confirmed'],
+            'phone'      => ['nullable', 'string', 'max:30'],
+            'about'      => ['nullable', 'string'],
+            'avatar'     => ['nullable', 'image'],
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
 
         // Save avatar directly to /public/avatars
         if ($request->hasFile('avatar')) {
-            $file = $request->file('avatar');
+            $file     = $request->file('avatar');
             $filename = uniqid('avatar_') . '.' . $file->getClientOriginalExtension();
+
+            if (!is_dir(public_path('avatars'))) {
+                mkdir(public_path('avatars'), 0755, true);
+            }
+
             $file->move(public_path('avatars'), $filename);
             $validated['avatar_path'] = 'avatars/' . $filename;
         }
 
-        User::create($validated);
+        $user = User::create($validated);
+
+        // 🔐 log create
+        $this->logActivity('Created User', [
+            'target_user' => $user->toArray(),
+        ]);
 
         return redirect()->route('users.index')->with('success', 'User created.');
     }
@@ -90,16 +102,15 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        // we validate department_id instead of user_type
         $validated = $request->validate([
-            'first_name' => ['required', 'string', 'max:255'],
-            'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email:rfc,dns', Rule::unique('users', 'email')->ignore($user->id)],
-            'phone' => ['nullable', 'string', 'max:30'],
-            'about' => ['nullable', 'string'],
-            'department_id' => ['required', 'integer', Rule::in([2, 3, 4])], // only these 3
-            'password' => ['nullable', 'confirmed', 'min:8'],
-            'avatar' => ['nullable', 'image'],
+            'first_name'    => ['required', 'string', 'max:255'],
+            'last_name'     => ['required', 'string', 'max:255'],
+            'email'         => ['required', 'email:rfc,dns', Rule::unique('users', 'email')->ignore($user->id)],
+            'phone'         => ['nullable', 'string', 'max:30'],
+            'about'         => ['nullable', 'string'],
+            'department_id' => ['required', 'integer', Rule::in([2, 3, 4])],
+            'password'      => ['nullable', 'confirmed', 'min:8'],
+            'avatar'        => ['nullable', 'image'],
         ]);
 
         // map dept -> user_type (keep DB consistent)
@@ -109,6 +120,9 @@ class UserController extends Controller
             4 => 'User',
         ];
         $validated['user_type'] = $deptToType[$validated['department_id']] ?? 'User';
+
+        // keep snapshot before
+        $before = $user->toArray();
 
         // handle password (optional)
         if (!empty($validated['password'])) {
@@ -122,10 +136,10 @@ class UserController extends Controller
             if ($user->avatar_path && file_exists(public_path($user->avatar_path))) {
                 @unlink(public_path($user->avatar_path));
             }
-            $file = $request->file('avatar');
+
+            $file     = $request->file('avatar');
             $filename = uniqid('avatar_') . '.' . $file->getClientOriginalExtension();
 
-            // make sure folder exists
             if (!is_dir(public_path('avatars'))) {
                 mkdir(public_path('avatars'), 0755, true);
             }
@@ -136,15 +150,53 @@ class UserController extends Controller
 
         $user->update($validated);
 
+        // snapshot after
+        $after = $user->fresh()->toArray();
+
+        // 🔐 log update
+        $this->logActivity('Updated User', [
+            'target_user_id' => $user->id,
+            'before'         => $before,
+            'after'          => $after,
+        ]);
+
         return redirect()->route('users.index')->with('success', 'User updated.');
     }
+
     public function destroy(User $user)
     {
+        $dump = $user->toArray();
+
         if ($user->avatar_path && file_exists(public_path($user->avatar_path))) {
             @unlink(public_path($user->avatar_path));
         }
+
         $user->delete();
 
+        // 🔐 log delete
+        $this->logActivity('Deleted User', [
+            'target_user' => $dump,
+        ]);
+
         return redirect()->route('users.index')->with('success', 'User deleted.');
+    }
+
+    /**
+     * Local activity logger (no trait)
+     */
+    protected function logActivity(string $action, array $changes = []): void
+    {
+        ActivityLog::create([
+            'id'          => (string) Str::uuid(),
+            'user_id'     => Auth::id(),         // who did the action
+            'action'      => $action,
+            'model_type'  => User::class,        // what model type
+            'model_id'    => $changes['target_user']['id']
+                             ?? $changes['target_user_id']
+                             ?? null,           // which user was affected
+            'changes'     => $changes,
+            'ip_address'  => request()->ip(),
+            'user_agent'  => request()->userAgent(),
+        ]);
     }
 }

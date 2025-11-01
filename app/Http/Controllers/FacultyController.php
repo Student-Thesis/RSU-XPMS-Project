@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Faculty;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class FacultyController extends Controller
 {
@@ -28,8 +31,8 @@ class FacultyController extends Controller
         $rows = $query->orderBy('campus_college')->paginate(20)->withQueryString();
 
         return view('faculties.index', [
-            'rows' => $rows,
-            'q' => $q,
+            'rows'    => $rows,
+            'q'       => $q,
             'college' => $college,
         ]);
     }
@@ -42,7 +45,13 @@ class FacultyController extends Controller
     public function store(Request $request)
     {
         $data = $this->validated($request);
-        Faculty::create($data);
+
+        $faculty = Faculty::create($data);
+
+        // 🔐 log create
+        $this->logActivity('Created Faculty Record', [
+            'faculty' => $faculty->toArray(),
+        ]);
 
         return redirect()->route('faculties.index')->with('success', 'Record created.');
     }
@@ -55,14 +64,31 @@ class FacultyController extends Controller
     public function update(Request $request, Faculty $faculty)
     {
         $data = $this->validated($request);
+
+        $before = $faculty->toArray();
         $faculty->update($data);
+        $after = $faculty->fresh()->toArray();
+
+        // 🔐 log update
+        $this->logActivity('Updated Faculty Record', [
+            'faculty_id' => $faculty->id,
+            'before'     => $before,
+            'after'      => $after,
+        ]);
 
         return redirect()->route('faculties.index')->with('success', 'Record updated.');
     }
 
     public function destroy(Faculty $faculty)
     {
+        $dump = $faculty->toArray();
         $faculty->delete();
+
+        // 🔐 log delete
+        $this->logActivity('Deleted Faculty Record', [
+            'faculty' => $dump,
+        ]);
+
         return redirect()->route('faculties.index')->with('success', 'Record deleted.');
     }
 
@@ -133,6 +159,25 @@ class FacultyController extends Controller
             'moa_mou_q2'    => $int,
             'moa_mou_q3'    => $int,
             'moa_mou_q4'    => $int,
+        ]);
+    }
+
+    /**
+     * Local activity logger — no trait needed
+     */
+    protected function logActivity(string $action, array $changes = []): void
+    {
+        ActivityLog::create([
+            'id'          => Str::uuid(),
+            'user_id'     => Auth::id(),
+            'action'      => $action,
+            'model_type'  => Faculty::class,
+            'model_id'    => $changes['faculty']['id'] 
+                             ?? $changes['faculty_id'] 
+                             ?? null,
+            'changes'     => $changes,
+            'ip_address'  => request()->ip(),
+            'user_agent'  => request()->userAgent(),
         ]);
     }
 }
