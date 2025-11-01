@@ -26,14 +26,14 @@
                     <div class="card setting-card h-100">
                         <div class="card-body text-center">
                             <div class="icon-wrapper mb-3">
-                                <i class="fa fa-users-cog fa-3x text-primary"></i>
+                                <i class="fa fa-users fa-3x text-primary"></i>
                             </div>
                             <h5 class="card-title mb-2">Department Permissions</h5>
                             <p class="card-text text-muted small">
                                 Control access and permission levels for each department.
                             </p>
                             <a href="{{ route('departments.permissions.index') }}" class="btn btn-primary btn-sm">
-                                <i class="fa fa-shield-alt"></i> Manage Permissions
+                                <i class="fa fa-shield"></i> Manage Permissions
                             </a>
                         </div>
                     </div>
@@ -41,21 +41,22 @@
 
                 <!-- Classifications -->
                 <div class="col-md-4">
-                    <div class="card setting-card h-100">
-                        <div class="card-body text-center">
-                            <div class="icon-wrapper mb-3">
-                                <i class="fa fa-layer-group fa-3x text-success"></i>
-                            </div>
-                            <h5 class="card-title mb-2">Classifications Settings</h5>
-                            <p class="card-text text-muted small">
-                                Define and manage project or program classifications.
-                            </p>
-                            <a href="{{ route('settings_classifications.index') }}" class="btn btn-success btn-sm">
-                                <i class="fa fa-cog"></i> Configure
-                            </a>
-                        </div>
-                    </div>
-                </div>
+    <div class="card setting-card h-100">
+        <div class="card-body text-center">
+            <div class="icon-wrapper mb-3">
+                <i class="fa fa-tasks fa-3x text-success"></i>
+            </div>
+            <h5 class="card-title mb-2">Classifications Settings</h5>
+            <p class="card-text text-muted small">
+                Define and manage project or program classifications.
+            </p>
+            <a href="{{ route('settings_classifications.index') }}" class="btn btn-success btn-sm">
+                <i class="fa fa-cog"></i> Configure
+            </a>
+        </div>
+    </div>
+</div>
+
 
                 <!-- Target Agendas -->
                 <div class="col-md-4">
@@ -81,7 +82,7 @@
     <!-- Custom Styles -->
     <style>
         .setting-card {
-            border: 2px solid #dee2e6; /* Stronger border */
+            border: 2px solid #dee2e6;
             border-radius: 0.75rem;
             transition: all 0.3s ease-in-out;
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);

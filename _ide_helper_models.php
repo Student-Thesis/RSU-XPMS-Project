@@ -69,6 +69,43 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $title
+ * @property string|null $description
+ * @property \Illuminate\Support\Carbon $start_date
+ * @property \Illuminate\Support\Carbon|null $end_date
+ * @property string|null $type
+ * @property string $priority
+ * @property string $visibility
+ * @property string|null $color
+ * @property int $created_by
+ * @property int|null $updated_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $creator
+ * @property-read \App\Models\User|null $updater
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereColor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereEndDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent wherePriority($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereStartDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereUpdatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereVisibility($value)
+ */
+	class CalendarEvent extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at

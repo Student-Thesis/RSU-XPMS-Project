@@ -9,7 +9,7 @@
             <div class="row column_title">
                 <div class="col-md-12">
                     <div class="page_title d-flex align-items-center justify-content-between gap-2 flex-wrap">
-                        <h3 class="m-0">2025 Extension Project Proposals</h3>
+                        <h3 class="m-0">Project Proposals</h3>
 
                         <button type="button"
                                 class="btn btn-success btn-sm"
@@ -185,7 +185,7 @@ document.addEventListener('click',async e=>{
 
 <!-- Add Proposal Modal -->
 <div class="modal fade" id="addProposalModal" tabindex="-1" aria-labelledby="addProposalModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+  <div class="modal-dialog modal-xxl modal-dialog-scrollable custom-modal-90">
     <div class="modal-content">
       <div class="modal-header py-2">
         <h5 class="modal-title"><i class="fa fa-plus-circle me-1"></i> Add New Proposal</h5>

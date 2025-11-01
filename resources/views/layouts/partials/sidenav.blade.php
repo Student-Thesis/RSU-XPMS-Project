@@ -14,7 +14,7 @@
                     <div class="icon_setting"></div>
                     <div class="user_profle_side">
                         <div class="user_img"><img class="img-responsive"
-                                src="{{ asset($basePath . '/images/logo/logo.jpg') }}" alt="Logo" /> 
+                                src="{{ asset($basePath . '/images/logo/logo.jpg') }}" alt="Logo" />
 
                         </div>
                         <div class="user_info">
@@ -28,37 +28,37 @@
                 <ul class="list-unstyled components">
                     <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
                         <a href="{{ route('dashboard') }}">
-                            <i class="fa fa-dashboard yellow_color"></i> <span>Dashboard</span>
+                            <i class="fa fa-dashboard  yellow_color"></i> <span>Dashboard</span>
                         </a>
                     </li>
 
                     <li class="{{ request()->routeIs('projects*') ? 'active' : '' }}">
                         <a href="{{ route('projects') }}">
-                            <i class="fa fa-table green_color"></i> <span>Projects</span>
+                            <i class="fa fa-folder-open green_color"></i> <span>Projects</span>
                         </a>
                     </li>
 
                     <li class="{{ request()->routeIs('forms.*') ? 'active' : '' }}">
                         <a href="{{ route('forms.index') }}">
-                            <i class="fa fa-edit orange_color"></i> <span>Forms</span>
+                            <i class="fa fa-file orange_color"></i> <span>Forms</span>
                         </a>
                     </li>
 
                     <li class="{{ request()->routeIs('faculties') ? 'active' : '' }}">
                         <a href="{{ route('faculties.index') }}">
-                            <i class="fa fa-edit yellow_color"></i> <span>Faculty</span>
+                            <i class="fa fa-graduation-cap yellow_color"></i><span>Faculty</span>
                         </a>
                     </li>
 
                     <li class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
                         <a href="#userSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                            <i class="fa fa-user blue2_color"></i> <span>Users</span>
+                            <i class="fa fa-users blue2_color"></i> <span>Users</span>
                         </a>
                         <ul class="collapse list-unstyled {{ request()->routeIs('users.*') ? 'show' : '' }}"
                             id="userSubmenu">
-                            <li><a href="{{ route('users.create') }}"><i class="fa fa-plus-circle"></i> Add User</a>
+                            <li><a href="{{ route('users.create') }}"><i class="fa fa-user-plus"></i> Add User</a></li>
+                            <li><a href="{{ route('users.index') }}"><i class="fa fa-list-ul"></i> List of Users</a>
                             </li>
-                            <li><a href="{{ route('users.index') }}"><i class="fa fa-list"></i> List of Users</a></li>
                         </ul>
                     </li>
 
@@ -67,31 +67,8 @@
                             <i class="fa fa-calendar red_color"></i> <span>Calendar</span>
                         </a>
                     </li>
-
                 </ul>
+
             </div>
         </nav>
         <!-- end sidebar -->
-
-
-        <style>
-            /* Sidebar link hover */
-            #sidebar ul.components li a {
-                transition: all 0.2s ease-in-out;
-            }
-
-            #sidebar ul.components li a:hover {
-                background-color: rgba(255, 255, 255, 0.15);
-                /* light transparent white */
-                color: #fff !important;
-                padding-left: 25px;
-                /* small visual shift */
-            }
-
-            /* Active link style */
-            #sidebar ul.components li.active>a {
-                background-color: rgba(255, 255, 255, 0.25);
-                color: #fff !important;
-                font-weight: 600;
-            }
-        </style>

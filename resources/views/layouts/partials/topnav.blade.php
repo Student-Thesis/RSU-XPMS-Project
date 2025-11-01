@@ -13,31 +13,27 @@
                         </li> --}}
 
                         {{-- 🔔 Notifications --}}
-                        <li class="nav-item dropdown">
-                            <a data-toggle="dropdown" href="#" data-boundary="viewport">
-                                <i class="fa fa-bell-o"></i>
-                                <span class="badge">{{ $notificationCount ?? \App\Models\ActivityLog::count() }}</span>
-                            </a>
+                       <li class="nav-item dropdown position-static">
+    <a href="#" class="nav-link" data-bs-toggle="dropdown" data-boundary="viewport">
+        <i class="fa fa-bell-o"></i>
+        <span class="badge">{{ $notificationCount ?? \App\Models\ActivityLog::count() }}</span>
+    </a>
 
-                            {{-- Right-align to toggle so the menu opens leftward and stays on-screen --}}
-                            <div id="notification-dropdown" class="dropdown-menu dropdown-menu-lg dropdown-menu-right"
-                                style="width:350px">
-                                <span class="dropdown-header">Notifications</span>
-                                <div id="notification-list" style="max-height:300px; overflow-y:auto;">
-                                    @forelse ($notifications ?? [] as $note)
-                                        <a href="#" class="dropdown-item">
-                                            <i class="fa fa-info-circle mr-2"></i>
-                                            {{ $note->action }}
-                                            <span
-                                                class="float-right text-muted text-sm">{{ $note->created_at->diffForHumans() }}</span>
-                                        </a>
-                                    @empty
-                                        <span class="dropdown-item text-muted">No notifications</span>
-                                    @endforelse
-                                </div>
-                            </div>
-                        </li>
+    <div id="notification-dropdown"
+         class="dropdown-menu dropdown-menu-end shadow-sm"
+         style="width:350px; max-height:300px; overflow-y:auto;">
+        <span class="dropdown-header">Notifications</span>
 
+        @forelse ($notifications ?? [] as $note)
+            <a href="#" class="dropdown-item d-flex justify-content-between align-items-start">
+                <span><i class="fa fa-info-circle me-2"></i> {{ $note->action }}</span>
+                <span class="text-muted text-sm">{{ $note->created_at->diffForHumans() }}</span>
+            </a>
+        @empty
+            <span class="dropdown-item text-muted">No notifications</span>
+        @endforelse
+    </div>
+</li>
 
                         {{-- ✉️ Messages --}}
                         {{-- <li>
@@ -49,7 +45,7 @@
                     </ul>
 
                     {{-- 👤 User Profile --}}
-                    <ul class="user_profile_dd">
+                    <ul class="user_profile_dd" style="z-index: 999999999999999999999999">
                         <li class="dropdown">
                             @php
                                 $u = auth()->user();
@@ -88,41 +84,35 @@
 
 {{-- CSS Fix --}}
 <style>
-    /* Make sure the dropdown can overflow the header wrappers */
+    /* allow overflow like you already did */
     .topbar .right_topbar,
     .topbar .icon_info,
-    .topbar .icon_info>ul {
+    .topbar .icon_info > ul {
         overflow: visible !important;
     }
 
-    /* Ensure the menu stacks over the header */
+    /* make ONLY the notifications dropdown layouted */
     #notification-dropdown {
-        z-index: 1055;
-        /* above navbar content */
+        position: static !important;     /* <— this is the main fix */
+        inset: auto !important;          /* remove top/right auto-pos from BS */
+        z-index: 9999999999999999999999999999999;
+        background: #fff;
     }
 
-    /* If your theme forces left/right, lock it for safety */
-    #notification-dropdown.dropdown-menu-right {
-        left: auto !important;
-        right: 0 !important;
+    /* keep right alignment look even if static */
+    .nav-item.dropdown.position-static {
+        position: static !important;
+    }
+    .nav-item.dropdown.position-static > .dropdown-menu {
+        margin-left: auto;               /* push to the right */
     }
 
     #notification-dropdown .dropdown-item {
         color: #212529 !important;
-        /* Bootstrap default dark text */
         background-color: #fff !important;
-        /* keep background white */
     }
-
     #notification-dropdown .dropdown-item:hover {
         background-color: #f8f9fa !important;
-        /* light gray on hover */
         color: #000 !important;
-        /* make sure it stays black on hover */
-    }
-
-    #notification-dropdown .dropdown-header {
-        color: #6c757d !important;
-        /* muted gray for header */
     }
 </style>

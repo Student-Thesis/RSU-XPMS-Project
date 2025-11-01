@@ -84,7 +84,7 @@
                     <button class="btn btn-sm btn-primary" type="submit">
                         <i class="fa fa-save"></i> Save Changes
                     </button>
-                    <a href="{{ route('departments.permissions.index') }}" class="btn btn-sm btn-warning">
+                    <a href="{{ route('departments.permissions.index') }}" class="btn btn-sm btn-warning ml-2">
                         <i class="fa fa-arrow-left"></i> Back to List
                     </a>
                 </div>

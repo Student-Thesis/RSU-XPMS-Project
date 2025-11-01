@@ -115,13 +115,11 @@
 
                        {{-- Department (static options, excludes Admin) --}}
                         <div class="mb-3">
-                            <label for="department_id" class="form-label fw-semibold">Department</label>
                             <select name="department_id" id="department_id"
                                     class="form-select @error('department_id') is-invalid @enderror" required>
-                                <option value="" disabled {{ old('department_id') ? '' : 'selected' }}>Select Department</option>
+                                <option value="" disabled {{ old('department_id') ? '' : 'selected' }}>Select Roles</option>
                                 <option value="2" {{ old('department_id') == 2 ? 'selected' : '' }}>Manager</option>
                                 <option value="3" {{ old('department_id') == 3 ? 'selected' : '' }}>Coordinator</option>
-                                <option value="4" {{ old('department_id') == 4 ? 'selected' : '' }}>User</option>
                             </select>
                             @error('department_id')
                                 <div class="invalid-feedback">{{ $message }}</div>

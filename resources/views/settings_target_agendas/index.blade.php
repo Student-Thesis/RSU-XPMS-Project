@@ -12,12 +12,11 @@
                             <small class="text-muted">Manage the selectable list used in forms (e.g., “Environmental
                                 Awareness”).</small>
                         </div>
-                        <a href="{{ route('settings_target_agendas.create') }}" class="btn btn-primary">
-                            <i class="bi bi-plus-lg"></i> New Agenda
+                        <a href="{{ route('settings_target_agendas.create') }}" class="btn btn-primary mb-2" style="margin:0; padding:5px;">
+                            <i class="fa fa-plus"></i> New Agenda
                         </a>
                     </div>
                 </div>
-
 
                 @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
@@ -42,25 +41,24 @@
                                         <td>{{ $item->name }}</td>
                                         <td class="text-muted">{{ $item->slug }}</td>
                                         <td>
-                                            <span class="badge bg-{{ $item->is_active ? 'success' : 'secondary' }}">
                                                 {{ $item->is_active ? 'Yes' : 'No' }}
-                                            </span>
+                                          
                                         </td>
                                         <td class="text-end">
-                                            <a href="{{ route('settings_target_agendas.edit', $item) }}"
-                                                class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-pencil-square"></i> Edit
-                                            </a>
+    <a href="{{ route('settings_target_agendas.edit', $item) }}" 
+       class="btn btn-sm btn-primary" style="margin:0; padding:5px;">
+        <i class="fa fa-pencil"></i> Edit
+    </a>
+    <form action="{{ route('settings_target_agendas.destroy', $item) }}" 
+          method="POST" class="d-inline"
+          onsubmit="return confirm('Delete this target agenda?')">
+        @csrf @method('DELETE')
+        <button type="submit" class="btn btn-sm btn-danger" style="margin:0; padding:5px;">
+            <i class="fa fa-trash"></i> Delete
+        </button>
+    </form>
+</td>
 
-                                            <form action="{{ route('settings_target_agendas.destroy', $item) }}"
-                                                method="POST" class="d-inline"
-                                                onsubmit="return confirm('Delete this target agenda?')">
-                                                @csrf @method('DELETE')
-                                                <button class="btn btn-sm btn-outline-danger">
-                                                    <i class="bi bi-trash"></i> Delete
-                                                </button>
-                                            </form>
-                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
