@@ -131,6 +131,7 @@
 
 {{-- CSS Fix --}}
 <style>
+    
     /* allow overflow like you already did */
     .topbar .right_topbar,
     .topbar .icon_info,

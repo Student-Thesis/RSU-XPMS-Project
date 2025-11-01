@@ -1,75 +1,78 @@
 @extends('layouts.app')
 
 @section('content')
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet" />
+    {{-- FullCalendar CSS (page-only) --}}
 
-    <div id="content">
+    {{-- wrap whole page with a CLASS, not a 2nd id --}}
+    <div id="content" class="calendar-page">
         @include('layouts.partials.topnav')
 
         <div class="midde_cont">
             <div class="container-fluid">
+                {{-- title --}}
                 <div class="row column_title">
                     <div class="col-md-12">
-                        <div class="page_title">
-                            <h2>Project Events Calendar</h2>
+                        <div class="page_title d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <h2 class="m-0">Project Events Calendar</h2>
+
+                            {{-- optional top button (same style as faculties) --}}
+                            <button type="button"
+                                    class="btn btn-primary btn-xs"
+                                    onclick="openAddEventModal()">
+                                <i class="fa fa-plus"></i> Add Event
+                            </button>
                         </div>
                     </div>
                 </div>
 
-              <div class="white_shd full margin_bottom_30">
-    <div class="full">
-        <div class="full graph_head">
-            <div class="heading1 margin_0 d-flex align-items-center justify-content-between">
-               
-                <div class="ms-auto">
-                    <button type="button"
-                            class="btn btn-primary btn-sm"
-                            onclick="openAddEventModal()"
-                            style="padding:5px 10px;margin:0;">
-                        <i class="fa fa-plus"></i> Add Event
-                    </button>
+                {{-- calendar card --}}
+                <div class="white_shd full margin_bottom_30 mt-3">
+                    <div class="full">
+                        <div class="full graph_head">
+                            <div class="heading1 margin_0 d-flex align-items-center justify-content-between">
+                                <h4 class="m-0">Calendar</h4>
+                                
+                            </div>
+                        </div>
+                        <div class="full padding_infor_info">
+                            <div id="calendar"></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="full padding_infor_info">
-            <div id="calendar"></div>
-        </div>
-    </div>
-</div>
 
             </div>
         </div>
     </div>
 
-    <!-- Add / Edit Event Modal -->
-    <div id="addEventModal" class="modal-overlay">
-        <div class="modal-container">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="addEventModalTitle">Add New Project Event</h3>
-                    <button class="close-btn" onclick="closeAddEventModal()">&times;</button>
+    {{-- Add / Edit Event Modal --}}
+    <div id="addEventModal" class="calendar-modal-overlay">
+        <div class="calendar-modal-container">
+            <div class="calendar-modal-content">
+                <div class="calendar-modal-header">
+                    <h3 class="calendar-modal-title" id="addEventModalTitle">Add New Project Event</h3>
+                    <button class="calendar-close-btn" onclick="closeAddEventModal()">&times;</button>
                 </div>
                 <form id="eventForm">
                     @csrf
-                    <div class="form-group">
-                        <label class="form-label">Project Title *</label>
-                        <input type="text" id="eventTitle" class="form-input" placeholder="Enter project title..." required>
+                    <div class="calendar-form-group">
+                        <label class="calendar-form-label">Project Title *</label>
+                        <input type="text" id="eventTitle" class="calendar-form-input" required placeholder="Enter project title...">
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Description</label>
-                        <textarea id="eventDescription" class="form-input form-textarea" placeholder="Enter project description..."></textarea>
+                    <div class="calendar-form-group">
+                        <label class="calendar-form-label">Description</label>
+                        <textarea id="eventDescription" class="calendar-form-input calendar-form-textarea" placeholder="Enter project description..."></textarea>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Date *</label>
-                        <input type="date" id="eventDate" class="form-input" required>
+                    <div class="calendar-form-group">
+                        <label class="calendar-form-label">Date *</label>
+                        <input type="date" id="eventDate" class="calendar-form-input" required>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">End Date (Optional)</label>
-                        <input type="date" id="eventEndDate" class="form-input">
+                    <div class="calendar-form-group">
+                        <label class="calendar-form-label">End Date (Optional)</label>
+                        <input type="date" id="eventEndDate" class="calendar-form-input">
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Project Type</label>
-                        <select id="eventType" class="form-input">
+                    <div class="calendar-form-group">
+                        <label class="calendar-form-label">Project Type</label>
+                        <select id="eventType" class="calendar-form-input">
                             <option value="">Select project type...</option>
                             <option value="Development">Development</option>
                             <option value="Testing">Testing</option>
@@ -80,17 +83,17 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Visibility</label>
-                        <select id="eventVisibility" class="form-input">
+                    <div class="calendar-form-group">
+                        <label class="calendar-form-label">Visibility</label>
+                        <select id="eventVisibility" class="calendar-form-input">
                             <option value="public" selected>Public</option>
                             <option value="private">Private</option>
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Priority</label>
-                        <select id="eventPriority" class="form-input">
+                    <div class="calendar-form-group">
+                        <label class="calendar-form-label">Priority</label>
+                        <select id="eventPriority" class="calendar-form-input">
                             <option value="Low">Low</option>
                             <option value="Medium" selected>Medium</option>
                             <option value="High">High</option>
@@ -98,20 +101,21 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Color</label>
-                        <div class="color-picker-container">
-                            <div class="color-option selected" style="background-color: #007bff;" data-color="#007bff"></div>
-                            <div class="color-option" style="background-color: #28a745;" data-color="#28a745"></div>
-                            <div class="color-option" style="background-color: #dc3545;" data-color="#dc3545"></div>
-                            <div class="color-option" style="background-color: #ffc107;" data-color="#ffc107"></div>
-                            <div class="color-option" style="background-color: #6f42c1;" data-color="#6f42c1"></div>
-                            <div class="color-option" style="background-color: #fd7e14;" data-color="#fd7e14"></div>
-                            <div class="color-option" style="background-color: #20c997;" data-color="#20c997"></div>
-                            <div class="color-option" style="background-color: #6c757d;" data-color="#6c757d"></div>
+                    <div class="calendar-form-group">
+                        <label class="calendar-form-label">Color</label>
+                        <div class="calendar-color-picker-container">
+                            <div class="calendar-color-option selected" style="background-color: #007bff;" data-color="#007bff"></div>
+                            <div class="calendar-color-option" style="background-color: #28a745;" data-color="#28a745"></div>
+                            <div class="calendar-color-option" style="background-color: #dc3545;" data-color="#dc3545"></div>
+                            <div class="calendar-color-option" style="background-color: #ffc107;" data-color="#ffc107"></div>
+                            <div class="calendar-color-option" style="background-color: #6f42c1;" data-color="#6f42c1"></div>
+                            <div class="calendar-color-option" style="background-color: #fd7e14;" data-color="#fd7e14"></div>
+                            <div class="calendar-color-option" style="background-color: #20c997;" data-color="#20c997"></div>
+                            <div class="calendar-color-option" style="background-color: #6c757d;" data-color="#6c757d"></div>
                         </div>
                     </div>
-                    <div class="btn-group mt-3">
+
+                    <div class="calendar-btn-row mt-3">
                         <button type="button" class="btn btn-secondary" onclick="closeAddEventModal()">Cancel</button>
                         <button type="submit" class="btn btn-primary" id="eventSubmitBtn">Add Event</button>
                     </div>
@@ -120,16 +124,16 @@
         </div>
     </div>
 
-    <!-- View Event Modal -->
-    <div id="viewEventModal" class="modal-overlay">
-        <div class="modal-container">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">Project Event Details</h3>
-                    <button class="close-btn" onclick="closeViewEventModal()">&times;</button>
+    {{-- View Event Modal --}}
+    <div id="viewEventModal" class="calendar-modal-overlay">
+        <div class="calendar-modal-container">
+            <div class="calendar-modal-content">
+                <div class="calendar-modal-header">
+                    <h3 class="calendar-modal-title">Project Event Details</h3>
+                    <button class="calendar-close-btn" onclick="closeViewEventModal()">&times;</button>
                 </div>
                 <div id="eventDetails"></div>
-                <div class="btn-group mt-3">
+                <div class="calendar-btn-row mt-3">
                     <button type="button" class="btn btn-danger" onclick="deleteEvent()">Delete Event</button>
                     <button type="button" class="btn btn-secondary" onclick="closeViewEventModal()">Close</button>
                 </div>
@@ -137,14 +141,16 @@
         </div>
     </div>
 
+    {{-- FullCalendar JS --}}
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+
     <script>
         let currentCalendar;
         let currentSelectedEvent = null;
         let selectedColor = '#007bff';
         let editingEventId = null;
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const calendarEl = document.getElementById('calendar');
 
             if (calendarEl) {
@@ -159,14 +165,14 @@
                     },
                     height: 'auto',
                     events: '{{ route('calendar.events.index') }}',
-                    dateClick: function(info) {
+                    dateClick: function (info) {
                         openAddEventModal(info.dateStr);
                     },
-                    eventClick: function(info) {
+                    eventClick: function (info) {
                         currentSelectedEvent = info.event;
                         showEventDetails(info.event);
                     },
-                    eventDidMount: function(info) {
+                    eventDidMount: function (info) {
                         if (info.event.extendedProps.description) {
                             info.el.setAttribute('title', info.event.title + '\n' + info.event.extendedProps.description);
                         }
@@ -181,9 +187,9 @@
         });
 
         function setupColorPicker() {
-            const colorOptions = document.querySelectorAll('.color-option');
+            const colorOptions = document.querySelectorAll('.calendar-color-option');
             colorOptions.forEach(option => {
-                option.addEventListener('click', function() {
+                option.addEventListener('click', function () {
                     colorOptions.forEach(opt => opt.classList.remove('selected'));
                     this.classList.add('selected');
                     selectedColor = this.dataset.color;
@@ -199,8 +205,9 @@
             document.getElementById('eventDate').value = dateStr;
             document.getElementById('eventVisibility').value = 'public';
 
-            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
-            document.querySelector('.color-option[data-color="#007bff"]').classList.add('selected');
+            // reset color
+            document.querySelectorAll('.calendar-color-option').forEach(opt => opt.classList.remove('selected'));
+            document.querySelector('.calendar-color-option[data-color="#007bff"]').classList.add('selected');
             selectedColor = '#007bff';
 
             document.getElementById('addEventModal').classList.add('show');
@@ -220,41 +227,41 @@
             const visibility = event.extendedProps.visibility || 'public';
 
             detailsContainer.innerHTML = `
-                <div class="event-detail">
-                    <div class="event-detail-label">Project Title:</div>
-                    <div class="event-detail-value">
-                        <span class="event-color-indicator" style="background-color: ${event.color || '#007bff'}"></span>
+                <div class="calendar-event-detail">
+                    <div class="calendar-event-detail-label">Project Title:</div>
+                    <div class="calendar-event-detail-value">
+                        <span class="calendar-event-color-indicator" style="background-color: ${event.color || '#007bff'}"></span>
                         ${event.title}
                     </div>
                 </div>
-                <div class="event-detail">
-                    <div class="event-detail-label">Description:</div>
-                    <div class="event-detail-value">${event.extendedProps.description || 'No description provided'}</div>
+                <div class="calendar-event-detail">
+                    <div class="calendar-event-detail-label">Description:</div>
+                    <div class="calendar-event-detail-value">${event.extendedProps.description || 'No description provided'}</div>
                 </div>
-                <div class="event-detail">
-                    <div class="event-detail-label">Start Date:</div>
-                    <div class="event-detail-value">${startDate.toLocaleDateString()}</div>
+                <div class="calendar-event-detail">
+                    <div class="calendar-event-detail-label">Start Date:</div>
+                    <div class="calendar-event-detail-value">${startDate.toLocaleDateString()}</div>
                 </div>
                 ${endDate ? `
-                <div class="event-detail">
-                    <div class="event-detail-label">End Date:</div>
-                    <div class="event-detail-value">${endDate.toLocaleDateString()}</div>
+                <div class="calendar-event-detail">
+                    <div class="calendar-event-detail-label">End Date:</div>
+                    <div class="calendar-event-detail-value">${endDate.toLocaleDateString()}</div>
                 </div>` : ''}
-                <div class="event-detail">
-                    <div class="event-detail-label">Project Type:</div>
-                    <div class="event-detail-value">${event.extendedProps.type || 'Not specified'}</div>
+                <div class="calendar-event-detail">
+                    <div class="calendar-event-detail-label">Project Type:</div>
+                    <div class="calendar-event-detail-value">${event.extendedProps.type || 'Not specified'}</div>
                 </div>
-                <div class="event-detail">
-                    <div class="event-detail-label">Priority:</div>
-                    <div class="event-detail-value">
+                <div class="calendar-event-detail">
+                    <div class="calendar-event-detail-label">Priority:</div>
+                    <div class="calendar-event-detail-value">
                         <span style="color: ${getPriorityColor(event.extendedProps.priority)}; font-weight: bold;">
                             ${event.extendedProps.priority || 'Medium'}
                         </span>
                     </div>
                 </div>
-                <div class="event-detail">
-                    <div class="event-detail-label">Visibility:</div>
-                    <div class="event-detail-value">
+                <div class="calendar-event-detail">
+                    <div class="calendar-event-detail-label">Visibility:</div>
+                    <div class="calendar-event-detail-value">
                         ${visibility === 'private'
                             ? '<span style="color:#dc3545;font-weight:bold;">Private</span>'
                             : '<span style="color:#28a745;font-weight:bold;">Public</span>'
@@ -263,17 +270,18 @@
                 </div>
             `;
 
-            const btnGroup = modal.querySelector('.btn-group');
-            if (!btnGroup.querySelector('.btn-edit-event')) {
+            // add Edit button once
+            const btnRow = modal.querySelector('.calendar-btn-row');
+            if (!btnRow.querySelector('.btn-edit-event')) {
                 const editBtn = document.createElement('button');
                 editBtn.type = 'button';
                 editBtn.className = 'btn btn-primary btn-edit-event';
                 editBtn.textContent = 'Edit Event';
                 editBtn.onclick = () => editEvent(event);
-                btnGroup.insertBefore(editBtn, btnGroup.firstChild);
+                btnRow.insertBefore(editBtn, btnRow.firstChild);
             }
 
-            document.getElementById('viewEventModal').classList.add('show');
+            modal.classList.add('show');
         }
 
         function closeViewEventModal() {
@@ -292,26 +300,18 @@
         }
 
         function setupFormSubmit() {
-            document.getElementById('eventForm').addEventListener('submit', async function(e) {
+            document.getElementById('eventForm').addEventListener('submit', async function (e) {
                 e.preventDefault();
 
-                const title = document.getElementById('eventTitle').value;
-                const description = document.getElementById('eventDescription').value;
-                const startDate = document.getElementById('eventDate').value;
-                const endDate = document.getElementById('eventEndDate').value;
-                const type = document.getElementById('eventType').value;
-                const priority = document.getElementById('eventPriority').value;
-                const visibility = document.getElementById('eventVisibility').value;
-
                 const payload = {
-                    title: title,
-                    description: description,
-                    start_date: startDate,
-                    end_date: endDate || null,
-                    type: type,
-                    priority: priority,
+                    title: document.getElementById('eventTitle').value,
+                    description: document.getElementById('eventDescription').value,
+                    start_date: document.getElementById('eventDate').value,
+                    end_date: document.getElementById('eventEndDate').value || null,
+                    type: document.getElementById('eventType').value,
+                    priority: document.getElementById('eventPriority').value,
                     color: selectedColor,
-                    visibility: visibility,
+                    visibility: document.getElementById('eventVisibility').value,
                 };
 
                 const url = editingEventId
@@ -335,8 +335,7 @@
                     closeAddEventModal();
                     closeViewEventModal();
                 } else {
-                    const err = await res.json().catch(() => ({}));
-                    console.error(err);
+                    console.error(await res.json().catch(() => ({})));
                     alert('Failed to save event.');
                 }
             });
@@ -344,11 +343,9 @@
 
         async function deleteEvent() {
             if (!currentSelectedEvent) return;
-            if (!confirm('Are you sure you want to delete this event?')) return;
+            if (!confirm('Delete this event?')) return;
 
-            const id = currentSelectedEvent.id;
-
-            const res = await fetch(`/calendar/events/${id}`, {
+            const res = await fetch(`/calendar/events/${currentSelectedEvent.id}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -379,9 +376,10 @@
             document.getElementById('eventPriority').value = event.extendedProps.priority || 'Medium';
             document.getElementById('eventVisibility').value = event.extendedProps.visibility || 'public';
 
-            document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+            // color
+            document.querySelectorAll('.calendar-color-option').forEach(opt => opt.classList.remove('selected'));
             const eventColor = event.backgroundColor || event.color || '#007bff';
-            const colorEl = document.querySelector(`.color-option[data-color="${eventColor}"]`);
+            const colorEl = document.querySelector(`.calendar-color-option[data-color="${eventColor}"]`);
             if (colorEl) {
                 colorEl.classList.add('selected');
                 selectedColor = eventColor;
@@ -393,14 +391,16 @@
             document.getElementById('addEventModal').classList.add('show');
         }
 
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('modal-overlay')) {
+        // click overlay to close
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('calendar-modal-overlay')) {
                 if (e.target.id === 'addEventModal') closeAddEventModal();
                 else if (e.target.id === 'viewEventModal') closeViewEventModal();
             }
         });
 
-        document.addEventListener('keydown', function(e) {
+        // ESC to close
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 closeAddEventModal();
                 closeViewEventModal();
@@ -409,55 +409,63 @@
     </script>
 
     <style>
-        #calendar {
+        /* ⬇️ everything is scoped to the calendar page so it WON'T affect sidebar/topbar */
+        .calendar-page #calendar {
             position: relative;
             z-index: 0 !important;
         }
 
-        /* center-center for ALL modals */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-            display: none;              /* hidden by default */
-            align-items: center;
-            justify-content: center;
-            z-index: 1050;
-            padding: 1rem;
-        }
+       /* overlay stays the same */
+.calendar-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1050;
+    padding: 1rem;
+}
+.calendar-modal-overlay.show {
+    display: flex !important;
+}
 
-        /* when visible */
-        .modal-overlay.show {
-            display: flex !important;
-        }
+/* container: width only */
+.calendar-modal-container {
+    position: relative;
+    z-index: 1060;
+    max-width: 540px;
+    width: 100%;
+}
 
-        .modal-container {
-            position: relative;
-            z-index: 1060;
-            max-width: 540px;
-            width: 100%;
-        }
+/* ✨ make modal scrollable if taller than screen */
+.calendar-modal-content {
+    background: #fff;
+    border-radius: .5rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    padding: 1.5rem 1.5rem 1.25rem;
 
-        .modal-content {
-            background: #fff;
-            border-radius: .5rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            padding: 1.5rem 1.5rem 1.25rem;
-        }
+    /* important part 👇 */
+    max-height: calc(100vh - 2rem);  /* always fit inside screen */
+    overflow-y: auto;                 /* scroll inside the modal */
+}
 
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
+/* keep header visible while scrolling (nice UX) */
+.calendar-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
 
-        .modal-title {
-            font-size: 1.15rem;
-            margin: 0;
-        }
+    position: sticky;
+    top: -1.5rem;   /* match top padding of .calendar-modal-content */
+    background: #fff;
+    padding-top: 1.5rem;
+    z-index: 1;
+}
 
-        .close-btn {
+
+        .calendar-close-btn {
             background: transparent;
             border: none;
             font-size: 1.5rem;
@@ -465,35 +473,36 @@
             cursor: pointer;
         }
 
-        .form-group {
+        .calendar-form-group {
             margin-bottom: .75rem;
         }
 
-        .form-label {
+        .calendar-form-label {
             display: block;
             font-weight: 600;
             margin-bottom: .35rem;
         }
 
-        .form-input, .form-textarea {
+        .calendar-form-input,
+        .calendar-form-textarea {
             width: 100%;
             border: 1px solid #ced4da;
             border-radius: .25rem;
             padding: .4rem .6rem;
         }
 
-        .form-textarea {
+        .calendar-form-textarea {
             min-height: 80px;
             resize: vertical;
         }
 
-        .color-picker-container {
+        .calendar-color-picker-container {
             display: flex;
             gap: .4rem;
             flex-wrap: wrap;
         }
 
-        .color-option {
+        .calendar-color-option {
             width: 28px;
             height: 28px;
             border-radius: 6px;
@@ -501,32 +510,52 @@
             border: 2px solid transparent;
         }
 
-        .color-option.selected {
+        .calendar-color-option.selected {
             border-color: #000;
         }
 
-        .event-detail {
+        .calendar-event-detail {
             display: flex;
             gap: .5rem;
             margin-bottom: .35rem;
         }
 
-        .event-detail-label {
+        .calendar-event-detail-label {
             width: 110px;
             font-weight: 600;
             color: #555;
         }
 
-        .event-detail-value {
+        .calendar-event-detail-value {
             flex: 1;
         }
 
-        .event-color-indicator {
+        .calendar-event-color-indicator {
             display: inline-block;
             width: 10px;
             height: 10px;
             border-radius: 50%;
             margin-right: .25rem;
+        }
+
+        /* like faculties page: don't touch global .btn-group */
+        .calendar-btn-row {
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap;
+        }
+
+        /* match your small button style */
+        .btn-xs {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 3px 8px !important;
+            font-size: 0.75rem !important;
+            line-height: 1 !important;
+            border-radius: 3px !important;
+            height: 26px !important;
         }
     </style>
 @endsection
