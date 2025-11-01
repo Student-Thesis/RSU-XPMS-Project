@@ -3,66 +3,64 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Faculty;
+use App\Models\Proposal;
 
 class HomeController extends Controller
 {
-    public function index()
-    {
-        // Aggregate KPI totals from `faculties`
-        // Columns are defined in your SQL dump (involved_extension_*, iec_* , proposals_*, community_served_*, beneficiaries_assistance_*, moa_mou_*)
-        $kpi = Faculty::query()
-            ->selectRaw('
-                SUM(involved_extension_total)    as involved_extension_total,
-                SUM(iec_developed_total)         as iec_developed_total,
-                SUM(iec_reproduced_total)        as iec_reproduced_total,
-                SUM(iec_distributed_total)       as iec_distributed_total,
-                SUM(proposals_approved_total)    as proposals_approved_total
-            ')
-            ->first();
+   public function index()
+{
+    // Which year to report? -> this year
+    $year = now()->year;
 
-        // Per-quarter breakdowns for the chart
-        $quarters = Faculty::query()
-            ->selectRaw('
-                SUM(involved_extension_q1) as ext_q1,
-                SUM(involved_extension_q2) as ext_q2,
-                SUM(involved_extension_q3) as ext_q3,
-                SUM(involved_extension_q4) as ext_q4,
+    // 1) Get counts per campus per month
+    // result shape:
+    // college_campus | month | total
+    $rows = Proposal::query()
+        ->whereYear('created_at', $year)
+        ->selectRaw('college_campus, MONTH(created_at) as month, COUNT(*) as total')
+        ->groupBy('college_campus', 'month')
+        ->get();
 
-                SUM(iec_developed_q1) as dev_q1,
-                SUM(iec_developed_q2) as dev_q2,
-                SUM(iec_developed_q3) as dev_q3,
-                SUM(iec_developed_q4) as dev_q4
-            ')
-            ->first();
+    // 2) Get all campuses that actually appear in projects
+    $campuses = $rows
+        ->pluck('college_campus')
+        ->filter()            // remove null / empty
+        ->unique()
+        ->values();
 
-        // Safe defaults (avoid nulls)
-        $kpi = [
-            'involved_extension_total' => (int)($kpi->involved_extension_total ?? 0),
-            'iec_developed_total'      => (int)($kpi->iec_developed_total ?? 0),
-            'iec_reproduced_total'     => (int)($kpi->iec_reproduced_total ?? 0),
-            'iec_distributed_total'    => (int)($kpi->iec_distributed_total ?? 0),
-            'proposals_approved_total' => (int)($kpi->proposals_approved_total ?? 0),
-        ];
+    // 3) Build chart array like:
+    // [
+    //   "CAS" => [0,3,1,0,2,0,0,0,0,0,0,0],
+    //   "CBA" => [1,0,0,0,0,0,0,0,0,0,0,0],
+    // ]
+    // index 0 = January, 11 = December (we'll match this in JS)
+    $chart = [];
+    foreach ($campuses as $campus) {
+        // start with 12 zeros
+        $chart[$campus] = array_fill(0, 12, 0);
 
-        $chart = [
-            'ext' => [
-                (int)($quarters->ext_q1 ?? 0),
-                (int)($quarters->ext_q2 ?? 0),
-                (int)($quarters->ext_q3 ?? 0),
-                (int)($quarters->ext_q4 ?? 0),
-            ],
-            'dev' => [
-                (int)($quarters->dev_q1 ?? 0),
-                (int)($quarters->dev_q2 ?? 0),
-                (int)($quarters->dev_q3 ?? 0),
-                (int)($quarters->dev_q4 ?? 0),
-            ],
-        ];
-
-
-        return view('dashboard', compact('kpi', 'chart'));
+        // fill from DB rows
+        foreach ($rows->where('college_campus', $campus) as $row) {
+            $monthIndex = (int)$row->month - 1; // MONTH() is 1..12 → index 0..11
+            $chart[$campus][$monthIndex] = (int)$row->total;
+        }
     }
+
+    // 4) KPIs (just to keep your Blade happy)
+    $kpi = [
+        'involved_extension_total' => Proposal::count(), // total projects
+        'iec_developed_total'      => 0,
+        'iec_reproduced_total'     => 0,
+        'iec_distributed_total'    => 0,
+        'proposals_approved_total' => Proposal::where('status', 'approved')->count(),
+    ];
+
+    return view('dashboard', [
+        'kpi'   => $kpi,
+        'chart' => $chart,    // <-- IMPORTANT: now campus => [jan..dec]
+        'year'  => $year,
+    ]);
+}
 
     public function register()
     {

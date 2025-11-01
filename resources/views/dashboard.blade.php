@@ -75,7 +75,7 @@
                     </div>
                 </div>
 
-                {{-- KPI Row 2 (single tile you had) --}}
+                {{-- KPI Row 2 --}}
                 <div class="row column1">
                     <div class="col-md-6 col-lg-3">
                         <div class="full counter_section margin_bottom_30">
@@ -94,51 +94,51 @@
 
                 {{-- Chart --}}
                 <div class="row column2 graph margin_bottom_30">
-    <div class="col-md-l2 col-lg-12">
-        <div class="white_shd full">
-            <div class="full graph_head d-flex justify-content-between align-items-center gap-2">
-                <div class="heading1 margin_0">
-                    <h2>Monthly Trends (Dummy Data)</h2>
-                </div>
+                    <div class="col-md-l2 col-lg-12">
+                        <div class="white_shd full">
+                            <div class="full graph_head d-flex justify-content-between align-items-center gap-2 flex-wrap">
+                                <div class="heading1 margin_0">
+                                    <h2>Monthly Trends (Dummy Data)</h2>
+                                </div>
 
-                {{-- Dropdown filter --}}
-                <div class="dropdown" style="position: relative;">
-                    <button class="btn btn-sm btn-outline-secondary" id="chartFilterBtn" type="button">
-                        <i class="fa fa-filter"></i> Filter Colleges/Campuses
-                    </button>
-                    <div id="chartFilterMenu"
-                         style="display:none; position:absolute; right:0; top:110%; z-index:999;
-                                background:#fff; border:1px solid #ddd; border-radius:6px;
-                                width:260px; max-height:280px; overflow-y:auto; box-shadow:0 10px 25px rgba(0,0,0,.08);">
-                        <div style="padding:.5rem .75rem; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
-                            <strong style="font-size:.8rem;">COLLEGE / CAMPUS</strong>
-                            <a href="javascript:void(0)" id="chartSelectAll" style="font-size:.7rem;">Select all</a>
-                        </div>
-                        <div id="chartFilterList" style="padding:.5rem .75rem .75rem;">
-                            {{-- items will be injected via JS --}}
-                        </div>
-                        <div style="padding:.5rem .75rem; border-top:1px solid #eee; text-align:right;">
-                            <button class="btn btn-sm btn-success" id="chartFilterApply">OK</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="full graph_revenue">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="content">
-                            <div class="area_chart">
-                                <canvas height="120" id="canvas"></canvas>
+                                <div class="d-flex align-items-center gap-2">
+                                    <label for="campusSelect" class="mb-0" style="font-size:.8rem;">College/Campus:</label>
+                                    <select id="campusSelect" class="form-control form-control-sm" style="min-width:220px;">
+                                        <option value="CAFES">CAFES</option>
+                                        <option value="Cajidiocan Campus">Cajidiocan Campus</option>
+                                        <option value="Calatrava Campus">Calatrava Campus</option>
+                                        <option value="CAS">CAS</option>
+                                        <option value="CBA">CBA</option>
+                                        <option value="CCMADI">CCMADI</option>
+                                        <option value="CED">CED</option>
+                                        <option value="CET">CET</option>
+                                        <option value="GEPS">GEPS</option>
+                                        <option value="Sta. Maria Campus">Sta. Maria Campus</option>
+                                        <option value="Santa Fe Campus">Santa Fe Campus</option>
+                                        <option value="San Andres Campus">San Andres Campus</option>
+                                        <option value="San Agustin Campus">San Agustin Campus</option>
+                                        <option value="Romblon Campus">Romblon Campus</option>
+                                        <option value="San Fernando Campus">San Fernando Campus</option>
+                                        <option value="(Blanks)">(Blanks)</option>
+                                    </select>
+                                </div>
                             </div>
+
+                            <div class="full graph_revenue">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="content">
+                                            <div class="area_chart">
+                                                {{-- 👇 use a UNIQUE id so theme scripts won't draw their demo chart here --}}
+                                                <canvas id="monthlyTrendsChart" height="120"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!-- /graph_revenue -->
                         </div>
                     </div>
                 </div>
-            </div>
-
-        </div>
-    </div>
-</div>
                 <!-- end graph -->
             </div>
         </div>
@@ -149,67 +149,48 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
 <script>
 (function () {
-    const ctx = document.getElementById('canvas').getContext('2d');
-    let chartInstance = null;
+    const canvas = document.getElementById('monthlyTrendsChart');
+    const select  = document.getElementById('campusSelect');
+    if (!canvas || !select) return;
 
-    const labels = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const ctx = canvas.getContext('2d');
 
-    const campuses = [
-        '(Blanks)','CAFES','Cajidiocan Campus','Calatrava Campus','CAS','CBA','CCMADI',
-        'CED','CET','GEPS','Sta. Maria Campus','Santa Fe Campus',
-        'San Andres Campus','San Agustin Campus','Romblon Campus','San Fernando Campus'
-    ];
+    // this comes from controller: ['CAS' => [..12 nums..], 'CBA' => [...], ...]
+    const chartData = @json($chart ?? []);
 
-    const colors = [
-        '#2563eb','#dc2626','#16a34a','#ca8a04','#7c3aed','#db2777',
-        '#0d9488','#0284c7','#f97316','#0891b2','#9333ea','#e11d48',
-        '#22c55e','#b91c1c','#3b82f6','#6366f1'
-    ];
+    // months
+    const labels = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-    function randomData() {
-        return Array.from({length: 12}, () => Math.floor(Math.random() * 46) + 5);
-    }
+    let chart = null;
 
-    const chartData = {};
-    campuses.forEach(name => chartData[name] = randomData());
+    function render(campus) {
+        if (chart) chart.destroy();
 
-    const allDatasets = campuses.map((name, i) => ({
-        key: name,
-        dataset: {
-            label: name,
-            data: chartData[name],
-            fill: false,
-            borderColor: colors[i % colors.length],
-            tension: 0.25,
-        }
-    }));
+        const data = chartData[campus] || Array(12).fill(0);
 
-    let selectedKeys = [...campuses];
-
-    /** 🧩 Render chart safely (destroy old one first) */
-    function renderChart() {
-        if (chartInstance) {
-            chartInstance.destroy(); // ✅ properly remove old chart from memory
-        }
-
-        const activeDatasets = allDatasets
-            .filter(d => selectedKeys.includes(d.key))
-            .map(d => d.dataset);
-
-        chartInstance = new Chart(ctx, {
+        chart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels,
-                datasets: activeDatasets
+                labels: labels,
+                datasets: [
+                    {
+                        label: campus + ' ({{ $year ?? now()->year }})',
+                        data: data,
+                        borderColor: 'rgba(0, 168, 120, 1)',
+                        backgroundColor: 'rgba(0, 168, 120, .15)',
+                        tension: 0.35,
+                        pointRadius: 3,
+                        fill: true,
+                    }
+                ]
             },
             options: {
                 responsive: true,
-                animation: false, // avoid flicker delay
+                animation: false,
                 plugins: {
                     legend: { position: 'top' },
                     tooltip: { mode: 'index', intersect: false }
                 },
-                interaction: { mode: 'nearest', axis: 'x', intersect: false },
                 scales: {
                     y: { beginAtZero: true, ticks: { precision: 0 } }
                 }
@@ -217,42 +198,28 @@
         });
     }
 
-    // 🧩 Initialize chart once DOM is ready
-    renderChart();
+    // fill dropdown from PHP keys (so it always matches DB)
+    const campusNames = Object.keys(chartData);
+    if (campusNames.length) {
+        // clear existing options
+        select.innerHTML = '';
+        campusNames.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c;
+            opt.textContent = c;
+            select.appendChild(opt);
+        });
 
-    // 🧩 Build filter dropdown dynamically
-    const listEl = document.getElementById('chartFilterList');
-    listEl.innerHTML = campuses.map((name) => `
-        <label style="display:flex;gap:.5rem;align-items:center;margin-bottom:.35rem;font-size:.8rem;cursor:pointer;">
-            <input type="checkbox" class="chart-filter-item" value="${name}" checked />
-            <span>${name}</span>
-        </label>
-    `).join('');
+        // render first campus
+        render(campusNames[0]);
+    } else {
+        // no data → still render zeros
+        render('(No data)');
+    }
 
-    const btn = document.getElementById('chartFilterBtn');
-    const menu = document.getElementById('chartFilterMenu');
-
-    btn.addEventListener('click', () => {
-        menu.style.display = (menu.style.display === 'none' || menu.style.display === '') ? 'block' : 'none';
-    });
-
-    document.getElementById('chartSelectAll').addEventListener('click', () => {
-        document.querySelectorAll('.chart-filter-item').forEach(cb => cb.checked = true);
-    });
-
-    document.getElementById('chartFilterApply').addEventListener('click', () => {
-        selectedKeys = Array.from(document.querySelectorAll('.chart-filter-item'))
-            .filter(cb => cb.checked)
-            .map(cb => cb.value);
-
-        renderChart(); // ✅ re-render from scratch, no ghost hover issue
-        menu.style.display = 'none';
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!menu.contains(e.target) && !btn.contains(e.target)) {
-            menu.style.display = 'none';
-        }
+    // change handler
+    select.addEventListener('change', function () {
+        render(this.value);
     });
 })();
 </script>
