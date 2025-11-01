@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use App\Traits\LogsActivity;
 
 class Proposal extends Model
 {
+
+    use LogsActivity;
     protected $fillable = [
         'user_id','title','classification','team_members','leader','target_agenda','location','college_campus',
         'time_frame','beneficiaries_who','beneficiaries_how_many',
