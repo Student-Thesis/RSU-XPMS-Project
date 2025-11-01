@@ -1,6 +1,5 @@
 <?php
 
-// app/Traits/LogsActivity.php
 namespace App\Traits;
 
 use App\Models\ActivityLog;
@@ -9,13 +8,8 @@ use Illuminate\Support\Str;
 
 trait LogsActivity
 {
-    /**
-     * This will be called automatically by Eloquent
-     * when the model boots.
-     */
     public static function bootLogsActivity(): void
     {
-        // 🔹 CREATE
         static::created(function ($model) {
             $model->logActivity(
                 'Created ' . class_basename($model),
@@ -23,10 +17,7 @@ trait LogsActivity
             );
         });
 
-        // 🔹 UPDATE
         static::updated(function ($model) {
-            // getChanges() = only changed fields
-            // getOriginal() = values before update
             $model->logActivity(
                 'Updated ' . class_basename($model),
                 [
@@ -36,17 +27,11 @@ trait LogsActivity
             );
         });
 
-        // 🔹 DELETE
         static::deleted(function ($model) {
-            $model->logActivity(
-                'Deleted ' . class_basename($model)
-            );
+            $model->logActivity('Deleted ' . class_basename($model));
         });
     }
 
-    /**
-     * Can still be called manually from controller/service
-     */
     public function logActivity(string $action, array $changes = []): void
     {
         ActivityLog::create([
