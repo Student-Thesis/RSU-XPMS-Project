@@ -11,60 +11,76 @@
                         {{-- <li>
                             <a href="#"><i class="fa fa-question-circle"></i></a>
                         </li> --}}
-{{-- 🔔 Notifications --}}
-<li class="nav-item dropdown position-static">
-    <a href="#" class="nav-link" data-bs-toggle="dropdown" data-boundary="viewport">
-        <i class="fa fa-bell-o"></i>
-        <span class="badge">{{ $notificationCount ?? \App\Models\ActivityLog::count() }}</span>
-    </a>
+                        {{-- 🔔 Notifications --}}
+                        <li class="nav-item dropdown" id="notif-wrapper">
+                            <a href="#" class="nav-link position-relative" id="notificationDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-bell-o"></i>
 
-    <div id="notification-dropdown"
-         class="dropdown-menu dropdown-menu-end dropdown-menu-start shadow-sm"
-         style="width:350px; max-height:300px; overflow-y:auto; right:0; left:auto;">
-        <span class="dropdown-header small fw-bold px-3">Notifications</span>
+                                @php
+                                    $count = $notificationCount ?? \App\Models\ActivityLog::count();
+                                @endphp
 
-        @forelse ($notifications ?? [] as $note)
-            <a href="#"
-               class="dropdown-item py-2 d-flex justify-content-between align-items-start">
-                <span class="small">
-                    <i class="fa fa-info-circle me-2 text-secondary"></i>
-                    {{ $note->action }}
-                </span>
-                <span class="text-muted text-xs">{{ $note->created_at->diffForHumans() }}</span>
-            </a>
-        @empty
-            <span class="dropdown-item text-muted small">No notifications</span>
-        @endforelse
-    </div>
-</li>
-<style>
-    /* Force dropdown to open toward the left */
-#notification-dropdown {
-    left: auto !important;
-    right: 0 !important;
-    transform: translateX(-60%); /* adjust this if still too far right */
-}
+                                @if ($count > 0)
+                                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle"
+                                        style="font-size: 0.65rem; padding: 4px 6px; border-radius: 10px;">
+                                        {{ $count }}
+                                    </span>
+                                @endif
+                            </a>
 
-/* Smaller font for notification items */
-#notification-dropdown .dropdown-item span {
-    font-size: 0.8rem;
-    line-height: 1.2;
-}
+                            <div class="dropdown-menu shadow-sm" aria-labelledby="notificationDropdown"
+                                style="width:360px; max-height:320px; overflow-y:auto; border-radius:8px;">
+                                <div
+                                    class="dropdown-header fw-bold text-primary d-flex justify-content-between align-items-center">
+                                    <span>Notifications</span>
+                                    <small class="text-muted">{{ now()->format('M d, Y') }}</small>
+                                </div>
+                                <div class="dropdown-divider"></div>
 
-#notification-dropdown .dropdown-header {
-    font-size: 0.85rem;
-    background: #f8f9fa;
-    color: #555;
-}
+                                @forelse ($notifications ?? [] as $note)
+                                    <a href="#"
+                                        class="dropdown-item d-flex justify-content-between align-items-start text-dark"
+                                        style="white-space: normal; font-size: 0.82rem; line-height: 1.2;">
+                                        <div class="me-2">
+                                            <i class="fa fa-info-circle text-primary me-2"
+                                                style="font-size: 0.85rem;"></i>
+                                            {{ ucfirst($note->action) }}
+                                        </div>
+                                        <small class="text-muted"
+                                            style="font-size: 0.75rem;">{{ $note->created_at->diffForHumans() }}</small>
+                                    </a>
+                                @empty
+                                    <div class="dropdown-item text-center text-muted py-3" style="font-size: 0.85rem;">
+                                        No notifications
+                                    </div>
+                                @endforelse
 
-/* Make badge smaller and better aligned */
-.nav-link .badge {
-    font-size: 0.65rem;
-    padding: 2px 6px;
-    vertical-align: top;
-}
+                            </div>
+                        </li>
 
-</style>
+                        {{-- force it to open LEFT even if bell is at screen edge --}}
+                        <style>
+                            /* make the dropdown attached to the bell's right edge, but expand LEFT */
+                            #notif-wrapper .dropdown-menu {
+                                left: auto !important;
+                                /* ignore default left */
+                                right: 0 !important;
+                                /* pin to the right edge of the bell */
+                                transform: translateX(0%) !important;
+                                /* move whole box to the left */
+                            }
+
+                            /* optional: on very small screens, don't move it too far */
+                            @media (max-width: 576px) {
+                                #notif-wrapper .dropdown-menu {
+                                    width: 300px;
+                                    transform: translateX(-90%) !important;
+                                }
+                            }
+                        </style>
+
+
 
                         {{-- ✉️ Messages --}}
                         {{-- <li>
@@ -94,13 +110,8 @@
 
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
                                 <a class="dropdown-item" href="{{ route('profile.edit') }}">My Profile</a>
-
-                                @if (auth()->check() && in_array(auth()->user()->user_type, ['admin', 'root']))
-                                    <a class="dropdown-item" href="{{ route('settings') }}">Settings</a>
-                                @endif
-
-                                {{-- <a class="dropdown-item" href="{{ route('help') }}">Help</a> --}}
-
+                                <a class="dropdown-item" href="{{ route('settings') }}">Settings</a>
+                                <a class="dropdown-item" href="{{ route('help') }}">Help</a>
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <span>Log Out</span> <i class="fa fa-sign-out"></i>
@@ -133,7 +144,7 @@
         /* <— this is the main fix */
         inset: auto !important;
         /* remove top/right auto-pos from BS */
-        z-index: 9999999999999999999999999999999;
+        z-index: 1055;
         background: #fff;
     }
 
