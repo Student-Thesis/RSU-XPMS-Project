@@ -8,9 +8,11 @@
             <div class="right_topbar">
                 <div class="icon_info">
                     <ul>
-                        {{-- <li>
-                            <a href="#"><i class="fa fa-question-circle"></i></a>
-                        </li> --}}
+                         <li class="nav-item">
+                            <a href="{{route('messages')}}" class="nav-link position-relative">
+                                <i class="fa fa-envelope" ></i>
+                            </a>
+                        </li>
                         {{-- 🔔 Notifications --}}
                         <li class="nav-item dropdown" id="notif-wrapper">
                             <a href="#" class="nav-link position-relative" id="notificationDropdown"
@@ -108,7 +110,7 @@
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 <img class="img-responsive rounded-circle" src="{{ $avatarUrl }}" alt="Avatar"
                                     width="40" height="40" style="object-fit: cover;" />
-                                <span class="name_user">{{ $u?->name ?? 'Guest User' }}</span>
+                                <span class="name_user">{{ $u?->first_name ?? 'Guest User' }}</span>
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">

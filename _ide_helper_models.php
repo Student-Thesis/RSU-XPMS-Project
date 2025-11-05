@@ -279,6 +279,29 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property int $sender_id
+ * @property int $recipient_id
+ * @property string $body
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $recipient
+ * @property-read \App\Models\User $sender
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PrivateMessage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PrivateMessage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PrivateMessage query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PrivateMessage whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PrivateMessage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PrivateMessage whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PrivateMessage whereRecipientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PrivateMessage whereSenderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PrivateMessage whereUpdatedAt($value)
+ */
+	class PrivateMessage extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property int $user_id
  * @property string $title
  * @property string $classification
@@ -364,6 +387,26 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereUserId($value)
  */
 	class Proposal extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property string $body
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PublicMessage newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PublicMessage newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PublicMessage query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PublicMessage whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PublicMessage whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PublicMessage whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PublicMessage whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|PublicMessage whereUserId($value)
+ */
+	class PublicMessage extends \Eloquent {}
 }
 
 namespace App\Models{

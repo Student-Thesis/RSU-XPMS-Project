@@ -16,7 +16,7 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\CalendarEventController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\MessageController;
+use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\SettingsController;
 
 Route::get('/', function () {
@@ -73,7 +73,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
     Route::get('/settings',  [SettingsController::class, 'index'])->middleware('dept.can:settings,view')->name('settings');
     Route::get('/help',      [HelpController::class, 'index'])->middleware('dept.can:help,view')->name('help');
-    Route::get('/messages',  [MessageController::class, 'index'])->middleware('dept.can:messages,view')->name('messages');
+    Route::get('/messages',  [MessagesController::class, 'index'])->middleware('dept.can:messages,view')->name('messages');
+    Route::post('/messages/public', [MessagesController::class, 'storePublic'])->name('messages.public.store');
+    Route::post('/messages/private', [MessagesController::class, 'storePrivate'])->name('messages.private.store');
 
     /* ================== NOTIFICATIONS ================== */
     Route::get('/notifications',      [NotificationController::class, 'index'])->middleware('dept.can:notifications,view')->name('notifications');
@@ -129,8 +131,7 @@ Route::middleware(['auth'])->group(function () {
         [SettingsTargetAgendaController::class, 'listJson'])->middleware('dept.can:settings,view')->name('settings_target_agendas.listJson');
 
 
-    
-Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])
-    ->name('notifications.markAsRead')
-    ->middleware('auth');
+    Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])
+        ->name('notifications.markAsRead')
+        ->middleware('auth');
 });
