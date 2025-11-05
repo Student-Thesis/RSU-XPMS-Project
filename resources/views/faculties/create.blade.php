@@ -18,7 +18,12 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Campus/College <span class="text-danger">*</span></label>
-                        <input type="text" name="campus_college" class="form-control" value="{{ old('campus_college') }}" required>
+                         <select name="campus_college" class="form-control">
+                <option value="">—</option>
+                @foreach (['CAS','CBA','CET','CAFES','CCMADI','CED','GEPS','CALATRAVA CAMPUS','STA. MARIA CAMPUS','SANTA FE CAMPUS','SAN ANDRES CAMPUS','SAN AGUSTIN CAMPUS','ROMBLON CAMPUS','CAJIDIOCAN CAMPUS','SAN FERNANDO CAMPUS'] as $opt)
+                  <option value="{{ $opt }}">{{ $opt }}</option>
+                @endforeach
+              </select>
                         @error('campus_college') <small class="text-danger">{{ $message }}</small> @enderror
                     </div>
 
