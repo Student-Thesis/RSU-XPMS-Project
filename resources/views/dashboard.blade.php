@@ -16,81 +16,58 @@
                     </div>
                 </div>
 
-                {{-- KPI Row 1 --}}
-                <div class="row column1">
-                    <div class="col-md-6 col-lg-3">
+                <div class="row column1 text-center">
+                    <div class="col-md-2 col-lg-2">
                         <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon">
-                                <div><i class="fa fa-user yellow_color"></i></div>
-                            </div>
+                            <div class="couter_icon"><i class="fa fa-user yellow_color"></i></div>
                             <div class="counter_no">
-                                <div>
-                                    <p class="total_no">{{ number_format($kpi['involved_extension_total']) }}</p>
-                                    <p class="head_couter">No. Of Involved in Extension</p>
-                                </div>
+                                <p class="total_no">{{ number_format($kpi['involved_extension_total']) }}</p>
+                                <p class="head_couter">Involved in Extension</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-6 col-lg-3">
+                    <div class="col-md-2 col-lg-2">
                         <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon">
-                                <div><i class="fa fa-clock-o blue1_color"></i></div>
-                            </div>
+                            <div class="couter_icon"><i class="fa fa-clock-o blue1_color"></i></div>
                             <div class="counter_no">
-                                <div>
-                                    <p class="total_no">{{ number_format($kpi['iec_developed_total']) }}</p>
-                                    <p class="head_couter">No. Of IEC Materials Developed</p>
-                                </div>
+                                <p class="total_no">{{ number_format($kpi['iec_developed_total']) }}</p>
+                                <p class="head_couter">IEC Developed</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-6 col-lg-3">
+                    <div class="col-md-2 col-lg-2">
                         <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon">
-                                <div><i class="fa fa-cloud-download green_color"></i></div>
-                            </div>
+                            <div class="couter_icon"><i class="fa fa-cloud-download green_color"></i></div>
                             <div class="counter_no">
-                                <div>
-                                    <p class="total_no">{{ number_format($kpi['iec_reproduced_total']) }}</p>
-                                    <p class="head_couter">No. Of IEC Materials Reproduced</p>
-                                </div>
+                                <p class="total_no">{{ number_format($kpi['iec_reproduced_total']) }}</p>
+                                <p class="head_couter">IEC Reproduced</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-6 col-lg-3">
+                    <div class="col-md-2 col-lg-2">
                         <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon">
-                                <div><i class="fa fa-comments-o red_color"></i></div>
-                            </div>
+                            <div class="couter_icon"><i class="fa fa-comments-o red_color"></i></div>
                             <div class="counter_no">
-                                <div>
-                                    <p class="total_no">{{ number_format($kpi['iec_distributed_total']) }}</p>
-                                    <p class="head_couter">No. OF IEC Materials Distributed</p>
-                                </div>
+                                <p class="total_no">{{ number_format($kpi['iec_distributed_total']) }}</p>
+                                <p class="head_couter">IEC Distributed</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-lg-2">
+                        <div class="full counter_section margin_bottom_30">
+                            <div class="couter_icon"><i class="fa fa-check-square-o red_color"></i></div>
+                            <div class="counter_no">
+                                <p class="total_no">{{ number_format($kpi['proposals_approved_total']) }}</p>
+                                <p class="head_couter">Proposals Approved</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {{-- KPI Row 2 --}}
-                <div class="row column1">
-                    <div class="col-md-6 col-lg-3">
-                        <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon">
-                                <div><i class="fa fa-check-square-o red_color"></i></div>
-                            </div>
-                            <div class="counter_no">
-                                <div>
-                                    <p class="total_no">{{ number_format($kpi['proposals_approved_total']) }}</p>
-                                    <p class="head_couter">No. Of Quality Extension Proposal Approved</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 {{-- Chart --}}
                 <div class="row column2 graph margin_bottom_30">
@@ -102,7 +79,8 @@
                                 </div>
 
                                 <div class="d-flex align-items-center gap-2">
-                                    <label for="campusSelect" class="mb-0" style="font-size:.8rem;">College/Campus:</label>
+                                    <label for="campusSelect" class="mb-0"
+                                        style="font-size:.8rem;">College/Campus:</label>
                                     <select id="campusSelect" class="form-control form-control-sm" style="min-width:220px;">
                                         <option value="CAFES">CAFES</option>
                                         <option value="Cajidiocan Campus">Cajidiocan Campus</option>
@@ -145,82 +123,91 @@
 @endsection
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
-<script>
-(function () {
-    const canvas = document.getElementById('monthlyTrendsChart');
-    const select  = document.getElementById('campusSelect');
-    if (!canvas || !select) return;
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+    <script>
+        (function() {
+            const canvas = document.getElementById('monthlyTrendsChart');
+            const select = document.getElementById('campusSelect');
+            if (!canvas || !select) return;
 
-    const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext('2d');
 
-    // this comes from controller: ['CAS' => [..12 nums..], 'CBA' => [...], ...]
-    const chartData = @json($chart ?? []);
+            // this comes from controller: ['CAS' => [..12 nums..], 'CBA' => [...], ...]
+            const chartData = @json($chart ?? []);
 
-    // months
-    const labels = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            // months
+            const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
+                'October', 'November', 'December'
+            ];
 
-    let chart = null;
+            let chart = null;
 
-    function render(campus) {
-        if (chart) chart.destroy();
+            function render(campus) {
+                if (chart) chart.destroy();
 
-        const data = chartData[campus] || Array(12).fill(0);
+                const data = chartData[campus] || Array(12).fill(0);
 
-        chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: campus + ' ({{ $year ?? now()->year }})',
-                        data: data,
-                        borderColor: 'rgba(0, 168, 120, 1)',
-                        backgroundColor: 'rgba(0, 168, 120, .15)',
-                        tension: 0.35,
-                        pointRadius: 3,
-                        fill: true,
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: campus + ' ({{ $year ?? now()->year }})',
+                            data: data,
+                            borderColor: 'rgba(0, 168, 120, 1)',
+                            backgroundColor: 'rgba(0, 168, 120, .15)',
+                            tension: 0.35,
+                            pointRadius: 3,
+                            fill: true,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        animation: false,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: 0
+                                }
+                            }
+                        }
                     }
-                ]
-            },
-            options: {
-                responsive: true,
-                animation: false,
-                plugins: {
-                    legend: { position: 'top' },
-                    tooltip: { mode: 'index', intersect: false }
-                },
-                scales: {
-                    y: { beginAtZero: true, ticks: { precision: 0 } }
-                }
+                });
             }
-        });
-    }
 
-    // fill dropdown from PHP keys (so it always matches DB)
-    const campusNames = Object.keys(chartData);
-    if (campusNames.length) {
-        // clear existing options
-        select.innerHTML = '';
-        campusNames.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c;
-            opt.textContent = c;
-            select.appendChild(opt);
-        });
+            // fill dropdown from PHP keys (so it always matches DB)
+            const campusNames = Object.keys(chartData);
+            if (campusNames.length) {
+                // clear existing options
+                select.innerHTML = '';
+                campusNames.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c;
+                    opt.textContent = c;
+                    select.appendChild(opt);
+                });
 
-        // render first campus
-        render(campusNames[0]);
-    } else {
-        // no data → still render zeros
-        render('(No data)');
-    }
+                // render first campus
+                render(campusNames[0]);
+            } else {
+                // no data → still render zeros
+                render('(No data)');
+            }
 
-    // change handler
-    select.addEventListener('change', function () {
-        render(this.value);
-    });
-})();
-</script>
+            // change handler
+            select.addEventListener('change', function() {
+                render(this.value);
+            });
+        })();
+    </script>
 @endpush
- 

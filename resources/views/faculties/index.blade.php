@@ -141,13 +141,13 @@
                                 <td>{{ $row->moa_mou_q4 }}</td>
                                 <td class="text-nowrap">
                                     <a href="{{ route('faculties.edit', $row) }}" class="btn btn-warning btn-xs text-white">
-                                        <i class="fa fa-edit"></i> Edit
+                                        <i class="fa fa-edit"></i> 
                                     </a>
                                     <form action="{{ route('faculties.destroy', $row) }}" method="POST"
                                           class="d-inline" onsubmit="return confirm('Delete this record?')">
                                         @csrf @method('DELETE')
                                         <button class="btn btn-danger btn-xs">
-                                            <i class="fa fa-trash"></i> Delete
+                                            <i class="fa fa-trash"></i> 
                                         </button>
                                     </form>
                                 </td>

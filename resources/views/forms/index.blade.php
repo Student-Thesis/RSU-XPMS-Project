@@ -12,7 +12,7 @@
                         <div class="page_title d-flex align-items-center justify-content-between gap-2 flex-wrap">
                             <h3 class="m-0">Forms / List of Records</h3>
 
-                            <a href="{{ route('forms.create') }}" class="btn-primary"
+                            <a href="{{ route('forms.create') }}" class="btn-primary btn"
                                style="margin-left: 20px;">
                                 <i class="fa fa-plus"></i> Add New Record / Form
                             </a>
@@ -59,9 +59,9 @@
                                                         <td>{{ $form->preservation_years }} Years</td>
                                                         <td>{{ $form->remarks ?? '—' }}</td>
                                                         <td class="text-nowrap">
-                                                            <a class=" btn-warning text-white"
+                                                            <a class=" btn-warning text-white btn btn-sm"
                                                                href="{{ route('forms.edit', $form->id) }}">
-                                                                <i class="fa fa-pencil"></i> Edit
+                                                                <i class="fa fa-pencil"></i>
                                                             </a>
                                                             <form action="{{ route('forms.destroy', $form) }}"
                                                                   method="POST"
@@ -69,8 +69,8 @@
                                                                   onsubmit="return confirmDelete(event, this)">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit" class="btn-danger">
-                                                                    <i class="fa fa-trash"></i> Delete
+                                                                <button type="submit" class="btn-danger btn btn-sm">
+                                                                    <i class="fa fa-trash"></i>
                                                                 </button>
                                                             </form>
                                                         </td>

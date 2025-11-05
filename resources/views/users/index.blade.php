@@ -72,52 +72,55 @@
                                 </div>
                             </div>
 
-                            <table class="table table-bordered table-striped table-hover mb-0 users-table">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th style="width:70px;">No.</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th style="width:160px;">Role</th>
-                                        <th style="width:200px;" class="text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($users as $i => $u)
-                                        <tr>
-                                            <td>{{ ($users->currentPage() - 1) * $users->perPage() + $i + 1 }}</td>
-                                            <td>{{ $u->first_name . ' ' . $u->last_name }}</td>
-                                            <td>{{ $u->email }}</td>
-                                            <td>{{ ucfirst(str_replace('_', ' ', $u->user_type)) }}</td>
-                                            <td class="text-center">
-                                                <div class="d-inline-flex gap-1">
-                                                    <a href="{{ route('users.edit', $u->id) }}"
-                                                       class="btn btn-warning btn-xs text-white">
-                                                        <i class="fa fa-edit"></i> Edit
-                                                    </a>
-
-                                                    <form action="{{ route('users.destroy', $u->id) }}"
-                                                          method="POST"
-                                                          onsubmit="return confirm('Delete this user?')">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                                class="btn btn-danger btn-xs ml-1">
-                                                            <i class="fa fa-trash"></i> Delete
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="5" class="text-center text-muted py-4">
-                                                No users found.
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                           
+<table class="table table-bordered table-striped table-hover mb-0 users-table">
+    <thead class="table-light">
+        <tr>
+            <th style="width:70px;">No.</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th style="width:160px;">Role</th>
+            <th class="text-center actions">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse($users as $i => $u)
+            <tr>
+                <td>{{ ($users->currentPage() - 1) * $users->perPage() + $i + 1 }}</td>
+                <td>{{ $u->first_name . ' ' . $u->last_name }}</td>
+                <td>{{ $u->email }}</td>
+                <td>{{ ucfirst(str_replace('_', ' ', $u->user_type)) }}</td>
+                <td class="text-center actions">
+                    <div class="d-inline-flex">
+                        <a href="{{ route('users.edit', $u->id) }}"
+                           class="btn btn-warning btn-xs text-white"
+                           title="Edit">
+                            <i class="fa fa-edit"></i>
+                        </a>
+                        <form action="{{ route('users.destroy', $u->id) }}"
+                              method="POST"
+                              onsubmit="return confirm('Delete this user?')"
+                              class="m-0 p-0">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                    class="btn btn-danger btn-xs"
+                                    title="Delete">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="5" class="text-center text-muted py-4">
+                    No users found.
+                </td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
 
                             {{-- Pagination --}}
                             <div class="mt-3">
@@ -132,6 +135,23 @@
 </div>
 
 <style>
+
+       /* Auto-width for Action column */
+    .users-table td.actions,
+    .users-table th.actions {
+        white-space: nowrap;
+        width: 1%;
+    }
+
+    .users-table .btn-xs {
+        padding: 3px 6px;
+        font-size: 0.75rem;
+        line-height: 1;
+    }
+
+    .users-table .d-inline-flex {
+        gap: 4px;
+    }
     /* extra small button, but centered */
  /* ✅ Uniform small buttons */
 .btn-xs {

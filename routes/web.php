@@ -111,7 +111,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/calendar/events', [CalendarEventController::class, 'store'])->name('calendar.events.store');
     Route::get('/calendar/events/{event}', [CalendarEventController::class, 'show'])->name('calendar.events.show');
     Route::put('/calendar/events/{event}', [CalendarEventController::class, 'update'])->name('calendar.events.update');
-    Route::delete('/calendar/events/{event}', [CalendarEventController::class, 'destroy'])->name('calendar.events.destroy');
+    Route::delete('/calendar/events/{event}', [CalendarEventController::class, 'destroy'])->name('calendar.events.destroy'); 
 
     /* ================== PROFILE ================== */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
