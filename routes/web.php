@@ -127,4 +127,10 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('dept.can:settings,update');
     Route::get('api/settings_target_agendas',
         [SettingsTargetAgendaController::class, 'listJson'])->middleware('dept.can:settings,view')->name('settings_target_agendas.listJson');
+
+
+    
+Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])
+    ->name('notifications.markAsRead')
+    ->middleware('auth');
 });

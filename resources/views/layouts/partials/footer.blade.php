@@ -35,5 +35,38 @@
 <!-- Bootstrap 5 bundle (CDN – same note as above) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdownToggle = document.getElementById('notificationDropdown');
+        const notifWrapper   = document.getElementById('notif-wrapper');
+
+        if (!dropdownToggle || !notifWrapper) return;
+
+        dropdownToggle.addEventListener('click', function () {
+            const badge = notifWrapper.querySelector('.badge');
+
+            if (!badge) return;
+
+            fetch("{{ route('notifications.markAsRead') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                // visually hide badge
+                badge.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error marking notifications as read:', error);
+            });
+        }, { once: true }); // only first click
+    });
+</script>
+
 </body>
 </html>

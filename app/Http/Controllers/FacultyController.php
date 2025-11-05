@@ -170,6 +170,7 @@ class FacultyController extends Controller
         ActivityLog::create([
             'id'          => Str::uuid(),
             'user_id'     => Auth::id(),
+            'notifiable_user_id' => Auth::id(),
             'action'      => $action,
             'model_type'  => Faculty::class,
             'model_id'    => $changes['faculty']['id'] 

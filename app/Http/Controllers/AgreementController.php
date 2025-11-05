@@ -124,6 +124,7 @@ class AgreementController extends Controller
         ActivityLog::create([
             'id'          => Str::uuid(),
             'user_id'     => Auth::id(),
+            'notifiable_user_id' => Auth::id(),
             'action'      => $action,
             'model_type'  => Agreement::class,
             'model_id'    => $changes['agreement']['id'] ?? null,

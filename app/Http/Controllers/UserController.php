@@ -188,7 +188,8 @@ class UserController extends Controller
     {
         ActivityLog::create([
             'id'          => (string) Str::uuid(),
-            'user_id'     => Auth::id(),         // who did the action
+            'user_id'     => Auth::id(),   
+            'notifiable_user_id' => Auth::id(),      // who did the action
             'action'      => $action,
             'model_type'  => User::class,        // what model type
             'model_id'    => $changes['target_user']['id']

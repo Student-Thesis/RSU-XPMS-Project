@@ -169,6 +169,7 @@ class CalendarEventController extends Controller
         ActivityLog::create([
             'id'          => Str::uuid(),
             'user_id'     => Auth::id(),
+            'notifiable_user_id' => Auth::id(),
             'action'      => $action,
             'model_type'  => CalendarEvent::class,
             'model_id'    => $changes['event']['id'] ?? null,

@@ -15,14 +15,17 @@ namespace App\Models{
 /**
  * @property string $id
  * @property string|null $user_id
+ * @property string|null $notifiable_user_id
  * @property string $action
  * @property string|null $model_type
  * @property string|null $model_id
  * @property array<array-key, mixed>|null $changes
  * @property string|null $ip_address
  * @property string|null $user_agent
+ * @property string|null $read_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Models\User|null $notifiableUser
  * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog newQuery()
@@ -34,6 +37,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereIpAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereModelId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereModelType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereNotifiableUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereReadAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereUserAgent($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|ActivityLog whereUserId($value)

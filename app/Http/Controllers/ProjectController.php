@@ -234,6 +234,7 @@ class ProjectController extends Controller
         ActivityLog::create([
             'id'          => (string) Str::uuid(),
             'user_id'     => Auth::id(),
+            'notifiable_user_id' => Auth::id(),
             'action'      => $action,
             'model_type'  => Proposal::class,
             'model_id'    => $changes['proposal']['id']

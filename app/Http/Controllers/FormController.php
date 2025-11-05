@@ -114,6 +114,7 @@ class FormController extends Controller
         ActivityLog::create([
             'id'          => Str::uuid(),
             'user_id'     => Auth::id(),
+            'notifiable_user_id' => Auth::id(),
             'action'      => $action,
             'model_type'  => RecordForm::class,
             'model_id'    => $changes['form']['id'] 

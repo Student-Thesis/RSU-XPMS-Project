@@ -18,7 +18,10 @@
                                 <i class="fa fa-bell-o"></i>
 
                                 @php
-                                    $count = $notificationCount ?? \App\Models\ActivityLog::count();
+                                    $count = $notificationCount
+                                        ?? \App\Models\ActivityLog::where('notifiable_user_id', auth()->id())
+                                            ->whereNull('read_at')
+                                            ->count();
                                 @endphp
 
                                 @if ($count > 0)

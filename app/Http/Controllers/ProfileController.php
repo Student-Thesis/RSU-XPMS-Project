@@ -101,6 +101,7 @@ class ProfileController extends Controller
         ActivityLog::create([
             'id'          => (string) Str::uuid(),
             'user_id'     => Auth::id(),
+            'notifiable_user_id' => Auth::id(),
             'action'      => $action,
             'model_type'  => 'profile',        // not tied to a model, just label it
             'model_id'    => Auth::id(),       // or null if you want

@@ -99,6 +99,7 @@ class SettingsTargetAgendaController extends Controller
         ActivityLog::create([
             'id'          => (string) Str::uuid(),
             'user_id'     => Auth::id(),
+            'notifiable_user_id' => Auth::id(),
             'action'      => $action,
             'model_type'  => SettingsTargetAgenda::class,
             'model_id'    => $changes['target_agenda']['id']

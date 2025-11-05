@@ -172,6 +172,7 @@ class DepartmentPermissionController extends Controller
         ActivityLog::create([
             'id'          => Str::uuid(),
             'user_id'     => Auth::id(),
+            'notifiable_user_id' => Auth::id(),
             'action'      => $action,
             'model_type'  => DepartmentPermission::class,
             'model_id'    => $changes['permission']['id'] ?? null,

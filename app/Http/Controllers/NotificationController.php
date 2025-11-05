@@ -30,4 +30,19 @@ class NotificationController extends Controller
 
         return response()->json($notifications);
     }
+
+     public function markAsRead(Request $request)
+    {
+        $userId = auth()->id();
+
+        if (!$userId) {
+            return response()->json(['status' => 'unauthenticated'], 401);
+        }
+
+        ActivityLog::where('notifiable_user_id', $userId)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->json(['status' => 'ok']);
+    }
 }

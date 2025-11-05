@@ -119,7 +119,6 @@
                                         <option value="San Agustin Campus">San Agustin Campus</option>
                                         <option value="Romblon Campus">Romblon Campus</option>
                                         <option value="San Fernando Campus">San Fernando Campus</option>
-                                        <option value="(Blanks)">(Blanks)</option>
                                     </select>
                                 </div>
                             </div>
@@ -224,3 +223,4 @@
 })();
 </script>
 @endpush
+ 

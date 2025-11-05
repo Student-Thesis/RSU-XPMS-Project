@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-     public function boot(): void
+    public function boot(): void
     {
         // if you're serving from subfolder
         $basePath = request()->ip() === '127.0.0.1' ? '' : '/public';
@@ -29,17 +29,20 @@ class AppServiceProvider extends ServiceProvider
 
         // 🔔 Share notifications only if table exists
         if (Schema::hasTable('activity_logs')) {
-            // better to bind to topnav only, not all views
             View::composer('layouts.partials.topnav', function ($view) {
-                $notifications = ActivityLog::with('user')
-                    ->latest()
-                    ->take(5)
-                    ->get();
+                $user = auth()->user();
 
-                $notificationCount = ActivityLog::count();
+                if (!$user) {
+                    return;
+                }
 
-                $view->with('notifications', $notifications)
-                     ->with('notificationCount', $notificationCount);
+                // last 5 notifications targeted to this user
+                $notifications = ActivityLog::with('user')->where('notifiable_user_id', $user->id)->latest()->take(5)->get();
+
+                // unread count for THIS user only
+                $notificationCount = ActivityLog::where('notifiable_user_id', $user->id)->whereNull('read_at')->count();
+
+                $view->with('notifications', $notifications)->with('notificationCount', $notificationCount);
             });
         }
     }

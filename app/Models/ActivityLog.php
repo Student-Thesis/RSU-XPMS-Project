@@ -24,6 +24,7 @@ class ActivityLog extends Model
         'changes',
         'ip_address',
         'user_agent',
+        'notifiable_user_id'
     ];
 
     protected $casts = [
@@ -39,5 +40,10 @@ class ActivityLog extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+     public function notifiableUser()
+    {
+        return $this->belongsTo(User::class, 'notifiable_user_id');
     }
 }
