@@ -14,6 +14,10 @@ class CalendarEventController extends Controller
      * Return events for FullCalendar.
      * - show ALL public events
      * - show MY private events
+     *
+     * IMPORTANT:
+     * We EXPAND multi-day ranges into ONE EVENT PER DAY
+     * so the same event appears on every date in the range.
      */
     public function index()
     {
@@ -23,26 +27,47 @@ class CalendarEventController extends Controller
             ->where('visibility', 'public')
             ->orWhere(function ($q) use ($userId) {
                 $q->where('visibility', 'private')
-                  ->where('created_by', $userId);
+                    ->where('created_by', $userId);
             })
             ->get();
 
-        return $events->map(function (CalendarEvent $event) {
-            return [
-                'id'    => $event->id,
-                'title' => $event->title,
-                'start' => $event->start_date->toDateString(),
-                'end'   => $event->end_date?->toDateString(),
-                'color' => $event->color ?? '#007bff',
-                'extendedProps' => [
-                    'description' => $event->description,
-                    'type'        => $event->type,
-                    'priority'    => $event->priority,
-                    'visibility'  => $event->visibility,
-                    'created_by'  => $event->created_by,
-                ],
-            ];
-        });
+        $mapped = [];
+
+        foreach ($events as $event) {
+            $rangeStart = $event->start_date;                      // Carbon
+            $rangeEnd   = $event->end_date ?? $event->start_date;  // inclusive
+
+            // safety
+            if ($rangeEnd->lt($rangeStart)) {
+                $rangeEnd = $rangeStart->copy();
+            }
+
+            // create one event per day in the range [start, end]
+            for ($date = $rangeStart->copy(); $date->lte($rangeEnd); $date->addDay()) {
+                $mapped[] = [
+                    // id is STILL the same DB id; FullCalendar allows duplicates
+                    'id'     => $event->id,
+                    'title'  => $event->title,
+                    'start'  => $date->toDateString(), // that specific day
+                    // one-day allDay event, no need to send end
+                    'allDay' => true,
+                    'color'  => $event->color ?? '#007bff',
+                    'extendedProps' => [
+                        'description' => $event->description,
+                        'type'        => $event->type,
+                        'priority'    => $event->priority,
+                        'visibility'  => $event->visibility,
+                        'created_by'  => $event->created_by,
+
+                        // full original range (inclusive)
+                        'range_start' => $rangeStart->toDateString(),
+                        'range_end'   => $rangeEnd->toDateString(),
+                    ],
+                ];
+            }
+        }
+
+        return $mapped;
     }
 
     /**
@@ -76,27 +101,13 @@ class CalendarEventController extends Controller
 
         $event = CalendarEvent::create($validated);
 
-        // 🔐 log here
         $this->logActivity('Created Calendar Event', [
             'event' => $event->toArray(),
         ]);
 
         return response()->json([
             'message' => 'Event created.',
-            'event'   => [
-                'id'    => $event->id,
-                'title' => $event->title,
-                'start' => $event->start_date->toDateString(),
-                'end'   => $event->end_date?->toDateString(),
-                'color' => $event->color ?? '#007bff',
-                'extendedProps' => [
-                    'description' => $event->description,
-                    'type'        => $event->type,
-                    'priority'    => $event->priority,
-                    'visibility'  => $event->visibility,
-                    'created_by'  => $event->created_by,
-                ],
-            ],
+            'id'      => $event->id,
         ], 201);
     }
 
@@ -123,7 +134,6 @@ class CalendarEventController extends Controller
         $validated['updated_by'] = Auth::id();
         $event->update($validated);
 
-        // 🔐 log here
         $this->logActivity('Updated Calendar Event', [
             'old' => $old,
             'new' => $event->fresh()->toArray(),
@@ -142,7 +152,6 @@ class CalendarEventController extends Controller
         $eventData = $event->toArray();
         $event->delete();
 
-        // 🔐 log here
         $this->logActivity('Deleted Calendar Event', [
             'event' => $eventData,
         ]);
@@ -161,21 +170,20 @@ class CalendarEventController extends Controller
     }
 
     /**
-     * 🧾 Local logging method (no trait)
-     * Logs only from this controller.
+     * Local logging method
      */
     protected function logActivity(string $action, array $changes = []): void
     {
         ActivityLog::create([
-            'id'          => Str::uuid(),
-            'user_id'     => Auth::id(),
+            'id'                 => Str::uuid(),
+            'user_id'            => Auth::id(),
             'notifiable_user_id' => Auth::id(),
-            'action'      => $action,
-            'model_type'  => CalendarEvent::class,
-            'model_id'    => $changes['event']['id'] ?? null,
-            'changes'     => $changes,
-            'ip_address'  => request()->ip(),
-            'user_agent'  => request()->userAgent(),
+            'action'             => $action,
+            'model_type'         => CalendarEvent::class,
+            'model_id'           => $changes['event']['id'] ?? null,
+            'changes'            => $changes,
+            'ip_address'         => request()->ip(),
+            'user_agent'         => request()->userAgent(),
         ]);
     }
 }

@@ -18,7 +18,7 @@ class ProposalController extends Controller
         $classifications = SettingsClassification::active()->orderBy('name')->get();
         $targetAgendas   = SettingsTargetAgenda::active()->orderBy('name')->get();
 
-        return view('proposals.register', compact('classifications', 'targetAgendas'));
+        return view('proposals.register', compact('classifications', 'targetAgendas')); 
     }
 
     public function index()
@@ -178,7 +178,7 @@ class ProposalController extends Controller
             'beneficiaries_how_many' => ['nullable', 'integer', 'min:0'],
             'budget_ps'              => ['nullable', 'numeric', 'min:0'],
             'budget_mooe'            => ['nullable', 'numeric', 'min:0'],
-            'budget_co'              => ['nullable', 'numeric', 'min:0'],
+            'budget_co'              => ['nullable', 'numeric', 'min:0'], 
             'partner'                => ['nullable', 'string', 'max:255'],
         ]);
     }

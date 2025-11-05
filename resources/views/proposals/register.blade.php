@@ -92,12 +92,16 @@
                                 <option value="" disabled {{ old('classification') ? '' : 'selected' }}>
                                     Choose classification
                                 </option>
-                                <option value="Project" {{ old('classification') === 'Project' ? 'selected' : '' }}>
-                                    Project</option>
-                                <option value="Program" {{ old('classification') === 'Program' ? 'selected' : '' }}>
-                                    Program</option>
+
+                                @foreach ($classifications as $classification)
+                                    <option value="{{ $classification->name }}"
+                                        {{ old('classification') === $classification->name ? 'selected' : '' }}>
+                                        {{ $classification->name }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
+
 
                         {{-- Team Members --}}
                         <div class="mb-2">
