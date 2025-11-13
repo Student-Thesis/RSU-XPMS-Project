@@ -12,9 +12,8 @@ class DepartmentSeeder extends Seeder
     {
         // create base departments
         $admin       = Department::firstOrCreate(['name' => 'Admins']);
-        $manager     = Department::firstOrCreate(['name' => 'Managers']);
+        $manager     = Department::firstOrCreate(['name' => 'Project Leader']);
         $coordinator = Department::firstOrCreate(['name' => 'Coordinators']);
-        $user        = Department::firstOrCreate(['name' => 'Users']); // renamed to plural to match others
 
         // master list of resources we used in routes
         $resources = [
@@ -64,19 +63,6 @@ class DepartmentSeeder extends Seeder
                     'can_view'   => true,
                     'can_create' => true,
                     'can_update' => true,
-                    'can_delete' => false,
-                ]
-            );
-        }
-
-        /* ========== USERS: view only ========== */
-        foreach ($resources as $res) {
-            DepartmentPermission::updateOrCreate(
-                ['department_id' => $user->id, 'resource' => $res],
-                [
-                    'can_view'   => true,
-                    'can_create' => false,
-                    'can_update' => false,
                     'can_delete' => false,
                 ]
             );

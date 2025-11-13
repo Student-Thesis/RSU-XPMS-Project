@@ -20,7 +20,7 @@ class DepartmentPermissionMiddleware
         if (!DeptGate::can($user, $resource, $action)) {
             // you can redirect instead:
             // return redirect()->route('dashboard')->with('error','Not allowed.');
-            abort(403, 'You are not allowed to access this feature.');
+            return redirect()->back()->with('permission_error', 'You are not allowed to access this feature.');
         }
 
         return $next($request);

@@ -32,7 +32,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Name</th>
-                                    <th>Slug</th>
+                                    {{-- <th>Slug</th> --}}
                                     <th>Active</th>
                                     <th class="text-end" style="width: 260px;">Actions</th>
                                 </tr>
@@ -41,7 +41,7 @@
                                 @forelse($items as $item)
                                     <tr>
                                         <td>{{ $item->name }}</td>
-                                        <td>{{ $item->slug }}</td>
+                                        {{-- <td>{{ $item->slug }}</td> --}}
                                         <td>
                                             @if ($item->is_active)
                                                 Yes

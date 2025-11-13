@@ -79,7 +79,7 @@
                             Our admin will review your submission and get back to you shortly.</p>
 
                         <div class="d-grid mt-4">
-                            <a href="{{ url('/') }}" class="btn btn-success">Back to Home</a>
+                            <a href="{{ url('/') }}" class="btn btn-success">Back to Login</a>
                         </div>
                     </div>
                 </div>

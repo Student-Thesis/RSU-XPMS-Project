@@ -120,6 +120,31 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .counter_section {
+            box-shadow: none !important;
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .counter_section .full {
+            box-shadow: none !important;
+            border: none !important;
+            background: transparent !important;
+        }
+
+        .counter_section .counter_no,
+        .counter_section .couter_icon {
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        .margin_bottom_30 {
+            margin-bottom: 30px;
+        }
+    </style>
 @endsection
 
 @push('scripts')
@@ -186,23 +211,22 @@
             }
 
             // fill dropdown from PHP keys (so it always matches DB)
-            const campusNames = Object.keys(chartData);
-            if (campusNames.length) {
-                // clear existing options
-                select.innerHTML = '';
-                campusNames.forEach(c => {
-                    const opt = document.createElement('option');
-                    opt.value = c;
-                    opt.textContent = c;
-                    select.appendChild(opt);
-                });
+           // Get the campuses that have actual DB data
+const campusNames = Object.keys(chartData);
 
-                // render first campus
-                render(campusNames[0]);
-            } else {
-                // no data → still render zeros
-                render('(No data)');
-            }
+// If DB has something, select the first one
+if (campusNames.length) {
+    // If the first database campus exists in the dropdown, select it
+    const firstCampus = campusNames[0];
+
+    if ([...select.options].some(opt => opt.value === firstCampus)) {
+        select.value = firstCampus;
+    }
+
+    render(firstCampus);
+} else {
+    render('(No data)');
+}
 
             // change handler
             select.addEventListener('change', function() {

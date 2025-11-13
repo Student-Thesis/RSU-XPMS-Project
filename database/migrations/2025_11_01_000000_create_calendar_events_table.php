@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->string('priority')->default('Medium');
             $table->string('visibility')->default('public'); // public | private
             $table->string('color')->nullable();
+            $table->string('location')->nullable();
 
             // audit
             $table->unsignedBigInteger('created_by');

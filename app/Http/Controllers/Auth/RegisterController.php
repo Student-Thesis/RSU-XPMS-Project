@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
@@ -27,15 +28,15 @@ class RegisterController extends Controller
         Log::info('Validating registration data', ['data' => $data]);
 
         return Validator::make($data, [
-            'first_name'    => ['required', 'string', 'max:100'],
-            'last_name'     => ['required', 'string', 'max:100'],
-            'username'      => ['required', 'string', 'max:50', 'unique:users,username'],
-            'email'         => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'phone'         => ['nullable', 'string', 'max:30'],
-            'college'       => ['required', 'string', 'max:100'],
+            'first_name' => ['required', 'string', 'max:100'],
+            'last_name' => ['required', 'string', 'max:100'],
+            'username' => ['required', 'string', 'max:50', 'unique:users,username'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'college' => ['required', 'string', 'max:100'],
             // only allow Manager(2), Coordinator(3), User(4)
             'department_id' => ['required', 'integer', 'in:2,3,4'],
-            'password'      => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
 
@@ -52,15 +53,15 @@ class RegisterController extends Controller
 
         try {
             $user = User::create([
-                'first_name'    => $data['first_name'],
-                'last_name'     => $data['last_name'],
-                'username'      => $data['username'],
-                'email'         => $data['email'],
-                'phone'         => $data['phone'] ?? null,
-                'college'       => $data['college'],
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'username' => $data['username'],
+                'email' => $data['email'],
+                'phone' => $data['phone'] ?? null,
+                'college' => $data['college'],
                 'department_id' => $data['department_id'],
-                'user_type'     => $userType,
-                'password'      => Hash::make($data['password']),
+                'user_type' => $userType,
+                'password' => Hash::make($data['password']),
             ]);
 
             Log::info('User registered successfully', [
@@ -70,11 +71,27 @@ class RegisterController extends Controller
                 'user_type' => $user->user_type,
             ]);
 
+            // ============================
+            // Send Welcome Email via Gmail
+            // ============================
+            try {
+                Mail::raw("Hi {$user->first_name},\n\n" . "Your account has been created successfully.\n\n" . "Username: {$user->username}\n" . "Email: {$user->email}\n\n" . "You can now log in to the system.\n\n" . 'Thank you.', function ($message) use ($user) {
+                    $message->to($user->email, $user->first_name . ' ' . $user->last_name)->subject('Your Account Has Been Created');
+                });
+            } catch (\Throwable $mailException) {
+                // Don’t block registration if email fails
+                Log::warning('User registered but welcome email failed to send', [
+                    'user_id' => $user->id,
+                    'email' => $user->email,
+                    'error' => $mailException->getMessage(),
+                ]);
+            }
+
             return $user;
         } catch (\Exception $e) {
             Log::error('User registration failed', [
                 'error' => $e->getMessage(),
-                'data'  => $data,
+                'data' => $data,
             ]);
             throw $e;
         }
@@ -87,9 +104,11 @@ class RegisterController extends Controller
 
         Log::info('Redirecting after registration', ['user_id' => $user->id]);
 
-        return redirect()->route('proposals.index')->with([
-            'success' => 'Welcome, ' . ($user->first_name ?: $user->username) . '!',
-            'user'    => $user->only(['id', 'username', 'email', 'college', 'department_id', 'user_type']),
-        ]);
+        return redirect()
+            ->route('proposals.index')
+            ->with([
+                'success' => 'Welcome, ' . ($user->first_name ?: $user->username) . '!',
+                'user' => $user->only(['id', 'username', 'email', 'college', 'department_id', 'user_type']),
+            ]);
     }
 }

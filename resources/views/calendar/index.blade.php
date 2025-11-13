@@ -76,6 +76,12 @@
                         </select>
                     </div>
 
+                    {{-- NEW: Location --}}
+                    <div class="calendar-form-group">
+                        <label class="calendar-form-label">Location</label>
+                        <input type="text" id="eventLocation" class="calendar-form-input">
+                    </div>
+
                     <div class="calendar-form-group">
                         <label class="calendar-form-label">Visibility</label>
                         <select id="eventVisibility" class="calendar-form-input">
@@ -94,19 +100,7 @@
                         </select>
                     </div>
 
-                    <div class="calendar-form-group">
-                        <label class="calendar-form-label">Color</label>
-                        <div class="calendar-color-picker-container">
-                            <div class="calendar-color-option selected" style="background-color:#007bff;" data-color="#007bff"></div>
-                            <div class="calendar-color-option" style="background-color:#28a745;" data-color="#28a745"></div>
-                            <div class="calendar-color-option" style="background-color:#dc3545;" data-color="#dc3545"></div>
-                            <div class="calendar-color-option" style="background-color:#ffc107;" data-color="#ffc107"></div>
-                            <div class="calendar-color-option" style="background-color:#6f42c1;" data-color="#6f42c1"></div>
-                            <div class="calendar-color-option" style="background-color:#fd7e14;" data-color="#fd7e14"></div>
-                            <div class="calendar-color-option" style="background-color:#20c997;" data-color="#20c997"></div>
-                            <div class="calendar-color-option" style="background-color:#6c757d;" data-color="#6c757d"></div>
-                        </div>
-                    </div>
+                    {{-- REMOVED MANUAL COLOR PICKER – color now auto based on priority --}}
 
                     <div class="calendar-btn-row mt-3">
                         <button type="button" class="btn btn-secondary" onclick="closeAddEventModal()">Cancel</button>
@@ -139,7 +133,6 @@
     <script>
         let currentCalendar;
         let currentSelectedEvent = null;
-        let selectedColor = '#007bff';
         let editingEventId = null;
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -177,20 +170,8 @@
                 currentCalendar.render();
             }
 
-            setupColorPicker();
             setupFormSubmit();
         });
-
-        function setupColorPicker() {
-            const colorOptions = document.querySelectorAll('.calendar-color-option');
-            colorOptions.forEach(option => {
-                option.addEventListener('click', function () {
-                    colorOptions.forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedColor = this.dataset.color;
-                });
-            });
-        }
 
         function openAddEventModal(dateStr = '') {
             editingEventId = null;
@@ -199,10 +180,7 @@
             document.getElementById('eventSubmitBtn').textContent = 'Add Event';
             document.getElementById('eventDate').value = dateStr;
             document.getElementById('eventVisibility').value = 'public';
-
-            document.querySelectorAll('.calendar-color-option').forEach(opt => opt.classList.remove('selected'));
-            document.querySelector('.calendar-color-option[data-color="#007bff"]').classList.add('selected');
-            selectedColor = '#007bff';
+            document.getElementById('eventPriority').value = 'Medium';
 
             document.getElementById('addEventModal').classList.add('show');
             document.getElementById('eventTitle').focus();
@@ -223,12 +201,14 @@
             const startDate = new Date(rangeStartStr);
             const endDate   = new Date(rangeEndStr);
             const visibility = event.extendedProps.visibility || 'public';
+            const priority  = event.extendedProps.priority || 'Medium';
+            const priorityColor = getPriorityColor(priority);
 
             detailsContainer.innerHTML = `
                 <div class="calendar-event-detail">
                     <div class="calendar-event-detail-label">Project Title:</div>
                     <div class="calendar-event-detail-value">
-                        <span class="calendar-event-color-indicator" style="background-color:${event.backgroundColor || event.color || '#007bff'}"></span>
+                        <span class="calendar-event-color-indicator" style="background-color:${priorityColor}"></span>
                         ${event.title}
                     </div>
                 </div>
@@ -249,10 +229,14 @@
                     <div class="calendar-event-detail-value">${event.extendedProps.type || 'Not specified'}</div>
                 </div>
                 <div class="calendar-event-detail">
+                    <div class="calendar-event-detail-label">Location:</div>
+                    <div class="calendar-event-detail-value">${event.extendedProps.location || 'Not specified'}</div>
+                </div>
+                <div class="calendar-event-detail">
                     <div class="calendar-event-detail-label">Priority:</div>
                     <div class="calendar-event-detail-value">
-                        <span style="color:${getPriorityColor(event.extendedProps.priority)};font-weight:bold;">
-                            ${event.extendedProps.priority || 'Medium'}
+                        <span style="color:${priorityColor};font-weight:bold;">
+                            ${priority}
                         </span>
                     </div>
                 </div>
@@ -285,13 +269,13 @@
             currentSelectedEvent = null;
         }
 
+        // Priority → Color mapping (Low/Medium/High)
         function getPriorityColor(priority) {
             switch (priority) {
-                case 'Critical': return '#dc3545';
-                case 'High':     return '#fd7e14';
-                case 'Medium':   return '#ffc107';
-                case 'Low':      return '#28a745';
-                default:         return '#6c757d';
+                case 'High':     return '#dc3545'; // red
+                case 'Medium':   return '#ffc107'; // yellow
+                case 'Low':      return '#28a745'; // green
+                default:         return '#6c757d'; // grey fallback
             }
         }
 
@@ -299,14 +283,17 @@
             document.getElementById('eventForm').addEventListener('submit', async function (e) {
                 e.preventDefault();
 
+                const priority = document.getElementById('eventPriority').value || 'Medium';
                 const payload = {
                     title:       document.getElementById('eventTitle').value,
                     description: document.getElementById('eventDescription').value,
                     start_date:  document.getElementById('eventDate').value,
                     end_date:    document.getElementById('eventEndDate').value || null,
                     type:        document.getElementById('eventType').value,
-                    priority:    document.getElementById('eventPriority').value,
-                    color:       selectedColor,
+                    location:    document.getElementById('eventLocation').value,
+                    priority:    priority,
+                    // Color is now auto-derived from priority
+                    color:       getPriorityColor(priority),
                     visibility:  document.getElementById('eventVisibility').value,
                 };
 
@@ -372,18 +359,9 @@
             document.getElementById('eventDate').value        = rangeStartStr;
             document.getElementById('eventEndDate').value     = rangeEndStr;
             document.getElementById('eventType').value        = event.extendedProps.type || '';
+            document.getElementById('eventLocation').value    = event.extendedProps.location || '';
             document.getElementById('eventPriority').value    = event.extendedProps.priority || 'Medium';
             document.getElementById('eventVisibility').value  = event.extendedProps.visibility || 'public';
-
-            document.querySelectorAll('.calendar-color-option').forEach(opt => opt.classList.remove('selected'));
-            const eventColor = event.backgroundColor || event.color || '#007bff';
-            const colorEl = document.querySelector(`.calendar-color-option[data-color="${eventColor}"]`);
-            if (colorEl) {
-                colorEl.classList.add('selected');
-                selectedColor = eventColor;
-            } else {
-                selectedColor = eventColor;
-            }
 
             closeViewEventModal();
             document.getElementById('addEventModal').classList.add('show');
@@ -469,13 +447,6 @@
             padding:.4rem .6rem;
         }
         .calendar-form-textarea { min-height:80px;resize:vertical; }
-
-        .calendar-color-picker-container { display:flex;gap:.4rem;flex-wrap:wrap; }
-        .calendar-color-option {
-            width:28px;height:28px;border-radius:6px;
-            cursor:pointer;border:2px solid transparent;
-        }
-        .calendar-color-option.selected { border-color:#000; }
 
         .calendar-event-detail { display:flex;gap:.5rem;margin-bottom:.35rem; }
         .calendar-event-detail-label { width:110px;font-weight:600;color:#555; }

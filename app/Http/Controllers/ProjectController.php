@@ -19,21 +19,32 @@ class ProjectController extends Controller
         $college = $request->input('college');
         $status  = $request->input('status');
 
-        $proposals = Proposal::query()
-            ->where('user_id', Auth::id()) // show only current user's data
-            ->when($q, function ($query, $q) {
-                $query->where(function ($qq) use ($q) {
-                    $qq->where('title', 'like', "%{$q}%")
-                        ->orWhere('team_members', 'like', "%{$q}%")
-                        ->orWhere('target_agenda', 'like', "%{$q}%")
-                        ->orWhere('location', 'like', "%{$q}%")
-                        ->orWhere('partner', 'like', "%{$q}%");
-                });
-            })
-            ->when($college && $college !== 'All', fn($query) => $query->where('location', $college))
-            ->when($status && $status !== 'All', fn($query) => $query->where('status', $status))
-            ->latest()
-            ->get();
+       $proposals = Proposal::query()
+
+    // Show all if department_id = 1, otherwise only own proposals
+    ->when(Auth::user()->department_id != 1, function ($query) {
+        $query->where('user_id', Auth::id());
+    })
+
+    // Search filtering
+    ->when($q, function ($query, $q) {
+        $query->where(function ($qq) use ($q) {
+            $qq->where('title', 'like', "%{$q}%")
+                ->orWhere('team_members', 'like', "%{$q}%")
+                ->orWhere('target_agenda', 'like', "%{$q}%")
+                ->orWhere('location', 'like', "%{$q}%")
+                ->orWhere('partner', 'like', "%{$q}%");
+        });
+    })
+
+    // College filter
+    ->when($college && $college !== 'All', fn($query) => $query->where('location', $college))
+
+    // Status filter
+    ->when($status && $status !== 'All', fn($query) => $query->where('status', $status))
+
+    ->latest()
+    ->get();
 
         return view('projects.index', compact('proposals', 'q', 'college', 'status'));
     }

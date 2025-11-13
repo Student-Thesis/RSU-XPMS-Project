@@ -17,6 +17,7 @@ class CalendarEvent extends Model
         'type',
         'priority',
         'visibility',
+        'location',
         'color',
         'created_by',
         'updated_by',

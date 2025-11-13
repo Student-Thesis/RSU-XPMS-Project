@@ -15,7 +15,6 @@ class CalendarEventController extends Controller
      * - show ALL public events
      * - show MY private events
      *
-     * IMPORTANT:
      * We EXPAND multi-day ranges into ONE EVENT PER DAY
      * so the same event appears on every date in the range.
      */
@@ -42,6 +41,9 @@ class CalendarEventController extends Controller
                 $rangeEnd = $rangeStart->copy();
             }
 
+            // color is always derived from priority
+            $color = $this->priorityColor($event->priority);
+
             // create one event per day in the range [start, end]
             for ($date = $rangeStart->copy(); $date->lte($rangeEnd); $date->addDay()) {
                 $mapped[] = [
@@ -51,10 +53,11 @@ class CalendarEventController extends Controller
                     'start'  => $date->toDateString(), // that specific day
                     // one-day allDay event, no need to send end
                     'allDay' => true,
-                    'color'  => $event->color ?? '#007bff',
+                    'color'  => $color,
                     'extendedProps' => [
                         'description' => $event->description,
                         'type'        => $event->type,
+                        'location'    => $event->location,   // NEW
                         'priority'    => $event->priority,
                         'visibility'  => $event->visibility,
                         'created_by'  => $event->created_by,
@@ -68,6 +71,7 @@ class CalendarEventController extends Controller
         }
 
         return $mapped;
+        // or: return response()->json($mapped);
     }
 
     /**
@@ -90,12 +94,21 @@ class CalendarEventController extends Controller
             'start_date'  => 'required|date',
             'end_date'    => 'nullable|date|after_or_equal:start_date',
             'type'        => 'nullable|string|max:100',
-            'priority'    => 'nullable|string|max:50',
-            'color'       => 'nullable|string|max:20',
+            'location'    => 'nullable|string|max:255',            // NEW
+            'priority'    => 'nullable|in:Low,Medium,High',
             'visibility'  => 'nullable|in:public,private',
+            // color is NOT accepted from front-end anymore
         ]);
 
         $validated['visibility'] = $validated['visibility'] ?? 'public';
+
+        // default priority if nothing sent
+        $priority = $validated['priority'] ?? 'Medium';
+        $validated['priority'] = $priority;
+
+        // derive color from priority
+        $validated['color'] = $this->priorityColor($priority);
+
         $validated['created_by'] = Auth::id();
         $validated['updated_by'] = Auth::id();
 
@@ -124,10 +137,21 @@ class CalendarEventController extends Controller
             'start_date'  => 'required|date',
             'end_date'    => 'nullable|date|after_or_equal:start_date',
             'type'        => 'nullable|string|max:100',
-            'priority'    => 'nullable|string|max:50',
-            'color'       => 'nullable|string|max:20',
+            'location'    => 'nullable|string|max:255',            // NEW
+            'priority' => 'nullable|in:Low,Medium,High,Critical',
             'visibility'  => 'nullable|in:public,private',
         ]);
+
+        // keep old priority if not sent (just in case)
+        $priority = $validated['priority'] ?? $event->priority ?? 'Medium';
+        $validated['priority'] = $priority;
+
+        // derive color again from priority
+        $validated['color'] = $this->priorityColor($priority);
+
+        if (!isset($validated['visibility'])) {
+            $validated['visibility'] = $event->visibility ?? 'public';
+        }
 
         $old = $event->toArray();
 
@@ -170,6 +194,25 @@ class CalendarEventController extends Controller
     }
 
     /**
+     * Map priority -> color
+     * Low    = green
+     * Medium = yellow
+     * High   = red
+     */
+    private function priorityColor(?string $priority): string
+    {
+        $priority = $priority ?? 'Medium';
+
+        return match ($priority) {
+            'Critical' => '#8B0000', // dark red
+            'High'   => '#dc3545', // red
+            'Medium' => '#ffc107', // yellow
+            'Low'    => '#28a745', // green
+            default  => '#6c757d', // grey fallback
+        };
+    }
+
+    /**
      * Local logging method
      */
     protected function logActivity(string $action, array $changes = []): void
@@ -180,7 +223,7 @@ class CalendarEventController extends Controller
             'notifiable_user_id' => Auth::id(),
             'action'             => $action,
             'model_type'         => CalendarEvent::class,
-            'model_id'           => $changes['event']['id'] ?? null,
+            'model_id'           => $changes['event']['id'] ?? $changes['new']['id'] ?? null,
             'changes'            => $changes,
             'ip_address'         => request()->ip(),
             'user_agent'         => request()->userAgent(),

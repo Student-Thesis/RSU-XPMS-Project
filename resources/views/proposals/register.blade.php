@@ -29,7 +29,7 @@
                 background-position: 0% 50%;
             }
         }
-
+ 
         .card {
             background-color: #ffffffcc;
             border-radius: 1rem;
@@ -65,6 +65,32 @@
             margin-bottom: 10px;
             color: #333;
         }
+         /* Remove Chrome autofill background + keep text color normal */
+        input.form-control:-webkit-autofill,
+        input.form-control:-webkit-autofill:hover,
+        input.form-control:-webkit-autofill:focus,
+        input.form-control:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+            box-shadow: 0 0 0 1000px #ffffff inset !important;
+            -webkit-text-fill-color: #212529 !important;
+            color: #212529 !important;
+            transition: background-color 9999s ease-in-out 0s;
+        }
+
+        /* For select autofill (if ever triggered) */
+        select.form-select:-webkit-autofill,
+        select.form-select:-webkit-autofill:hover,
+        select.form-select:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+            -webkit-text-fill-color: #212529 !important;
+        }
+
+        /* Ensure the input border does not darken on autofill */
+        input.form-control,
+        select.form-select {
+            background-color: #fff !important;
+            color: #212529 !important;
+        }
     </style>
 </head>
 
@@ -73,21 +99,21 @@
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
                 <div class="card">
-                    <h4 class="text-center mb-4">Proposal Submission Form</h4>
+                    <h4 class="text-center mb-4">Submission to Requirement</h4>
 
                     <form method="POST" action="{{ route('proposals.store') }}">
                         @csrf
 
                         {{-- Title --}}
                         <div class="mb-2">
-                            <label class="form-label">Title for Proposal</label>
+                            <label class="form-label">Title for Proposal <span style="color:red;"> * </span></label>
                             <input type="text" name="title" class="form-control" value="{{ old('title') }}"
                                 placeholder="Enter proposal title" required>
                         </div>
 
                         {{-- Classification (names, not slugs) --}}
                         <div class="mb-2">
-                            <label class="form-label">Classification</label>
+                            <label class="form-label">Classification <span style="color:red;"> * </span></label>
                             <select name="classification" class="form-select" required>
                                 <option value="" disabled {{ old('classification') ? '' : 'selected' }}>
                                     Choose classification
@@ -105,14 +131,14 @@
 
                         {{-- Team Members --}}
                         <div class="mb-2">
-                            <label class="form-label">Team Member Name(s)</label>
+                            <label class="form-label">Team Member Name(s) <span style="color:red;"> * </span></label>
                             <input type="text" name="team_members" class="form-control"
-                                value="{{ old('team_members') }}" placeholder="Separate multiple names with commas">
+                                value="{{ old('team_members') }}" placeholder="Separate multiple names with commas" required>
                         </div>
 
                         {{-- Target Agenda (names, not slugs) --}}
                         <div class="mb-2">
-                            <label class="form-label">Target Agenda</label>
+                            <label class="form-label">Target Agenda <span style="color:red;"> * </span></label>
                             <select name="target_agenda" class="form-select">
                                 <option value="" disabled {{ old('target_agenda') ? '' : 'selected' }}>
                                     Choose target agenda
@@ -128,30 +154,30 @@
 
                         {{-- Location --}}
                         <div class="mb-2">
-                            <label class="form-label">Location</label>
+                            <label class="form-label">Location <span style="color:red;"> * </span></label>
                             <input type="text" name="location" class="form-control" value="{{ old('location') }}"
                                 placeholder="Enter location">
                         </div>
 
                         {{-- Time Frame (string per validator) --}}
                         <div class="mb-2">
-                            <label class="form-label">Required Time Frame</label>
-                            <input type="date" name="time_frame" class="form-control"
-                                value="{{ old('time_frame') }}" placeholder="e.g. 1 month or Oct–Dec 2025">
+                            <label class="form-label">Required Time Frame <span style="color:red;"> * </span></label>
+                            <input type="text" name="time_frame" class="form-control"
+                                value="{{ old('time_frame') }}" placeholder="e.g. 1 month or Oct–Dec 2025" required>
                         </div>
 
                         {{-- Target Beneficiaries --}}
-                        <div class="form-section-title">Target Beneficiaries</div>
+                        <div class="form-section-title">Target Beneficiaries <span style="color:red;"> * </span></div>
                         <div class="row g-2">
                             <div class="col-md-6">
                                 <label class="form-label">Who?</label>
                                 <input type="text" name="beneficiaries_who" class="form-control"
-                                    value="{{ old('beneficiaries_who') }}" placeholder="e.g. Farmers, Students">
+                                    value="{{ old('beneficiaries_who') }}" placeholder="e.g. Farmers, Students" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">How many?</label>
                                 <input type="number" name="beneficiaries_how_many" class="form-control"
-                                    value="{{ old('beneficiaries_how_many') }}" placeholder="e.g. 100" min="0">
+                                    value="{{ old('beneficiaries_how_many') }}" placeholder="e.g. 100" min="0" required>
                             </div>
                         </div>
 
@@ -159,9 +185,9 @@
                         <div class="form-section-title">Budget Requirements</div>
                         <div class="row g-2">
                             <div class="col-md-4">
-                                <label class="form-label">PS</label>
+                                <label class="form-label">₱</label>
                                 <input type="text" name="budget_ps" class="form-control"
-                                    value="{{ old('budget_ps') }}" placeholder="Enter PS">
+                                    value="{{ old('budget_ps') }}" placeholder="Enter ₱">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">MOOE</label>

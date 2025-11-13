@@ -18,6 +18,16 @@ use App\Http\Controllers\HelpController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\SettingsController;
+use Illuminate\Support\Facades\Mail;
+
+Route::get('/test-email', function () {
+    Mail::raw('This is a test email from Laravel Gmail SMTP!', function ($message) {
+        $message->to('nelmardapulang@gmail.com')
+                ->subject('Gmail SMTP Test');
+    });
+
+    return 'Email sent!';
+});
 
 Route::get('/', function () {
     return view('auth.login');
