@@ -39,4 +39,9 @@ class Proposal extends Model
     {
         return $v ?: (collect(explode(',', (string)$this->team_members))->map('trim')->first() ?: null);
     }
+
+    public function user()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
 }

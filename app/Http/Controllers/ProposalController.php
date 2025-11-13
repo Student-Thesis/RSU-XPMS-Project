@@ -10,15 +10,16 @@ use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Mail;
 
 class ProposalController extends Controller
 {
     public function register()
     {
         $classifications = SettingsClassification::active()->orderBy('name')->get();
-        $targetAgendas   = SettingsTargetAgenda::active()->orderBy('name')->get();
+        $targetAgendas = SettingsTargetAgenda::active()->orderBy('name')->get();
 
-        return view('proposals.register', compact('classifications', 'targetAgendas')); 
+        return view('proposals.register', compact('classifications', 'targetAgendas'));
     }
 
     public function index()
@@ -44,25 +45,25 @@ class ProposalController extends Controller
     {
         try {
             $data = $request->validate([
-                'title'                  => 'required|string|max:255',
-                'classification'         => 'required|in:Project,Program',
-                'team_members'           => 'nullable|string|max:2000',
-                'target_agenda'          => 'nullable|string|max:255',
-                'location'               => 'nullable|string|max:255',
-                'time_frame'             => 'nullable|string|max:255',
-                'beneficiaries_who'      => 'nullable|string|max:255',
+                'title' => 'required|string|max:255',
+                'classification' => 'required|in:Project,Program',
+                'team_members' => 'nullable|string|max:2000',
+                'target_agenda' => 'nullable|string|max:255',
+                'location' => 'nullable|string|max:255',
+                'time_frame' => 'nullable|string|max:255',
+                'beneficiaries_who' => 'nullable|string|max:255',
                 'beneficiaries_how_many' => 'nullable|integer|min:0',
-                'budget_ps'              => 'nullable|string|max:50',
-                'budget_mooe'            => 'nullable|string|max:50',
-                'budget_co'              => 'nullable|string|max:50',
-                'partner'                => 'nullable|string|max:255',
+                'budget_ps' => 'nullable|string|max:50',
+                'budget_mooe' => 'nullable|string|max:50',
+                'budget_co' => 'nullable|string|max:50',
+                'partner' => 'nullable|string|max:255',
             ]);
 
             // Normalize numbers: remove commas/spaces → float
-            foreach (['budget_ps','budget_mooe','budget_co'] as $k) {
+            foreach (['budget_ps', 'budget_mooe', 'budget_co'] as $k) {
                 if (isset($data[$k]) && $data[$k] !== '') {
-                    $clean     = preg_replace('/[,\s]/', '', $data[$k]);
-                    $data[$k]  = is_numeric($clean) ? (float) $clean : null;
+                    $clean = preg_replace('/[,\s]/', '', $data[$k]);
+                    $data[$k] = is_numeric($clean) ? (float) $clean : null;
                 } else {
                     $data[$k] = null;
                 }
@@ -83,9 +84,7 @@ class ProposalController extends Controller
                 'proposal' => $proposal->toArray(),
             ]);
 
-            return redirect()
-                ->route('agreement.register')
-                ->with('success', 'Proposal submitted successfully! Proceed to agreement.');
+            return redirect()->route('agreement.register')->with('success', 'Proposal submitted successfully! Proceed to agreement.');
         } catch (\Throwable $e) {
             \Log::error('Proposal submission failed', [
                 'error' => $e->getMessage(),
@@ -99,8 +98,7 @@ class ProposalController extends Controller
                 'input' => $request->except([]),
             ]);
 
-            return back()->withInput()
-                ->with('error', 'Something went wrong while submitting your proposal. Please try again.');
+            return back()->withInput()->with('error', 'Something went wrong while submitting your proposal. Please try again.');
         }
     }
 
@@ -134,13 +132,13 @@ class ProposalController extends Controller
 
         $before = $proposal->toArray();
         $proposal->update($data);
-        $after  = $proposal->fresh()->toArray();
+        $after = $proposal->fresh()->toArray();
 
         // ✅ log update
         $this->logActivity('Updated Proposal', [
             'proposal_id' => $proposal->id,
-            'before'      => $before,
-            'after'       => $after,
+            'before' => $before,
+            'after' => $after,
         ]);
 
         return redirect()->route('proposals.index')->with('success', 'Proposal updated successfully.');
@@ -168,18 +166,18 @@ class ProposalController extends Controller
     protected function validatedData(Request $request): array
     {
         return $request->validate([
-            'title'                  => ['required', 'string', 'max:255'],
-            'classification'         => ['required', Rule::in(['Project', 'Program'])],
-            'team_members'           => ['nullable', 'string', 'max:2000'],
-            'target_agenda'          => ['nullable', 'string', 'max:255'],
-            'location'               => ['nullable', 'string', 'max:255'],
-            'time_frame'             => ['nullable', 'string', 'max:255'],
-            'beneficiaries_who'      => ['nullable', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255'],
+            'classification' => ['required', Rule::in(['Project', 'Program'])],
+            'team_members' => ['nullable', 'string', 'max:2000'],
+            'target_agenda' => ['nullable', 'string', 'max:255'],
+            'location' => ['nullable', 'string', 'max:255'],
+            'time_frame' => ['nullable', 'string', 'max:255'],
+            'beneficiaries_who' => ['nullable', 'string', 'max:255'],
             'beneficiaries_how_many' => ['nullable', 'integer', 'min:0'],
-            'budget_ps'              => ['nullable', 'numeric', 'min:0'],
-            'budget_mooe'            => ['nullable', 'numeric', 'min:0'],
-            'budget_co'              => ['nullable', 'numeric', 'min:0'], 
-            'partner'                => ['nullable', 'string', 'max:255'],
+            'budget_ps' => ['nullable', 'numeric', 'min:0'],
+            'budget_mooe' => ['nullable', 'numeric', 'min:0'],
+            'budget_co' => ['nullable', 'numeric', 'min:0'],
+            'partner' => ['nullable', 'string', 'max:255'],
         ]);
     }
 
@@ -198,17 +196,90 @@ class ProposalController extends Controller
     protected function logActivity(string $action, array $changes = []): void
     {
         ActivityLog::create([
-            'id'          => (string) Str::uuid(),
-            'user_id'     => Auth::id(),
+            'id' => (string) Str::uuid(),
+            'user_id' => Auth::id(),
             'notifiable_user_id' => Auth::id(),
-            'action'      => $action,
-            'model_type'  => Proposal::class,
-            'model_id'    => $changes['proposal']['id']
-                             ?? $changes['proposal_id']
-                             ?? null,
-            'changes'     => $changes,
-            'ip_address'  => request()->ip(),
-            'user_agent'  => request()->userAgent(),
+            'action' => $action,
+            'model_type' => Proposal::class,
+            'model_id' => $changes['proposal']['id'] ?? ($changes['proposal_id'] ?? null),
+            'changes' => $changes,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+    }
+
+    public function approve(Request $request, $id)
+    {
+        // Must be logged in
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(
+                [
+                    'message' => 'Unauthenticated.',
+                ],
+                401,
+            );
+        }
+
+        // OPTIONAL: Only department_id = 1 can approve
+        if ($user->department_id != 1) {
+            return response()->json(
+                [
+                    'message' => 'You are not allowed to approve proposals.',
+                ],
+                403,
+            );
+        }
+
+        // Find proposal
+        $proposal = Proposal::findOrFail($id);
+
+        // Check if already approved
+        if ($proposal->status === 'Approved') {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'This proposal is already approved.',
+                ],
+                422,
+            );
+        }
+
+        // Update fields
+        $proposal->status = 'Approved';
+
+        if ($proposal->isFillable('approved_by')) {
+            $proposal->approved_by = $user->id;
+        }
+        if ($proposal->isFillable('approved_at')) {
+            $proposal->approved_at = now();
+        }
+
+        $proposal->save();
+
+        // ==================================================
+        // 📧 Send Email Notification to the Proposal Owner
+        // ==================================================
+        try {
+            $proposalOwner = $proposal->user; // must have relationship: Proposal belongsTo User
+
+            if ($proposalOwner && $proposalOwner->email) {
+                Mail::raw("Hi {$proposalOwner->first_name},\n\n" . "Your proposal titled '{$proposal->title}' has been approved.\n\n" . "You may now proceed with the next steps.\n\n" . 'Thank you.', function ($message) use ($proposalOwner, $proposal) {
+                    $message->to($proposalOwner->email, $proposalOwner->first_name . ' ' . $proposalOwner->last_name)->subject('Your Proposal Has Been Approved');
+                });
+            }
+        } catch (\Throwable $mailError) {
+            \Log::warning('Failed to send approval email', [
+                'proposal_id' => $proposal->id,
+                'user_id' => $proposal->user_id,
+                'email' => $proposal->user->email ?? null,
+                'error' => $mailError->getMessage(),
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Proposal approved successfully.',
         ]);
     }
 }

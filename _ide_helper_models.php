@@ -337,6 +337,8 @@ namespace App\Models{
  * @property numeric|null $expenditure
  * @property string|null $fund_utilization_rate
  * @property string $status
+ * @property string|null $approved_by
+ * @property string|null $approved_at
  * @property string|null $documentation_report
  * @property string|null $code
  * @property string|null $remarks
@@ -344,10 +346,13 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read float $approved_budget
+ * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereActivityDesign($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereApprovedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereApprovedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereAttendanceSheet($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereBeneficiariesHowMany($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Proposal whereBeneficiariesWho($value)

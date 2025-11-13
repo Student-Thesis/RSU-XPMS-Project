@@ -53,6 +53,8 @@ Route::middleware(['auth'])->group(function () {
     /* ================== PROPOSALS ================== */
     Route::get('/proposals',  [ProposalController::class, 'register'])->name('proposals.index');
     Route::post('/proposals', [ProposalController::class, 'store'])->name('proposals.store');
+   Route::post('/proposals/{id}/approve', [ProposalController::class, 'approve'])
+        ->name('proposals.approve');
 
     /* ================== AGREEMENT / NOTIF ================== */
     Route::get('/agreement',        [AgreementController::class, 'register'])->name('agreement.register');
