@@ -79,7 +79,7 @@
                                     </div>
 
                                     {{-- Department / Role --}}
-                                    <div class="col-md-6">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Department / Role <span class="text-danger">*</span></label>
                                             <select class="form-control" name="department_id" required>
@@ -99,6 +99,29 @@
                                             @enderror
                                         </div>
                                     </div>
+
+                                      {{-- Status --}}
+    <div class="col-md-3">
+        <div class="form-group">
+            <label>Status <span class="text-danger">*</span></label>
+            <select class="form-control" name="status" required>
+                <option value="">-- Select Status --</option>
+
+                <option value="Pending"
+                    {{ old('status', $user->status) == 'Pending' ? 'selected' : '' }}>
+                    Pending
+                </option>
+
+                <option value="Approved"
+                    {{ old('status', $user->status) == 'Approved' ? 'selected' : '' }}>
+                    Approved
+                </option>
+            </select>
+            @error('status')
+                <small class="text-danger d-block mt-1">{{ $message }}</small>
+            @enderror
+        </div>
+    </div>
 
 
                                     {{-- Avatar --}}
@@ -171,4 +194,48 @@
             });
         })();
     </script>
+
+    
+<script>
+    // Avatar Preview (existing)
+    (function() {
+        const avatarInput = document.getElementById('avatarInput');
+        const avatarPreview = document.getElementById('avatarPreview');
+
+        avatarInput?.addEventListener('change', function(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                avatarPreview.innerHTML = '';
+                const img = document.createElement('img');
+                img.src = evt.target.result;
+                img.alt = 'avatar';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                avatarPreview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    })();
+
+
+    // ============================
+    // 🚀 SHOW SWEETALERT LOADING
+    // ============================
+    document.getElementById('userEditForm').addEventListener('submit', function(e) {
+        Swal.fire({
+            title: 'Updating...',
+            text: 'Please wait while we save your changes.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            allowEnterKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+    });
+</script>
 @endpush

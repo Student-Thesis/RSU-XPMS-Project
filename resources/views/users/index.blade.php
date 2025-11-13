@@ -17,7 +17,7 @@
                         </a>
                     </div>
                 </div>
-            </div>
+            </div> 
 
             {{-- Filter Bar --}}
             <form class="filter-bar d-flex flex-wrap gap-2 mb-3 align-items-center"
@@ -80,6 +80,7 @@
             <th>Name</th>
             <th>Email</th>
             <th style="width:160px;">Role</th>
+             <th>Status</th>
             <th class="text-center actions">Action</th>
         </tr>
     </thead>
@@ -90,6 +91,7 @@
                 <td>{{ $u->first_name . ' ' . $u->last_name }}</td>
                 <td>{{ $u->email }}</td>
                 <td>{{ ucfirst(str_replace('_', ' ', $u->user_type)) }}</td>
+                <td>{{ $u->status }}</td>
                 <td class="text-center actions">
                     <div class="d-inline-flex">
                         <a href="{{ route('users.edit', $u->id) }}"

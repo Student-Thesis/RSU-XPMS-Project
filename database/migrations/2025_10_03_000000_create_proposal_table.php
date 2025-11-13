@@ -65,7 +65,7 @@ return new class extends Migration
             $table->string('fund_utilization_rate')->nullable();
 
             // Status & docs
-            $table->enum('status', ['Ongoing', 'Completed', 'Cancelled'])->default('Ongoing');
+            $table->enum('status', ['Pending','Ongoing', 'Completed', 'Cancelled'])->default('Pending');
             $table->string('documentation_report')->nullable();
             $table->string('code')->nullable();
             $table->text('remarks')->nullable();

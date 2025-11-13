@@ -22,6 +22,7 @@ class User extends Authenticatable
         'college',
         'about',
         'avatar_path',
+        'status',
     ];
 
     protected $hidden = [

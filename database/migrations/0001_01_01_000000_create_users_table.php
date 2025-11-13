@@ -34,6 +34,8 @@ return new class extends Migration {
     $table->text('about')->nullable();
     $table->string('avatar_path')->nullable(); // profile picture path
 
+    $table->string('status')->default('Pending');
+
     // Session & timestamps
     $table->rememberToken();
     $table->timestamps();

@@ -82,6 +82,7 @@ namespace App\Models{
  * @property string $priority
  * @property string $visibility
  * @property string|null $color
+ * @property string|null $location
  * @property int $created_by
  * @property int|null $updated_by
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -97,6 +98,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereEndDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereLocation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent wherePriority($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereStartDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CalendarEvent whereTitle($value)
@@ -514,6 +516,7 @@ namespace App\Models{
  * @property string|null $phone
  * @property string|null $about
  * @property string|null $avatar_path
+ * @property string $status
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -538,6 +541,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUserType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUsername($value)

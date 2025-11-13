@@ -29,7 +29,7 @@ Route::get('/test-email', function () {
     return 'Email sent!';
 });
 
-Route::get('/', function () {
+Route::get('/', function () { 
     return view('auth.login');
 });
 

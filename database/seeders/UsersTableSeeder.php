@@ -23,6 +23,7 @@ class UsersTableSeeder extends Seeder
                 'password' => Hash::make('root'),
                 'department_id' => 1, // Admins department
                 'user_type' => 'root',
+                'status' => 'Approved',
             ],
         );
 
@@ -36,6 +37,7 @@ class UsersTableSeeder extends Seeder
                 'password' => Hash::make('admin123'),
                 'department_id' => 1, // Admins department
                 'user_type' => 'admin',
+                'status' => 'Approved',
             ],
         );
 
@@ -49,6 +51,7 @@ class UsersTableSeeder extends Seeder
                 'password' => Hash::make('manager123'),
                 'department_id' => 2, // Managers department
                 'user_type' => 'manager',
+                'status' => 'Approved',
             ],
         );
 
@@ -62,6 +65,7 @@ class UsersTableSeeder extends Seeder
                 'password' => Hash::make('coordinator123'),
                 'department_id' => 3, // Coordinators department
                 'user_type' => 'coordinator',
+                'status' => 'Approved',
             ],
         );
     }
