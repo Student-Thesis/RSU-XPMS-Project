@@ -10,16 +10,13 @@
                 <div class="row column_title">
                     <div class="col-md-12">
                         <div class="page_title">
-                            <h3>Edit Proposa</h3>
+                            <h3>Edit Proposal</h3>
                         </div>
-                        <a href="{{ route('projects') }}" class="btn btn-secondary">
+                        <a href="{{ route('projects') }}" class="btn btn-secondary mb-3">
                             <i class="fa fa-arrow-left"></i> Back
                         </a>
                     </div>
                 </div>
-
-
-
 
                 <form method="POST" action="{{ route('projects.update', $project->id) }}">
                     @csrf
@@ -34,17 +31,14 @@
                     <div class="mb-3">
                         <label class="form-label">Classification</label>
                         <select name="classification" class="form-control">
-                            <option value="Program" {{ $project->classification === 'Program' ? 'selected' : '' }}>Program
-                            </option>
-                            <option value="Project" {{ $project->classification === 'Project' ? 'selected' : '' }}>Project
-                            </option>
+                            <option value="Program" {{ $project->classification === 'Program' ? 'selected' : '' }}>Program</option>
+                            <option value="Project" {{ $project->classification === 'Project' ? 'selected' : '' }}>Project</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">College/Campus</label>
-                        <input type="text" name="location" value="{{ old('location', $project->location) }}"
-                            class="form-control">
+                        <input type="text" name="location" value="{{ old('location', $project->location) }}" class="form-control">
                     </div>
 
                     <div class="mb-3">
@@ -54,25 +48,20 @@
 
                     <div class="mb-3">
                         <label class="form-label">Target Agenda</label>
-                        <input type="text" name="target_agenda"
-                            value="{{ old('target_agenda', $project->target_agenda) }}" class="form-control">
+                        <input type="text" name="target_agenda" value="{{ old('target_agenda', $project->target_agenda) }}" class="form-control">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Approved Budget</label>
-                        <input type="number" name="approved_budget"
-                            value="{{ old('approved_budget', $project->approved_budget) }}" class="form-control"
-                            min="0" step="0.01">
+                        <input type="number" name="approved_budget" value="{{ old('approved_budget', $project->approved_budget) }}" class="form-control" min="0" step="0.01">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-control">
-                            <option value="Ongoing" {{ $project->status === 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
-                            <option value="Completed" {{ $project->status === 'Completed' ? 'selected' : '' }}>Completed
-                            </option>
-                            <option value="Cancelled" {{ $project->status === 'Cancelled' ? 'selected' : '' }}>Cancelled
-                            </option>
+                        <select name="status" class="form-control status-select">
+                            <option value="Ongoing" class="status-ongoing" {{ $project->status === 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
+                            <option value="Completed" class="status-completed" {{ $project->status === 'Completed' ? 'selected' : '' }}>Completed</option>
+                            <option value="Cancelled" class="status-cancelled" {{ $project->status === 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
                         </select>
                     </div>
 
@@ -83,4 +72,20 @@
             </div>
         </div>
     </div>
+
+    <!-- Status Option Colors -->
+    <style>
+        .status-ongoing {
+            background-color: #fff3cd !important;
+            color: #856404 !important;
+        }
+        .status-completed {
+            background-color: #d4edda !important;
+            color: #155724 !important;
+        }
+        .status-cancelled {
+            background-color: #f8d7da !important;
+            color: #721c24 !important;
+        }
+    </style>
 @endsection

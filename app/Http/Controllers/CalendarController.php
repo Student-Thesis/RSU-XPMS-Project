@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\EventLocation;
 
 class CalendarController extends Controller
 {
     public function index()
     {
-        return view('calendar.index');
-    }
+        $eventLocations = EventLocation::where('is_active', true)
+            ->orderBy('name')
+            ->get();
 
-  
+        return view('calendar.index', compact('eventLocations'));
+    }
 }

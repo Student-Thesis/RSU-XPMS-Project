@@ -162,6 +162,27 @@ namespace App\Models{
 namespace App\Models{
 /**
  * @property int $id
+ * @property string $name
+ * @property string|null $address
+ * @property string|null $notes
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereAddress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereUpdatedAt($value)
+ */
+	class EventLocation extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * @property int $id
  * @property string $campus_college
  * @property int $num_faculties
  * @property int $involved_extension_total

@@ -17,13 +17,14 @@ class FacultyController extends Controller
 
         $query = Faculty::query();
 
+        // 🔍 Case-sensitive search using BINARY
         if ($q) {
-            $query->where(function($w) use ($q) {
-                $w->where('campus_college', 'like', "%{$q}%")
-                  ->orWhere('num_faculties', 'like', "%{$q}%");
+            $query->where(function ($w) use ($q) {
+                $w->whereRaw('BINARY campus_college LIKE ?', ["%{$q}%"])->orWhereRaw('BINARY num_faculties LIKE ?', ["%{$q}%"]);
             });
         }
 
+        // 🎓 College filter
         if ($college && $college !== 'All') {
             $query->where('campus_college', $college);
         }
@@ -31,8 +32,8 @@ class FacultyController extends Controller
         $rows = $query->orderBy('campus_college')->paginate(20)->withQueryString();
 
         return view('faculties.index', [
-            'rows'    => $rows,
-            'q'       => $q,
+            'rows' => $rows,
+            'q' => $q,
             'college' => $college,
         ]);
     }
@@ -72,8 +73,8 @@ class FacultyController extends Controller
         // 🔐 log update
         $this->logActivity('Updated Faculty Record', [
             'faculty_id' => $faculty->id,
-            'before'     => $before,
-            'after'      => $after,
+            'before' => $before,
+            'after' => $after,
         ]);
 
         return redirect()->route('faculties.index')->with('success', 'Record updated.');
@@ -97,68 +98,68 @@ class FacultyController extends Controller
         $int = 'nullable|integer|min:0';
 
         return $request->validate([
-            'campus_college' => ['required','string','max:255'],
-            'num_faculties'  => $int,
+            'campus_college' => ['required', 'string', 'max:255'],
+            'num_faculties' => $int,
 
             'involved_extension_total' => $int,
-            'involved_extension_q1'    => $int,
-            'involved_extension_q2'    => $int,
-            'involved_extension_q3'    => $int,
-            'involved_extension_q4'    => $int,
+            'involved_extension_q1' => $int,
+            'involved_extension_q2' => $int,
+            'involved_extension_q3' => $int,
+            'involved_extension_q4' => $int,
 
             'iec_developed_total' => $int,
-            'iec_developed_q1'    => $int,
-            'iec_developed_q2'    => $int,
-            'iec_developed_q3'    => $int,
-            'iec_developed_q4'    => $int,
+            'iec_developed_q1' => $int,
+            'iec_developed_q2' => $int,
+            'iec_developed_q3' => $int,
+            'iec_developed_q4' => $int,
 
             'iec_reproduced_total' => $int,
-            'iec_reproduced_q1'    => $int,
-            'iec_reproduced_q2'    => $int,
-            'iec_reproduced_q3'    => $int,
-            'iec_reproduced_q4'    => $int,
+            'iec_reproduced_q1' => $int,
+            'iec_reproduced_q2' => $int,
+            'iec_reproduced_q3' => $int,
+            'iec_reproduced_q4' => $int,
 
             'iec_distributed_total' => $int,
-            'iec_distributed_q1'    => $int,
-            'iec_distributed_q2'    => $int,
-            'iec_distributed_q3'    => $int,
-            'iec_distributed_q4'    => $int,
+            'iec_distributed_q1' => $int,
+            'iec_distributed_q2' => $int,
+            'iec_distributed_q3' => $int,
+            'iec_distributed_q4' => $int,
 
             'proposals_approved_total' => $int,
-            'proposals_approved_q1'    => $int,
-            'proposals_approved_q2'    => $int,
-            'proposals_approved_q3'    => $int,
-            'proposals_approved_q4'    => $int,
+            'proposals_approved_q1' => $int,
+            'proposals_approved_q2' => $int,
+            'proposals_approved_q3' => $int,
+            'proposals_approved_q4' => $int,
 
             'proposals_implemented_total' => $int,
-            'proposals_implemented_q1'    => $int,
-            'proposals_implemented_q2'    => $int,
-            'proposals_implemented_q3'    => $int,
-            'proposals_implemented_q4'    => $int,
+            'proposals_implemented_q1' => $int,
+            'proposals_implemented_q2' => $int,
+            'proposals_implemented_q3' => $int,
+            'proposals_implemented_q4' => $int,
 
             'proposals_documented_total' => $int,
-            'proposals_documented_q1'    => $int,
-            'proposals_documented_q2'    => $int,
-            'proposals_documented_q3'    => $int,
-            'proposals_documented_q4'    => $int,
+            'proposals_documented_q1' => $int,
+            'proposals_documented_q2' => $int,
+            'proposals_documented_q3' => $int,
+            'proposals_documented_q4' => $int,
 
             'community_served_total' => $int,
-            'community_served_q1'    => $int,
-            'community_served_q2'    => $int,
-            'community_served_q3'    => $int,
-            'community_served_q4'    => $int,
+            'community_served_q1' => $int,
+            'community_served_q2' => $int,
+            'community_served_q3' => $int,
+            'community_served_q4' => $int,
 
             'beneficiaries_assistance_total' => $int,
-            'beneficiaries_assistance_q1'    => $int,
-            'beneficiaries_assistance_q2'    => $int,
-            'beneficiaries_assistance_q3'    => $int,
-            'beneficiaries_assistance_q4'    => $int,
+            'beneficiaries_assistance_q1' => $int,
+            'beneficiaries_assistance_q2' => $int,
+            'beneficiaries_assistance_q3' => $int,
+            'beneficiaries_assistance_q4' => $int,
 
             'moa_mou_total' => $int,
-            'moa_mou_q1'    => $int,
-            'moa_mou_q2'    => $int,
-            'moa_mou_q3'    => $int,
-            'moa_mou_q4'    => $int,
+            'moa_mou_q1' => $int,
+            'moa_mou_q2' => $int,
+            'moa_mou_q3' => $int,
+            'moa_mou_q4' => $int,
         ]);
     }
 
@@ -168,17 +169,15 @@ class FacultyController extends Controller
     protected function logActivity(string $action, array $changes = []): void
     {
         ActivityLog::create([
-            'id'          => Str::uuid(),
-            'user_id'     => Auth::id(),
+            'id' => Str::uuid(),
+            'user_id' => Auth::id(),
             'notifiable_user_id' => Auth::id(),
-            'action'      => $action,
-            'model_type'  => Faculty::class,
-            'model_id'    => $changes['faculty']['id'] 
-                             ?? $changes['faculty_id'] 
-                             ?? null,
-            'changes'     => $changes,
-            'ip_address'  => request()->ip(),
-            'user_agent'  => request()->userAgent(),
+            'action' => $action,
+            'model_type' => Faculty::class,
+            'model_id' => $changes['faculty']['id'] ?? ($changes['faculty_id'] ?? null),
+            'changes' => $changes,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
         ]);
     }
 }

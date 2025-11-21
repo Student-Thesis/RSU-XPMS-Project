@@ -20,6 +20,7 @@ use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\SettingsController; 
 use App\Http\Controllers\NotificationsController; 
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\EventLocationController;
 
 Route::get('/', function () { 
     return view('auth.login');
@@ -96,7 +97,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/',                  [ProjectController::class, 'store'])->middleware('dept.can:project,create')->name('projects.store');
         Route::get('/{project}/edit',     [ProjectController::class, 'edit'])->middleware('dept.can:project,update')->name('projects.edit');
         Route::put('/{project}',          [ProjectController::class, 'update'])->middleware('dept.can:project,update')->name('projects.update');
-        Route::delete('/{project}',       [ProjectController::class, 'destroy'])->middleware('dept.can:project,delete')->name('projects.destroy');
+        Route::delete('/{project}',       [ProjectController::class, 'destroy'])->middleware('dept.can:project,delete')->name('projects.destroy'); 
     });
 
     /* ================== FACULTIES ================== */
@@ -132,4 +133,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('api/settings_target_agendas',[SettingsTargetAgendaController::class, 'listJson'])->middleware('dept.can:settings,view')->name('settings_target_agendas.listJson');
 
     Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead')->middleware('auth');
+
+
+    Route::prefix('calendar/locations')->name('event-locations.')->group(function () {
+        Route::get('/',           [EventLocationController::class, 'index'])->name('index');
+        Route::get('/create',     [EventLocationController::class, 'create'])->name('create');
+        Route::post('/',          [EventLocationController::class, 'store'])->name('store');
+        Route::get('/{eventLocation}/edit', [EventLocationController::class, 'edit'])->name('edit');
+        Route::put('/{eventLocation}',      [EventLocationController::class, 'update'])->name('update');
+        Route::delete('/{eventLocation}',   [EventLocationController::class, 'destroy'])->name('destroy');
+    });
+
 });

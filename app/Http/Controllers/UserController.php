@@ -15,34 +15,29 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $q = trim($request->get('q', ''));
-        $role = $request->get('role', '');
+        $q = $request->get('q');
+        $role = $request->get('role');
 
-        $users = User::query()
-            ->when($q, function ($qr) use ($q) {
-                $qr->where(function ($w) use ($q) {
-                    $w->where('first_name', 'like', "%{$q}%")
-                        ->orWhere('last_name', 'like', "%{$q}%")
-                        ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$q}%"])
-                        ->orWhere('email', 'like', "%{$q}%")
-                        ->orWhere('phone', 'like', "%{$q}%");
-                });
-            })
-            ->when($role && $role !== 'all', fn($qr) => $qr->where('user_type', $role))
-            ->where('user_type', '!=', 'root') // exclude root user
-            ->orderByDesc('id')
-            ->paginate(10)
-            ->withQueryString();
+        $query = User::query();
 
-        $roles = [
-            'all' => 'All Roles',
-            'admin' => 'Admin',
-            'user' => 'User',
-            'coordinator' => 'Coordinator',
-            'manager' => 'Project Manager',
-        ];
+        // 🔍 CASE-SENSITIVE SEARCH
+        if ($q) {
+            $query->where(function ($w) use ($q) {
+                $w->whereRaw('BINARY first_name LIKE ?', ["%{$q}%"])
+                    ->orWhereRaw('BINARY last_name LIKE ?', ["%{$q}%"])
+                    ->orWhereRaw('BINARY email LIKE ?', ["%{$q}%"])
+                    ->orWhereRaw('BINARY phone LIKE ?', ["%{$q}%"]);
+            });
+        }
 
-        return view('users.index', compact('users', 'q', 'role', 'roles'));
+        // 🎭 Role Filter
+        if ($role && $role !== 'All') {
+            $query->where('user_type', $role);
+        }
+
+        $users = $query->paginate(20)->withQueryString();
+
+        return view('users.index', compact('users', 'q', 'role'));
     }
 
     public function create()

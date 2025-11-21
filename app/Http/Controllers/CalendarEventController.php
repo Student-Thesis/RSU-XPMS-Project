@@ -11,12 +11,10 @@ use Illuminate\Support\Str;
 class CalendarEventController extends Controller
 {
     /**
-     * Return events for FullCalendar.
+     * Return events for FullCalendar (JSON).
      * - show ALL public events
      * - show MY private events
-     *
-     * We EXPAND multi-day ranges into ONE EVENT PER DAY
-     * so the same event appears on every date in the range.
+     * - expand multi-day ranges into one event per day
      */
     public function index()
     {
@@ -26,7 +24,7 @@ class CalendarEventController extends Controller
             ->where('visibility', 'public')
             ->orWhere(function ($q) use ($userId) {
                 $q->where('visibility', 'private')
-                    ->where('created_by', $userId);
+                  ->where('created_by', $userId);
             })
             ->get();
 
@@ -47,17 +45,15 @@ class CalendarEventController extends Controller
             // create one event per day in the range [start, end]
             for ($date = $rangeStart->copy(); $date->lte($rangeEnd); $date->addDay()) {
                 $mapped[] = [
-                    // id is STILL the same DB id; FullCalendar allows duplicates
                     'id'     => $event->id,
                     'title'  => $event->title,
-                    'start'  => $date->toDateString(), // that specific day
-                    // one-day allDay event, no need to send end
+                    'start'  => $date->toDateString(),
                     'allDay' => true,
                     'color'  => $color,
                     'extendedProps' => [
                         'description' => $event->description,
                         'type'        => $event->type,
-                        'location'    => $event->location,   // NEW
+                        'location'    => $event->location,
                         'priority'    => $event->priority,
                         'visibility'  => $event->visibility,
                         'created_by'  => $event->created_by,
@@ -70,8 +66,7 @@ class CalendarEventController extends Controller
             }
         }
 
-        return $mapped;
-        // or: return response()->json($mapped);
+        return response()->json($mapped);
     }
 
     /**
@@ -94,13 +89,33 @@ class CalendarEventController extends Controller
             'start_date'  => 'required|date',
             'end_date'    => 'nullable|date|after_or_equal:start_date',
             'type'        => 'nullable|string|max:100',
-            'location'    => 'nullable|string|max:255',            // NEW
-            'priority'    => 'nullable|in:Low,Medium,High',
+            'location'    => 'nullable|string|max:255',
+            'priority'    => 'nullable|in:Low,Medium,High,Critical',
             'visibility'  => 'nullable|in:public,private',
-            // color is NOT accepted from front-end anymore
         ]);
 
         $validated['visibility'] = $validated['visibility'] ?? 'public';
+
+        // ✅ DUPLICATE CHECK: same location + overlapping date range
+        if (!empty($validated['location'])) {
+            $start = $validated['start_date'];
+            $end   = $validated['end_date'] ?? $start;
+
+            $hasConflict = CalendarEvent::query()
+                ->where('location', $validated['location'])
+                ->where(function ($q) use ($start, $end) {
+                    // overlap: existing.start <= newEnd AND existing.end_or_start >= newStart
+                    $q->where('start_date', '<=', $end)
+                      ->whereRaw('COALESCE(end_date, start_date) >= ?', [$start]);
+                })
+                ->exists();
+
+            if ($hasConflict) {
+                return response()->json([
+                    'message' => 'There is already an event at this location on the selected date range.',
+                ], 422);
+            }
+        }
 
         // default priority if nothing sent
         $priority = $validated['priority'] ?? 'Medium';
@@ -137,12 +152,33 @@ class CalendarEventController extends Controller
             'start_date'  => 'required|date',
             'end_date'    => 'nullable|date|after_or_equal:start_date',
             'type'        => 'nullable|string|max:100',
-            'location'    => 'nullable|string|max:255',            // NEW
-            'priority' => 'nullable|in:Low,Medium,High,Critical',
+            'location'    => 'nullable|string|max:255',
+            'priority'    => 'nullable|in:Low,Medium,High,Critical',
             'visibility'  => 'nullable|in:public,private',
         ]);
 
-        // keep old priority if not sent (just in case)
+        // ✅ DUPLICATE CHECK on update as well (exclude self)
+        if (!empty($validated['location'])) {
+            $start = $validated['start_date'];
+            $end   = $validated['end_date'] ?? $start;
+
+            $hasConflict = CalendarEvent::query()
+                ->where('location', $validated['location'])
+                ->where('id', '!=', $event->id)
+                ->where(function ($q) use ($start, $end) {
+                    $q->where('start_date', '<=', $end)
+                      ->whereRaw('COALESCE(end_date, start_date) >= ?', [$start]);
+                })
+                ->exists();
+
+            if ($hasConflict) {
+                return response()->json([
+                    'message' => 'There is already an event at this location on the selected date range.',
+                ], 422);
+            }
+        }
+
+        // keep old priority if not sent
         $priority = $validated['priority'] ?? $event->priority ?? 'Medium';
         $validated['priority'] = $priority;
 
@@ -195,9 +231,6 @@ class CalendarEventController extends Controller
 
     /**
      * Map priority -> color
-     * Low    = green
-     * Medium = yellow
-     * High   = red
      */
     private function priorityColor(?string $priority): string
     {
@@ -205,10 +238,10 @@ class CalendarEventController extends Controller
 
         return match ($priority) {
             'Critical' => '#8B0000', // dark red
-            'High'   => '#dc3545', // red
-            'Medium' => '#ffc107', // yellow
-            'Low'    => '#28a745', // green
-            default  => '#6c757d', // grey fallback
+            'High'     => '#dc3545', // red
+            'Medium'   => '#ffc107', // yellow
+            'Low'      => '#28a745', // green
+            default    => '#6c757d', // grey fallback
         };
     }
 

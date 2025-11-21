@@ -7,11 +7,18 @@
     <div class="midde_cont">
         <div class="container-fluid">
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3>Edit Record</h3>
-                <a href="{{ route('faculties.index') }}" class="btn btn-outline-secondary">Back</a>
-            </div>
-
+              <div class="row column_title">
+                    <div class="col-md-12">
+                        <div class="page_title d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <h3 class="m-0">EXTENSION PERFORMANCE INDICATORS AND TARGETS - Edit Record </h3>
+                            <a href="{{ route('faculties.index') }}"  class="btn btn-warning btn-sm">
+                                <i class="fa fa-plus"></i> Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+          
             <form method="POST" action="{{ route('faculties.update', $item) }}">
                 @csrf @method('PUT')
 

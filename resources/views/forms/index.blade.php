@@ -28,18 +28,19 @@
                     <div class="col-md-12">
                         <div class="white_shd full margin_bottom_30">
                             <div class="full">
-                                <div class="table_section padding_infor_info">
+                                <div class="table_section">
                                     <div class="table-responsive-sm">
-                                        <table class="table table-bordered align-middle">
+                                        <table id="recordFormsTable"
+                                               class="table table-bordered align-middle records-table">
                                             <thead class="thead-dark">
                                                 <tr>
                                                     <th style="width:70px;">No.</th>
                                                     <th style="width:140px;">Record Code</th>
                                                     <th>Record Title (Link)</th>
-                                                    <th style="width:150px;">Maintenance Period</th>
-                                                    <th style="width:150px;">Preservation Period</th>
+                                                    <th style="width:150px;">Maintenance_Period</th>
+                                                    <th style="width:150px;">Preservation_Period</th>
                                                     <th>Remarks</th>
-                                                    <th style="width:120px;">Actions</th>
+                                                    <th align="center">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -58,9 +59,9 @@
                                                         <td>{{ $form->maintenance_years }} Years</td>
                                                         <td>{{ $form->preservation_years }} Years</td>
                                                         <td>{{ $form->remarks ?? '—' }}</td>
-                                                        <td class="text-nowrap">
-                                                            <a class=" btn-warning text-white btn btn-sm"
-                                                               href="{{ route('forms.edit', $form->id) }}">
+                                                        <td class="text-nowrap" align="center">
+                                                            <a class="btn btn-warning btn-xs text-white"
+                                                               href="{{ route('forms.edit', $form->id) }}" style="padding:2px 5px">
                                                                 <i class="fa fa-pencil"></i>
                                                             </a>
                                                             <form action="{{ route('forms.destroy', $form) }}"
@@ -69,7 +70,7 @@
                                                                   onsubmit="return confirmDelete(event, this)">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="submit" class="btn-danger btn btn-sm">
+                                                                <button type="submit" class="btn btn-danger btn-xs" style="padding:2px 5px">
                                                                     <i class="fa fa-trash"></i>
                                                                 </button>
                                                             </form>
@@ -134,6 +135,26 @@
 
 @push('styles')
 <style>
+/* ✅ Make table fit contents nicely */
+#recordFormsTable,
+.records-table {
+    table-layout: auto !important;
+    width: auto;
+    min-width: 100%;
+}
+
+#recordFormsTable th,
+#recordFormsTable td {
+    white-space: nowrap;
+}
+
+/* Compact cells */
+#recordFormsTable td,
+#recordFormsTable th {
+    padding: 4px 6px !important;
+    vertical-align: middle !important;
+}
+
 /* ✅ Compact uniform buttons across Bootstrap/AdminLTE overrides */
 .btn-xs,
 .btn-xs.btn,
@@ -164,9 +185,9 @@
     margin: 0 !important;
 }
 
-/* Optional: make Add New button consistent too */
-.page_title .btn-xs {
+/* Optional: make Add New button consistent too if you switch it to btn-xs */
+/* .page_title .btn-xs {
     font-weight: 500;
-}
+} */
 </style>
 @endpush

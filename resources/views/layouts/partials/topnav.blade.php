@@ -1,18 +1,45 @@
+<div class="content-area">
 <div class="topbar">
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="full">
-            <button type="button" id="sidebarCollapse" class="sidebar_toggle">
-                <i class="fa fa-bars"></i>
+            <button type="button" id="sidebarCollapse" class="sidebar_toggle" style="background: none">
+                <i class="fa fa-bars"></i> 
             </button>
+            
 
             <div class="right_topbar">
                 <div class="icon_info">
                     <ul>
-                         <li class="nav-item">
-                            <a href="{{route('messages')}}" class="nav-link position-relative">
-                                <i class="fa fa-envelope" ></i>
-                            </a>
-                        </li>
+                 @auth
+    @if (auth()->user()->department_id == 1)
+        @php
+            // Count proposals where status = pending (case-insensitive)
+            $unreadMessages =
+                $unreadMessageCount
+                ?? \App\Models\Proposal::whereRaw('LOWER(status) = ?', ['pending'])->count();
+        @endphp
+
+        <li class="nav-item">
+            <a href="{{ route('messages') }}" 
+               class="nav-link position-relative"
+               id="messagesLink">
+
+                <i class="fa fa-envelope"></i>
+
+                @if ($unreadMessages > 0)
+                    <span id="messagesBadge"
+                          class="badge bg-danger position-absolute top-0 start-100 translate-middle"
+                          style="font-size: 0.65rem; padding: 4px 6px; border-radius: 10px;">
+                        {{ $unreadMessages }}
+                    </span>
+                @endif
+            </a>
+        </li>
+    @endif
+@endauth
+
+
+
                         {{-- 🔔 Notifications --}}
                         <li class="nav-item dropdown" id="notif-wrapper">
                             <a href="#" class="nav-link position-relative" id="notificationDropdown"
@@ -20,8 +47,9 @@
                                 <i class="fa fa-bell-o"></i>
 
                                 @php
-                                    $count = $notificationCount
-                                        ?? \App\Models\ActivityLog::where('notifiable_user_id', auth()->id())
+                                    $count =
+                                        $notificationCount ??
+                                        \App\Models\ActivityLog::where('notifiable_user_id', auth()->id())
                                             ->whereNull('read_at')
                                             ->count();
                                 @endphp
@@ -133,10 +161,37 @@
         </div>
     </nav>
 </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const badge = document.getElementById("messagesBadge");
+    const link  = document.getElementById("messagesLink");
+
+    if (!link) return;
+
+    // KEY for this menu badge
+    const storageKey = "messagesBadgeHidden";
+
+    // If badge was hidden earlier, hide it on page load
+    if (localStorage.getItem(storageKey) === "true" && badge) {
+        badge.style.display = "none";
+    }
+
+    // When clicking the messages icon
+    link.addEventListener("click", function () {
+        if (badge) {
+            badge.style.display = "none";
+        }
+        localStorage.setItem(storageKey, "true");
+    });
+});
+</script>
+
 
 {{-- CSS Fix --}}
 <style>
-    
     /* allow overflow like you already did */
     .topbar .right_topbar,
     .topbar .icon_info,

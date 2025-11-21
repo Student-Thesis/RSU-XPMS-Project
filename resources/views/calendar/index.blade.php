@@ -11,9 +11,7 @@
                         <div class="page_title d-flex align-items-center justify-content-between flex-wrap gap-2">
                             <h2 class="m-0">Project Events Calendar</h2>
 
-                            <button type="button"
-                                    class="btn btn-primary btn-xs"
-                                    onclick="openAddEventModal()">
+                            <button type="button" class="btn btn-success btn-sm" onclick="openAddEventModal()">
                                 <i class="fa fa-plus"></i> Add Event
                             </button>
                         </div>
@@ -51,18 +49,22 @@
                         <label class="calendar-form-label">Project Title *</label>
                         <input type="text" id="eventTitle" class="calendar-form-input" required>
                     </div>
+
                     <div class="calendar-form-group">
                         <label class="calendar-form-label">Description</label>
                         <textarea id="eventDescription" class="calendar-form-input calendar-form-textarea"></textarea>
                     </div>
+
                     <div class="calendar-form-group">
                         <label class="calendar-form-label">Date *</label>
                         <input type="date" id="eventDate" class="calendar-form-input" required>
                     </div>
+
                     <div class="calendar-form-group">
                         <label class="calendar-form-label">End Date (Optional)</label>
                         <input type="date" id="eventEndDate" class="calendar-form-input">
                     </div>
+
                     <div class="calendar-form-group">
                         <label class="calendar-form-label">Project Type</label>
                         <select id="eventType" class="calendar-form-input">
@@ -76,10 +78,23 @@
                         </select>
                     </div>
 
-                    {{-- NEW: Location --}}
+                    {{-- Location --}}
                     <div class="calendar-form-group">
-                        <label class="calendar-form-label">Location</label>
-                        <input type="text" id="eventLocation" class="calendar-form-input">
+                        <label class="calendar-form-label d-flex justify-content-between align-items-center">
+                            <span>Location</span>
+                            <a href="{{ route('event-locations.index') }}" target="_blank" class="small text-primary">
+                                <i class="fa fa-plus-circle"></i> Manage
+                            </a>
+                        </label>
+
+                        <select id="eventLocation" class="calendar-form-input">
+                            <option value="">Select location...</option>
+                            @foreach($eventLocations as $loc)
+                                <option value="{{ $loc->name }}">
+                                    {{ $loc->name }}{{ $loc->room ? ' - ' . $loc->room : '' }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="calendar-form-group">
@@ -99,8 +114,6 @@
                             <option value="Critical">Critical</option>
                         </select>
                     </div>
-
-                    {{-- REMOVED MANUAL COLOR PICKER – color now auto based on priority --}}
 
                     <div class="calendar-btn-row mt-3">
                         <button type="button" class="btn btn-secondary" onclick="closeAddEventModal()">Cancel</button>
@@ -198,10 +211,10 @@
             const rangeStartStr = event.extendedProps.range_start || event.startStr.substring(0, 10);
             const rangeEndStr   = event.extendedProps.range_end   || rangeStartStr;
 
-            const startDate = new Date(rangeStartStr);
-            const endDate   = new Date(rangeEndStr);
+            const startDate  = new Date(rangeStartStr);
+            const endDate    = new Date(rangeEndStr);
             const visibility = event.extendedProps.visibility || 'public';
-            const priority  = event.extendedProps.priority || 'Medium';
+            const priority   = event.extendedProps.priority || 'Medium';
             const priorityColor = getPriorityColor(priority);
 
             detailsContainer.innerHTML = `
@@ -269,13 +282,14 @@
             currentSelectedEvent = null;
         }
 
-        // Priority → Color mapping (Low/Medium/High)
+        // Priority → Color mapping (Low/Medium/High/Critical)
         function getPriorityColor(priority) {
             switch (priority) {
-                case 'High':     return '#dc3545'; // red
-                case 'Medium':   return '#ffc107'; // yellow
-                case 'Low':      return '#28a745'; // green
-                default:         return '#6c757d'; // grey fallback
+                case 'Critical': return '#8B0000';
+                case 'High':     return '#dc3545';
+                case 'Medium':   return '#ffc107';
+                case 'Low':      return '#28a745';
+                default:         return '#6c757d';
             }
         }
 
@@ -292,8 +306,6 @@
                     type:        document.getElementById('eventType').value,
                     location:    document.getElementById('eventLocation').value,
                     priority:    priority,
-                    // Color is now auto-derived from priority
-                    color:       getPriorityColor(priority),
                     visibility:  document.getElementById('eventVisibility').value,
                 };
 
@@ -304,7 +316,7 @@
                 const method = editingEventId ? 'PUT' : 'POST';
 
                 const res = await fetch(url, {
-                    method: method,
+                    method,
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -318,8 +330,24 @@
                     closeAddEventModal();
                     closeViewEventModal();
                 } else {
-                    console.error(await res.json().catch(() => ({})));
-                    alert('Failed to save event.');
+                    let data = {};
+                    try {
+                        data = await res.json();
+                    } catch (e) {
+                        data = {};
+                    }
+
+                    const msg = data.message || 'Failed to save event.';
+
+                    if (window.Swal) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Cannot save event',
+                            text: msg,
+                        });
+                    } else {
+                        alert(msg);
+                    }
                 }
             });
         }
@@ -391,14 +419,17 @@
         .calendar-modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0, 0, 0, 0.4);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1050;
             padding: 1rem;
         }
-        .calendar-modal-overlay.show { display:flex !important; }
+
+        .calendar-modal-overlay.show {
+            display: flex !important;
+        }
 
         .calendar-modal-container {
             position: relative;
@@ -410,58 +441,83 @@
         .calendar-modal-content {
             background: #fff;
             border-radius: .5rem;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
             padding: 1.5rem 1.5rem 1.25rem;
             max-height: calc(100vh - 2rem);
             overflow-y: auto;
         }
 
         .calendar-modal-header {
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            margin-bottom:1rem;
-            position:sticky;
-            top:-1.5rem;
-            background:#fff;
-            padding-top:1.5rem;
-            z-index:1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            position: sticky;
+            top: -1.5rem;
+            background: #fff;
+            padding-top: 1.5rem;
+            z-index: 1;
         }
 
         .calendar-close-btn {
-            background:transparent;
-            border:none;
-            font-size:1.5rem;
-            line-height:1;
-            cursor:pointer;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            line-height: 1;
+            cursor: pointer;
         }
 
-        .calendar-form-group { margin-bottom:.75rem; }
-        .calendar-form-label { display:block;font-weight:600;margin-bottom:.35rem; }
+        .calendar-form-group {
+            margin-bottom: .75rem;
+        }
+
+        .calendar-form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: .35rem;
+        }
 
         .calendar-form-input,
         .calendar-form-textarea {
-            width:100%;
-            border:1px solid #ced4da;
-            border-radius:.25rem;
-            padding:.4rem .6rem;
+            width: 100%;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+            padding: .4rem .6rem;
         }
-        .calendar-form-textarea { min-height:80px;resize:vertical; }
 
-        .calendar-event-detail { display:flex;gap:.5rem;margin-bottom:.35rem; }
-        .calendar-event-detail-label { width:110px;font-weight:600;color:#555; }
-        .calendar-event-detail-value { flex:1; }
+        .calendar-form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .calendar-event-detail {
+            display: flex;
+            gap: .5rem;
+            margin-bottom: .35rem;
+        }
+
+        .calendar-event-detail-label {
+            width: 110px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .calendar-event-detail-value {
+            flex: 1;
+        }
 
         .calendar-event-color-indicator {
-            display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:.25rem;
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: .25rem;
         }
 
-        .calendar-btn-row { display:flex;gap:.5rem;flex-wrap:wrap; }
-
-        .btn-xs {
-            display:inline-flex;align-items:center;justify-content:center;gap:4px;
-            padding:3px 8px !important;font-size:.75rem !important;line-height:1 !important;
-            border-radius:3px !important;height:26px !important;
+        .calendar-btn-row {
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap;
         }
     </style>
 @endsection
