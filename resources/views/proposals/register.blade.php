@@ -95,6 +95,13 @@
 </head>
 
 <body class="d-flex justify-content-center align-items-center min-vh-100">
+     @if (empty($registeredUserId))
+        <script>
+            alert('You should register first before submitting a proposal.');
+            window.location.href = "{{ route('auth.register') }}";
+        </script>
+    @endif
+    
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
@@ -113,7 +120,7 @@
 
                         {{-- Classification (names, not slugs) --}}
                         <div class="mb-2">
-                            <label class="form-label">Classification <span style="color:red;"> * </span></label>
+                            <label class="form-label">Add Activities for Classification <span style="color:red;"> * </span></label>
                             <select name="classification" class="form-select" required>
                                 <option value="" disabled {{ old('classification') ? '' : 'selected' }}>
                                     Choose classification
@@ -207,6 +214,11 @@
                             <input type="text" name="partner" class="form-control" value="{{ old('partner') }}"
                                 placeholder="e.g. LGU, DepEd">
                         </div>
+
+                        {{-- Hidden field to attach registered user ID --}}
+                        @if(!empty($registeredUserId))
+                            <input type="hidden" name="registered_user_id" value="{{ $registeredUserId }}">
+                        @endif
 
                         <div class="d-grid mt-3">
                             <button type="submit" class="btn btn-primary">Submit Proposal</button>

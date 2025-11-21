@@ -163,16 +163,16 @@
                             @enderror
                         </div>
 
+
+
+                        {{-- Confirm Password --}}
+                        <input type="password" name="password_confirmation" id="confirmPasswordInput"
+                            class="form-control" placeholder="Confirm Password" required>
+
                         {{-- Show Password --}}
                         <div class="mb-3">
                             <input type="checkbox" id="showPassword" onclick="togglePassword()">
                             <label for="showPassword">Show Password</label>
-                        </div>
-
-                        {{-- Confirm Password --}}
-                        <div class="mb-3">
-                            <input type="password" name="password_confirmation" class="form-control"
-                                placeholder="Confirm Password" required>
                         </div>
 
                         {{-- Submit --}}
@@ -200,6 +200,7 @@
 
     <script>
         const passwordInput = document.getElementById("passwordInput");
+        const confirmPasswordInput = document.getElementById("confirmPasswordInput");
         const submitBtn = document.getElementById("submitBtn");
         const feedback = document.getElementById("passwordFeedback");
 
@@ -216,10 +217,16 @@
         });
 
         function togglePassword() {
+            // Toggle password
             passwordInput.type =
                 passwordInput.type === "password" ? "text" : "password";
+
+            // Toggle confirm password
+            confirmPasswordInput.type =
+                confirmPasswordInput.type === "password" ? "text" : "password";
         }
     </script>
+
 
     <style>
         /* Remove Chrome autofill background + keep text color normal */

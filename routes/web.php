@@ -17,17 +17,9 @@ use App\Http\Controllers\CalendarEventController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessagesController;
-use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\SettingsController; 
+use App\Http\Controllers\NotificationsController; 
 use Illuminate\Support\Facades\Mail;
-
-Route::get('/test-email', function () {
-    Mail::raw('This is a test email from Laravel Gmail SMTP!', function ($message) {
-        $message->to('nelmardapulang@gmail.com')
-                ->subject('Gmail SMTP Test');
-    });
-
-    return 'Email sent!';
-});
 
 Route::get('/', function () { 
     return view('auth.login');
@@ -35,7 +27,13 @@ Route::get('/', function () {
 
 Auth::routes();
 
+/* ================== REGISTRATION PROCESS ================== */
 Route::get('/auth-register', [App\Http\Controllers\HomeController::class, 'register'])->name('auth.register');
+Route::get('/proposals',  [ProposalController::class, 'register'])->name('proposals.index');
+Route::post('/proposals', [ProposalController::class, 'store'])->name('proposals.store');
+Route::get('/agreement',        [AgreementController::class, 'register'])->name('agreement.register');
+Route::post('/agreement',       [AgreementController::class, 'store'])->name('agreement.store');
+Route::get('/notif-agreement',  [NotificationsController::class, 'agreement'])->name('notifications.agreement');
 
 
 Route::middleware(['auth'])->group(function () {
@@ -51,15 +49,12 @@ Route::middleware(['auth'])->group(function () {
     });
 
     /* ================== PROPOSALS ================== */
-    Route::get('/proposals',  [ProposalController::class, 'register'])->name('proposals.index');
-    Route::post('/proposals', [ProposalController::class, 'store'])->name('proposals.store');
    Route::post('/proposals/{id}/approve', [ProposalController::class, 'approve'])
         ->name('proposals.approve');
 
     /* ================== AGREEMENT / NOTIF ================== */
-    Route::get('/agreement',        [AgreementController::class, 'register'])->name('agreement.register');
-    Route::post('/agreement',       [AgreementController::class, 'store'])->name('agreement.store');
-    Route::get('/notif-agreement',  [\App\Http\Controllers\NotificationsController::class, 'agreement'])->name('notifications.agreement');
+   
+
 
     /* ================== DEPARTMENT PERMISSIONS ================== */
     Route::prefix('departments/permissions')->name('departments.permissions.')->group(function () {
@@ -130,20 +125,11 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     /* ================== SETTINGS RESOURCES ================== */
-    Route::resource('settings_classifications', SettingsClassificationController::class)
-        ->middleware('dept.can:settings,update');
-    Route::patch('settings_classifications/{settings_classification}/toggle',
-        [SettingsClassificationController::class, 'toggle'])->middleware('dept.can:settings,update')->name('settings_classifications.toggle');
-    Route::get('api/settings_classifications',
-        [SettingsClassificationController::class, 'listJson'])->middleware('dept.can:settings,view')->name('settings_classifications.listJson');
+    Route::resource('settings_classifications', SettingsClassificationController::class)->middleware('dept.can:settings,update');
+    Route::patch('settings_classifications/{settings_classification}/toggle',[SettingsClassificationController::class, 'toggle'])->middleware('dept.can:settings,update')->name('settings_classifications.toggle');
+    Route::get('api/settings_classifications',[SettingsClassificationController::class, 'listJson'])->middleware('dept.can:settings,view')->name('settings_classifications.listJson');
+    Route::resource('settings_target_agendas', SettingsTargetAgendaController::class)->middleware('dept.can:settings,update');
+    Route::get('api/settings_target_agendas',[SettingsTargetAgendaController::class, 'listJson'])->middleware('dept.can:settings,view')->name('settings_target_agendas.listJson');
 
-    Route::resource('settings_target_agendas', SettingsTargetAgendaController::class)
-        ->middleware('dept.can:settings,update');
-    Route::get('api/settings_target_agendas',
-        [SettingsTargetAgendaController::class, 'listJson'])->middleware('dept.can:settings,view')->name('settings_target_agendas.listJson');
-
-
-    Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])
-        ->name('notifications.markAsRead')
-        ->middleware('auth');
+    Route::post('/notifications/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead')->middleware('auth');
 });

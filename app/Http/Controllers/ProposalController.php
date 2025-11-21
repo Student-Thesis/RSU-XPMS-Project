@@ -14,13 +14,27 @@ use Illuminate\Support\Facades\Mail;
 
 class ProposalController extends Controller
 {
-    public function register()
-    {
-        $classifications = SettingsClassification::active()->orderBy('name')->get();
-        $targetAgendas = SettingsTargetAgenda::active()->orderBy('name')->get();
+   public function register()
+{
+    // Load from your settings tables
+    $classifications = SettingsClassification::active()
+        ->orderBy('name')
+        ->get();
 
-        return view('proposals.register', compact('classifications', 'targetAgendas'));
-    }
+    $targetAgendas = SettingsTargetAgenda::active()
+        ->orderBy('name')
+        ->get();
+
+    // Get user id from session (set by RegisterController after successful registration)
+    $registeredUserId = session('registered_user_id');
+
+    return view('proposals.register', compact(
+        'classifications',
+        'targetAgendas',
+        'registeredUserId'
+    ));
+}
+
 
     public function index()
     {
@@ -38,7 +52,7 @@ class ProposalController extends Controller
         return view('proposals.create', compact('classifications'));
     }
 
-    /**
+     /**
      * Store a newly created proposal in storage.
      */
     public function store(Request $request)
@@ -57,7 +71,20 @@ class ProposalController extends Controller
                 'budget_mooe' => 'nullable|string|max:50',
                 'budget_co' => 'nullable|string|max:50',
                 'partner' => 'nullable|string|max:255',
+
+                // this comes from the hidden field on the create page
+                'registered_user_id' => 'nullable|string', // if UUID, keep string
             ]);
+
+            // Get the user_id source:
+            // 1) If someone is logged in, use auth()->id()
+            // 2) Else, use the registered_user_id passed from registration → proposal
+            $userId = auth()->id() ?: $data['registered_user_id'] ?? null;
+
+            if (!$userId) {
+                // No user context at all — bail cleanly
+                return back()->withInput()->with('error', 'User information is missing. Please register or login again.');
+            }
 
             // Normalize numbers: remove commas/spaces → float
             foreach (['budget_ps', 'budget_mooe', 'budget_co'] as $k) {
@@ -75,7 +102,11 @@ class ProposalController extends Controller
                 $data['team_members'] = implode(', ', $parts);
             }
 
-            $data['user_id'] = auth()->id();
+            // Set user_id on proposal (this is what you asked)
+            $data['user_id'] = $userId;
+
+            // We don't need this in the Proposal model itself
+            unset($data['registered_user_id']);
 
             $proposal = Proposal::create($data);
 
@@ -84,7 +115,14 @@ class ProposalController extends Controller
                 'proposal' => $proposal->toArray(),
             ]);
 
-            return redirect()->route('agreement.register')->with('success', 'Proposal submitted successfully! Proceed to agreement.');
+            // 👉 Pass user_id (and proposal_id if you want) to the next stage
+            return redirect()
+                ->route('agreement.register')
+                ->with([
+                    'success' => 'Proposal submitted successfully! Proceed to agreement.',
+                    'registered_user_id' => $userId,
+                    'proposal_id' => $proposal->id, // optional but usually useful
+                ]);
         } catch (\Throwable $e) {
             \Log::error('Proposal submission failed', [
                 'error' => $e->getMessage(),

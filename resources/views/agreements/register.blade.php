@@ -61,6 +61,13 @@
 </head>
 
 <body class="d-flex justify-content-center align-items-center min-vh-100">
+    @if (empty($registeredUserId))
+    <script>
+        alert('You must register first before proceeding to agreement.');
+        window.location.href = "{{ route('auth.register') }}";
+    </script>
+@endif
+
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
@@ -82,18 +89,27 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">MOU Document</label>
+                            <label class="form-label">MOU / MOA Document</label>
                             <input type="file" name="mouFile" class="form-control"
                                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" data-max-size="10240">
                             <small class="file-hint text-muted">Max file size: 10 MB (PDF, DOC, DOCX, JPG, PNG)</small>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">MOA Document</label>
+                            <label class="form-label">Proposal</label>
                             <input type="file" name="moaFile" class="form-control"
                                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" data-max-size="10240">
                             <small class="file-hint text-muted">Max file size: 10 MB (PDF, DOC, DOCX, JPG, PNG)</small>
                         </div>
+
+                        @if(!empty($registeredUserId))
+                            <input type="hidden" name="user_id" value="{{ $registeredUserId }}">
+                        @endif
+
+                        @if(!empty($proposalId))
+                            <input type="hidden" name="proposal_id" value="{{ $proposalId }}">
+                        @endif
+
 
                         <div class="d-grid mt-3">
                             <button type="submit" class="btn btn-success">Submit Documents</button>
