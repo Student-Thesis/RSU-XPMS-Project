@@ -13,32 +13,43 @@ use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
-    {
-        $q = $request->get('q');
-        $role = $request->get('role');
+   public function index(Request $request)
+{
+    $q    = $request->get('q');
+    $role = $request->get('role', 'All'); // currently selected role (string)
 
-        $query = User::query();
+    // Options for the dropdown
+    $roles = [
+        'All'         => 'All Roles',
+        'admin'       => 'Admin',
+        'user'        => 'User',
+        'coordinator' => 'Coordinator',
+        'manager'     => 'Manager',
+    ];
 
-        // 🔍 CASE-SENSITIVE SEARCH
-        if ($q) {
-            $query->where(function ($w) use ($q) {
-                $w->whereRaw('BINARY first_name LIKE ?', ["%{$q}%"])
-                    ->orWhereRaw('BINARY last_name LIKE ?', ["%{$q}%"])
-                    ->orWhereRaw('BINARY email LIKE ?', ["%{$q}%"])
-                    ->orWhereRaw('BINARY phone LIKE ?', ["%{$q}%"]);
-            });
-        }
+    $query = User::query();
 
-        // 🎭 Role Filter
-        if ($role && $role !== 'All') {
-            $query->where('user_type', $role);
-        }
-
-        $users = $query->paginate(20)->withQueryString();
-
-        return view('users.index', compact('users', 'q', 'role'));
+    // 🔍 CASE-SENSITIVE SEARCH
+    if ($q) {
+        $query->where(function ($w) use ($q) {
+            $w->whereRaw('BINARY first_name LIKE ?', ["%{$q}%"])
+                ->orWhereRaw('BINARY last_name LIKE ?', ["%{$q}%"])
+                ->orWhereRaw('BINARY email LIKE ?', ["%{$q}%"])
+                ->orWhereRaw('BINARY phone LIKE ?', ["%{$q}%"]);
+        });
     }
+
+    // 🎭 Role Filter
+    if ($role && $role !== 'All') {
+        $query->where('user_type', $role);
+    }
+
+    $users = $query->paginate(20)->withQueryString();
+
+    // pass BOTH $roles (array) and $role (selected)
+    return view('users.index', compact('users', 'q', 'roles', 'role'));
+}
+
 
     public function create()
     {
