@@ -54,11 +54,6 @@ class ProjectController extends Controller
             'value' => 'nullable',
         ]);
 
-        // Ensure user owns the record
-        if ($project->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
-
         $column = $request->column;
         $value = $request->value;
 
@@ -157,9 +152,7 @@ class ProjectController extends Controller
      */
     public function edit(Proposal $project)
     {
-        if ($project->user_id !== Auth::id()) {
-            abort(403);
-        }
+       
 
         return view('projects.edit', compact('project'));
     }
@@ -169,9 +162,7 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Proposal $project)
     {
-        if ($project->user_id !== Auth::id()) {
-            abort(403);
-        }
+       
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -203,9 +194,7 @@ class ProjectController extends Controller
      */
     public function destroy(Proposal $project)
     {
-        if ($project->user_id !== Auth::id()) {
-            abort(403);
-        }
+       
 
         $dump = $project->toArray();
         $project->delete();
