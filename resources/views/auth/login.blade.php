@@ -114,16 +114,23 @@
                             <label for="showPassword">Show Password</label>
                         </div>
 
-                        {{-- Remember --}}
-                        {{-- <div class="mb-3 form-check">
-                            <input class="form-check-input" type="checkbox" name="remember" id="remember"
-                                   {{ old('remember') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="remember">Remember Me</label>
-                        </div> --}}
+                        {{-- Simple CAPTCHA --}}
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Security Check:
+                                <span id="captchaQuestion" class="fw-semibold"></span>
+                            </label>
+                            <input type="number" id="captchaAnswer" class="form-control" placeholder="Enter answer here">
+                            <div id="captchaFeedback" class="form-text text-danger d-none">
+                                Incorrect answer. Please try again.
+                            </div>
+                        </div>
 
                         {{-- Login Button --}}
                         <div class="mb-3">
-                            <button type="submit" class="btn auth-btn w-100">Login</button>
+                            <button type="submit" id="loginBtn" class="btn auth-btn w-100" disabled>
+                                Login
+                            </button>
                         </div>
 
                         {{-- Links --}}
@@ -150,6 +157,60 @@
             const input = document.getElementById("password");
             input.type = input.type === "password" ? "text" : "password";
         }
+
+        // === Simple Math CAPTCHA ===
+        let captchaCorrectAnswer = null;
+
+        function generateCaptcha() {
+            const a = Math.floor(Math.random() * 10) + 1;   // 1–10
+            const b = Math.floor(Math.random() * 10) + 1;   // 1–10
+            captchaCorrectAnswer = a + b;
+
+            const questionSpan = document.getElementById('captchaQuestion');
+            if (questionSpan) {
+                questionSpan.textContent = `What is ${a} + ${b}?`;
+            }
+
+            // reset states
+            const answerInput   = document.getElementById('captchaAnswer');
+            const loginBtn      = document.getElementById('loginBtn');
+            const feedback      = document.getElementById('captchaFeedback');
+
+            if (answerInput) answerInput.value = '';
+            if (loginBtn)    loginBtn.disabled = true;
+            if (feedback)    feedback.classList.add('d-none');
+        }
+
+        function validateCaptcha() {
+            const answerInput = document.getElementById('captchaAnswer');
+            const loginBtn    = document.getElementById('loginBtn');
+            const feedback    = document.getElementById('captchaFeedback');
+
+            if (!answerInput || !loginBtn) return;
+
+            const userAnswer = parseInt(answerInput.value, 10);
+
+            if (!isNaN(userAnswer) && userAnswer === captchaCorrectAnswer) {
+                loginBtn.disabled = false;
+                if (feedback) feedback.classList.add('d-none');
+            } else {
+                loginBtn.disabled = true;
+                if (feedback && answerInput.value !== '') {
+                    feedback.classList.remove('d-none');
+                } else if (feedback) {
+                    feedback.classList.add('d-none');
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            generateCaptcha();
+
+            const answerInput = document.getElementById('captchaAnswer');
+            if (answerInput) {
+                answerInput.addEventListener('input', validateCaptcha);
+            }
+        });
     </script>
 
 </body>

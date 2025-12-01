@@ -295,6 +295,16 @@ class ProposalController extends Controller
 
         $proposal->save();
 
+        // ==============================================
+        // Update the status of the user
+        // ==============================================
+        $userToUpdate = User::find($proposal->user_id);
+
+        if ($userToUpdate) {
+            $userToUpdate->status = 'Approved';
+            $userToUpdate->save();
+        }
+
         // ==================================================
         // 📧 Send Email Notification to the Proposal Owner
         // ==================================================
