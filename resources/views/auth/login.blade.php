@@ -32,16 +32,6 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         }
 
-        /* Autofill Fix */
-        input.form-control:-webkit-autofill,
-        input.form-control:-webkit-autofill:hover,
-        input.form-control:-webkit-autofill:focus {
-            -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
-            -webkit-text-fill-color: #212529 !important;
-            transition: background-color 9999s ease-in-out 0s;
-        }
-
-        /* Login button */
         .auth-btn {
             background: #007bff;
             color: #fff;
@@ -57,161 +47,153 @@
             box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.25);
             color: #fff;
         }
+
+        /* Small spin on refresh icon */
+        #refreshCaptchaBtn i {
+            transition: transform .3s ease-in-out;
+        }
+
+        #refreshCaptchaBtn:active i {
+            transform: rotate(360deg);
+        }
     </style>
 </head>
 
 <body class="d-flex justify-content-center align-items-center min-vh-100">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-5">
-@if(session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
-@endif
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
 
-                <div class="card p-4">
-                    <div class="text-center mb-4">
-                        <img src="/images/logo/logonobg.png" alt="Logo" class="mb-3" style="height: 100px;">
-                        <h4>Login</h4>
+            @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            <div class="card p-4">
+
+                <div class="text-center mb-4">
+                    <img src="/images/logo/logonobg.png" alt="Logo" class="mb-3" style="height: 100px;">
+                    <h4>Login</h4>
+                </div>
+
+                <form method="POST" action="{{ route('login') }}" class="p-4 border rounded bg-light">
+                    @csrf
+
+                    {{-- Email --}}
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input id="email" type="text"
+                               class="form-control @error('email') is-invalid @enderror"
+                               name="email" value="{{ old('email') }}" required autofocus>
+
+                        @error('email')
+                        <span class="invalid-feedback d-block">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
                     </div>
 
-                    <form method="POST" action="{{ route('login') }}" class="p-4 border rounded bg-light">
-                        @csrf
+                    {{-- Password --}}
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input id="password" type="password"
+                               class="form-control @error('password') is-invalid @enderror"
+                               name="password" required>
 
-                        {{-- Email --}}
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input id="email" type="text"
-                                   class="form-control @error('email') is-invalid @enderror"
-                                   name="email" value="{{ old('email') }}" required autofocus>
+                        @error('password')
+                        <span class="invalid-feedback d-block">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                        @enderror
+                    </div>
 
-                            @error('email')
-                                <span class="invalid-feedback d-block">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+                    {{-- Show Password --}}
+                    <div class="mb-3">
+                        <input type="checkbox" id="showPassword">
+                        <label for="showPassword">Show Password</label>
+                    </div>
 
-                        {{-- Password --}}
-                        <div class="mb-2">
-                            <label for="password" class="form-label">Password</label>
+                    {{-- CAPTCHA --}}
+                    <div class="mb-3">
+                        <label class="form-label">Security Check</label>
 
-                            <input id="password" type="password"
-                                   class="form-control @error('password') is-invalid @enderror"
-                                   name="password" required>
-
-                            @error('password')
-                                <span class="invalid-feedback d-block">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        {{-- Show Password --}}
-                        <div class="mb-3">
-                            <input type="checkbox" id="showPassword" onclick="togglePassword()">
-                            <label for="showPassword">Show Password</label>
-                        </div>
-
-                        {{-- Simple CAPTCHA --}}
-                        <div class="mb-3">
-                            <label class="form-label">
-                                Security Check:
-                                <span id="captchaQuestion" class="fw-semibold"></span>
-                            </label>
-                            <input type="number" id="captchaAnswer" class="form-control" placeholder="Enter answer here">
-                            <div id="captchaFeedback" class="form-text text-danger d-none">
-                                Incorrect answer. Please try again.
-                            </div>
-                        </div>
-
-                        {{-- Login Button --}}
-                        <div class="mb-3">
-                            <button type="submit" id="loginBtn" class="btn auth-btn w-100" disabled>
-                                Login
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="{{ captcha_src('default') }}" alt="captcha" id="captchaImg" style="border-radius: 8px;">
+                            <button type="button"
+                                    id="refreshCaptchaBtn"
+                                    class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-arrow-clockwise"></i>
                             </button>
                         </div>
 
-                        {{-- Links --}}
-                        <div class="d-flex justify-content-between">
-                            @if (Route::has('password.request'))
-                                <a href="{{ route('password.request') }}">Forgot Password?</a>
-                            @endif
+                        <input type="text"
+                               name="captcha"
+                               class="form-control mt-2 @error('captcha') is-invalid @enderror"
+                               placeholder="Enter the code shown above"
+                               required>
 
-                            <a href="{{ route('register') }}">Create Account</a>
-                        </div>
+                        @error('captcha')
+                        <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
 
-                    </form>
-                </div>
+                    {{-- Login Button --}}
+                    <div class="mb-3">
+                        <button type="submit" class="btn auth-btn w-100">Login</button>
+                    </div>
 
+                    {{-- Links --}}
+                    <div class="d-flex justify-content-between">
+                        @if (Route::has('password.request'))
+                            <a href="{{ route('password.request') }}">Forgot Password?</a>
+                        @endif
+
+                        <a href="{{ route('register') }}">Create Account</a>
+                    </div>
+
+                </form>
             </div>
+
         </div>
     </div>
+</div>
 
-    <!-- JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        function togglePassword() {
-            const input = document.getElementById("password");
-            input.type = input.type === "password" ? "text" : "password";
-        }
+<script>
+    // Show / hide password
+    document.getElementById('showPassword').addEventListener('change', function () {
+        const input = document.getElementById('password');
+        input.type = this.checked ? 'text' : 'password';
+    });
 
-        // === Simple Math CAPTCHA ===
-        let captchaCorrectAnswer = null;
+    // Refresh captcha image and clear input
+    function refreshCaptcha() {
+        fetch('/captcha/refresh')
+            .then(res => res.text())
+            .then(data => {
+                const img = document.getElementById('captchaImg');
+                const input = document.querySelector('input[name="captcha"]');
 
-        function generateCaptcha() {
-            const a = Math.floor(Math.random() * 10) + 1;   // 1–10
-            const b = Math.floor(Math.random() * 10) + 1;   // 1–10
-            captchaCorrectAnswer = a + b;
-
-            const questionSpan = document.getElementById('captchaQuestion');
-            if (questionSpan) {
-                questionSpan.textContent = `What is ${a} + ${b}?`;
-            }
-
-            // reset states
-            const answerInput   = document.getElementById('captchaAnswer');
-            const loginBtn      = document.getElementById('loginBtn');
-            const feedback      = document.getElementById('captchaFeedback');
-
-            if (answerInput) answerInput.value = '';
-            if (loginBtn)    loginBtn.disabled = true;
-            if (feedback)    feedback.classList.add('d-none');
-        }
-
-        function validateCaptcha() {
-            const answerInput = document.getElementById('captchaAnswer');
-            const loginBtn    = document.getElementById('loginBtn');
-            const feedback    = document.getElementById('captchaFeedback');
-
-            if (!answerInput || !loginBtn) return;
-
-            const userAnswer = parseInt(answerInput.value, 10);
-
-            if (!isNaN(userAnswer) && userAnswer === captchaCorrectAnswer) {
-                loginBtn.disabled = false;
-                if (feedback) feedback.classList.add('d-none');
-            } else {
-                loginBtn.disabled = true;
-                if (feedback && answerInput.value !== '') {
-                    feedback.classList.remove('d-none');
-                } else if (feedback) {
-                    feedback.classList.add('d-none');
+                if (img) {
+                    img.src = data;
                 }
-            }
+
+                if (input) {
+                    input.value = '';
+                }
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const refreshBtn = document.getElementById('refreshCaptchaBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', refreshCaptcha);
         }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            generateCaptcha();
-
-            const answerInput = document.getElementById('captchaAnswer');
-            if (answerInput) {
-                answerInput.addEventListener('input', validateCaptcha);
-            }
-        });
-    </script>
+    });
+</script>
 
 </body>
 </html>

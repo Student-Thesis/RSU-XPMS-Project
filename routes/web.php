@@ -26,6 +26,11 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+Route::get('captcha/refresh', function(){
+    return captcha_src('math');
+});
+
+
 Auth::routes();
 
 /* ================== REGISTRATION PROCESS ================== */
