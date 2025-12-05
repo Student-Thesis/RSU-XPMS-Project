@@ -208,7 +208,7 @@
 
                             <div class="full graph_head">
                                 <!-- Title on its own row -->
-                                <h4 class="kpi-title">KPI Summary by Campus ({{ $year }})</h4>
+                                <h4 class="kpi-title mb-3">KPI Summary by Campus ({{ $year }})</h4>
 
                                 <!-- Controls below the title -->
                                 <div class="row align-items-center g-2">
@@ -225,21 +225,25 @@
 
                                     <!-- Chart type radios -->
                                     <div class="col-md-4 col-sm-12 mb-2">
-                                        <div class="chart-type-options d-flex flex-wrap align-items-center gap-2">
-                                            <span class="label-text">Chart type:</span>
+                                        <div class="chart-type-options d-flex flex-wrap align-items-center">
+    <span class="label-text me-2 mr-2">Chart type:</span>
 
-                                            <label class="ms-1">
-                                                <input type="radio" name="chartType" value="line"> Line
-                                            </label>
+    <label class="d-flex align-items-center ms-3 mr-2">
+        <input type="radio" name="chartType" value="line" class="me-2">
+        <span>&nbsp Line</span>
+    </label>
 
-                                            <label class="ms-1">
-                                                <input type="radio" name="chartType" value="bar"> Bar
-                                            </label>
+    <label class="d-flex align-items-center ms-3 mr-2">
+        <input type="radio" name="chartType" value="bar" class="me-1">
+        <span>&nbsp Bar</span>
+    </label>
 
-                                            <label class="ms-1">
-                                                <input type="radio" name="chartType" value="both" checked> Both
-                                            </label>
-                                        </div>
+    <label class="d-flex align-items-center ms-3 mr-2">
+        <input type="radio" name="chartType" value="both" checked class="me-1">
+        <span>&nbsp Both</span>
+    </label>
+</div>
+
                                     </div>
                                 </div>
                             </div>
