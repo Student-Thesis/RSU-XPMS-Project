@@ -96,10 +96,22 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Proposal</label>
+                            <label class="form-label">MOU / MOA G-Link</label>
+                            <input type="text" name="mou_link" class="form-control"
+                                placeholder="Enter G-Drive Link">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Proposal</label> 
                             <input type="file" name="moaFile" class="form-control"
                                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" data-max-size="10240">
                             <small class="file-hint text-muted">Max file size: 10 MB (PDF, DOC, DOCX, JPG, PNG)</small>
+                        </div>
+
+                         <div class="mb-3">
+                            <label class="form-label">Proposal G-Link</label>
+                            <input type="text" name="moa_link" class="form-control"
+                                placeholder="Enter G-Drive Link">
                         </div>
 
                         @if(!empty($registeredUserId))

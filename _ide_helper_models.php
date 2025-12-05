@@ -53,7 +53,9 @@ namespace App\Models{
  * @property string $organization_name
  * @property \Illuminate\Support\Carbon $date_signed
  * @property string|null $mou_path
+ * @property string|null $mou_link
  * @property string|null $moa_path
+ * @property string|null $moa_link
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement newModelQuery()
@@ -62,7 +64,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereDateSigned($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereMoaLink($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereMoaPath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereMouLink($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereMouPath($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereOrganizationName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Agreement whereUpdatedAt($value)
@@ -164,7 +168,9 @@ namespace App\Models{
  * @property int $id
  * @property string $name
  * @property string|null $address
+ * @property string|null $room
  * @property string|null $notes
+ * @property bool $is_active
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation newModelQuery()
@@ -173,8 +179,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereAddress($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereIsActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereRoom($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|EventLocation whereUpdatedAt($value)
  */
 	class EventLocation extends \Eloquent {}

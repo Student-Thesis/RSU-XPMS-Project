@@ -20,6 +20,18 @@
             min-height: 100vh;
             margin: 0 auto;
         }
+
+        table.table td,
+        table.table th {
+            color: #222;
+            /* darker text */
+        }
+
+        .btn-sm {
+            padding: 2px 6px;
+            font-size: 0.70rem;
+            border-radius: 3px;
+        }
     </style>
 
     <div id="content">
@@ -44,17 +56,18 @@
                 {{-- ============================ --}}
                 <ul class="nav nav-tabs mt-3" id="mainMessagesTab" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="proposals-tab" data-bs-toggle="tab" data-bs-target="#proposals"
-                            type="button" role="tab" aria-selected="true">
+                        <button class="nav-link active" id="proposals-tab" data-bs-toggle="tab"
+                            data-bs-target="#proposals" type="button" role="tab" aria-selected="true">
                             <i class="fa fa-file-text-o me-1"></i> Proposals
                         </button>
                     </li>
+                    {{-- If you want to enable the messages tab later, uncomment this --}}
                     {{-- <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="messages-tab" data-bs-toggle="tab"
-                        data-bs-target="#messages" type="button" role="tab" aria-selected="false">
-                        <i class="fa fa-envelope-o me-1"></i> Messages
-                    </button>
-                </li> --}}
+                        <button class="nav-link" id="messages-tab" data-bs-toggle="tab"
+                            data-bs-target="#messages" type="button" role="tab" aria-selected="false">
+                            <i class="fa fa-envelope-o me-1"></i> Messages
+                        </button>
+                    </li> --}}
                 </ul>
 
                 <div class="tab-content border border-top-0 p-3 bg-white rounded-bottom" id="mainMessagesTabContent">
@@ -94,13 +107,22 @@
                                                 <td>{{ $proposal->created_at->format('M d, Y') }}</td>
                                                 <td>
                                                     <button class="btn btn-sm btn-info viewProposalBtn"
-                                                        data-id="{{ $proposal->id }}" data-title="{{ $proposal->title }}"
+                                                        data-id="{{ $proposal->id }}"
+                                                        data-title="{{ $proposal->title }}"
                                                         data-location="{{ $proposal->location }}"
                                                         data-target_agenda="{{ $proposal->target_agenda }}"
                                                         data-budget="{{ $proposal->approved_budget }}"
                                                         data-description="{{ $proposal->description }}"
                                                         data-created="{{ $proposal->created_at->format('M d, Y h:i A') }}"
-                                                        data-bs-toggle="modal" data-bs-target="#viewProposalModal">
+
+                                                        {{-- User info --}}
+                                                        data-user_first_name="{{ optional($proposal->user)->first_name }}"
+                                                        data-user_last_name="{{ optional($proposal->user)->last_name }}"
+                                                        data-user_college="{{ optional($proposal->user)->college }}"
+                                                        data-user_phone="{{ optional($proposal->user)->phone }}"
+
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#viewProposalModal">
                                                         <i class="fa fa-eye"></i> View
                                                     </button>
                                                 </td>
@@ -123,9 +145,38 @@
 
                                             <div class="modal-body">
                                                 <h5 id="vp_title"></h5>
+
                                                 <p class="text-muted mb-3">
-                                                    <strong>Created:</strong> <span id="vp_created"></span>
+                                                    <strong>Created:</strong>
+                                                    <span id="vp_created"></span>
                                                 </p>
+
+                                                {{-- Proponent / User Information --}}
+                                                <div class="card mb-3">
+                                                    <div class="card-body p-2">
+                                                        <h6 class="mb-2"><strong>Proponent Information</strong></h6>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <strong>First Name:</strong>
+                                                                <p class="mb-1" id="vp_user_first_name"></p>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <strong>Last Name:</strong>
+                                                                <p class="mb-1" id="vp_user_last_name"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <strong>College:</strong>
+                                                                <p class="mb-1" id="vp_user_college"></p>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <strong>Phone:</strong>
+                                                                <p class="mb-1" id="vp_user_phone"></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
                                                 <div class="row mb-2">
                                                     <div class="col-md-6">
@@ -169,90 +220,94 @@
                                     // Fill modal on View button click
                                     document.querySelectorAll('.viewProposalBtn').forEach(btn => {
                                         btn.addEventListener('click', function() {
+                                            // Proposal fields
                                             document.getElementById('vp_title').textContent = this.dataset.title;
                                             document.getElementById('vp_location').textContent = this.dataset.location || 'N/A';
-                                            document.getElementById('vp_target_agenda').textContent = this.dataset.target_agenda ||
-                                                'N/A';
+                                            document.getElementById('vp_target_agenda').textContent = this.dataset.target_agenda || 'N/A';
                                             document.getElementById('vp_budget').textContent = Number(this.dataset.budget ?? 0)
                                                 .toLocaleString(undefined, {
                                                     minimumFractionDigits: 2
                                                 });
-                                            document.getElementById('vp_description').textContent = this.dataset.description ||
-                                                'No description';
+                                            document.getElementById('vp_description').textContent = this.dataset.description || 'No description';
                                             document.getElementById('vp_created').textContent = this.dataset.created;
 
+                                            // User / Proponent fields
+                                            document.getElementById('vp_user_first_name').textContent = this.dataset.user_first_name || 'N/A';
+                                            document.getElementById('vp_user_last_name').textContent = this.dataset.user_last_name || 'N/A';
+                                            document.getElementById('vp_user_college').textContent = this.dataset.user_college || 'N/A';
+                                            document.getElementById('vp_user_phone').textContent = this.dataset.user_phone || 'N/A';
+
+                                            // Set ID on Approve button
                                             document.getElementById('approveProposalBtn').dataset.id = this.dataset.id;
                                         });
                                     });
 
                                     // Approve button with loading state + Swal
-document.getElementById('approveProposalBtn').addEventListener('click', function () {
-    const id = this.dataset.id;
-    if (!id) return;
+                                    document.getElementById('approveProposalBtn').addEventListener('click', function() {
+                                        const id = this.dataset.id;
+                                        if (!id) return;
 
-    Swal.fire({
-        title: "Approve this proposal?",
-        text: "This action cannot be undone.",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Yes, approve",
-        cancelButtonText: "Cancel",
-        confirmButtonColor: "#28a745",
-        cancelButtonColor: "#6c757d"
-    }).then((result) => {
-        if (result.isConfirmed) {
+                                        Swal.fire({
+                                            title: "Approve this proposal?",
+                                            text: "This action cannot be undone.",
+                                            icon: "question",
+                                            showCancelButton: true,
+                                            confirmButtonText: "Yes, approve",
+                                            cancelButtonText: "Cancel",
+                                            confirmButtonColor: "#28a745",
+                                            cancelButtonColor: "#6c757d"
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
 
-            const approveBtn = document.getElementById('approveProposalBtn');
+                                                const approveBtn = document.getElementById('approveProposalBtn');
 
-            // 🔵 Add loading spinner + disable button
-            approveBtn.disabled = true;
-            approveBtn.innerHTML = `
-                <span class="spinner-border spinner-border-sm me-1"></span>
-                Approving...
-            `;
+                                                // 🔵 Add loading spinner + disable button
+                                                approveBtn.disabled = true;
+                                                approveBtn.innerHTML = `
+                                                    <span class="spinner-border spinner-border-sm me-1"></span>
+                                                    Approving...
+                                                `;
 
-            const url = "{{ route('proposals.approve', ':id') }}".replace(':id', id);
+                                                const url = "{{ route('proposals.approve', ':id') }}".replace(':id', id);
 
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({})
-            })
-            .then(res => res.json())
-            .then(() => {
-                Swal.fire({
-                    title: "Approved!",
-                    text: "The proposal has been approved successfully.",
-                    icon: "success",
-                    confirmButtonColor: "#28a745"
-                }).then(() => {
-                    window.location.reload();
-                });
-            })
-            .catch(() => {
-                Swal.fire({
-                    title: "Error!",
-                    text: "Failed to approve proposal.",
-                    icon: "error",
-                    confirmButtonColor: "#dc3545"
-                });
-            })
-            .finally(() => {
-                // 🔵 Reset button state (in case user stays on modal)
-                approveBtn.disabled = false;
-                approveBtn.innerHTML = `
-                    <i class="fa fa-check"></i> Approve
-                `;
-            });
-        }
-    });
-});
-
+                                                fetch(url, {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                            'Content-Type': 'application/json',
+                                                        },
+                                                        body: JSON.stringify({})
+                                                    })
+                                                    .then(res => res.json())
+                                                    .then(() => {
+                                                        Swal.fire({
+                                                            title: "Approved!",
+                                                            text: "The proposal has been approved successfully.",
+                                                            icon: "success",
+                                                            confirmButtonColor: "#28a745"
+                                                        }).then(() => {
+                                                            window.location.reload();
+                                                        });
+                                                    })
+                                                    .catch(() => {
+                                                        Swal.fire({
+                                                            title: "Error!",
+                                                            text: "Failed to approve proposal.",
+                                                            icon: "error",
+                                                            confirmButtonColor: "#dc3545"
+                                                        });
+                                                    })
+                                                    .finally(() => {
+                                                        // 🔵 Reset button state (in case user stays on modal)
+                                                        approveBtn.disabled = false;
+                                                        approveBtn.innerHTML = `
+                                                            <i class="fa fa-check"></i> Approve
+                                                        `;
+                                                    });
+                                            }
+                                        });
+                                    });
                                 </script>
-
 
                             </div>
                         @else
@@ -262,10 +317,9 @@ document.getElementById('approveProposalBtn').addEventListener('click', function
                     </div>
 
                     {{-- ============================ --}}
-                    {{-- MESSAGES TAB (NO CHANGES) --}}
+                    {{-- MESSAGES TAB (OPTIONAL / PLACEHOLDER) --}}
                     {{-- ============================ --}}
                     <div class="tab-pane fade" id="messages" role="tabpanel">
-                        {{-- Entire messages section remains unchanged --}}
                         {!! $messagesSection ?? '' !!}
                     </div>
 
@@ -273,19 +327,5 @@ document.getElementById('approveProposalBtn').addEventListener('click', function
             </div>
         </div>
     </div>
-
-    <style>
-        table.table td,
-        table.table th {
-            color: #222;
-            /* darker text */
-        }
-
-        .btn-sm {
-            padding: 2px 6px;
-            font-size: 0.70rem;
-            border-radius: 3px;
-        }
-    </style>
 
 @endsection

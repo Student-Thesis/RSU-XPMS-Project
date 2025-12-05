@@ -47,6 +47,8 @@ class AgreementController extends Controller
                 'date_signed' => ['nullable', 'date'],
                 'mouFile' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
                 'moaFile' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
+                'mou_link' => ['nullable', 'string', 'max:2048'], // or 'url' if you want stricter validation
+                'moa_link' => ['nullable', 'string', 'max:2048'], // or 'url'
                 'user_id' => ['nullable', 'string'],
             ]);
 
@@ -62,7 +64,7 @@ class AgreementController extends Controller
             $user = User::find($userId);
 
             // Check if user submitted *any* agreement data
-            $hasAnyData = !empty($data['organization_name']) || !empty($data['date_signed']) || $request->hasFile('mouFile') || $request->hasFile('moaFile');
+            $hasAnyData = !empty($data['organization_name']) || !empty($data['date_signed']) || !empty($data['mou_link']) || !empty($data['moa_link']) || $request->hasFile('mouFile') || $request->hasFile('moaFile');
 
             Log::info('Agreement hasAnyData check', [
                 'hasAnyData' => $hasAnyData,
@@ -123,7 +125,9 @@ class AgreementController extends Controller
             // ==================================
 
             // Build payload for Agreement
-            $payload = ['user_id' => $userId];
+            $payload = [
+                'user_id' => $userId,
+            ];
 
             if (!empty($data['organization_name'])) {
                 $payload['organization_name'] = $data['organization_name'];
@@ -131,6 +135,14 @@ class AgreementController extends Controller
 
             if (!empty($data['date_signed'])) {
                 $payload['date_signed'] = $data['date_signed'];
+            }
+
+            if (!empty($data['mou_link'])) {
+                $payload['mou_link'] = $data['mou_link'];
+            }
+
+            if (!empty($data['moa_link'])) {
+                $payload['moa_link'] = $data['moa_link'];
             }
 
             if ($request->hasFile('mouFile')) {
@@ -167,10 +179,12 @@ class AgreementController extends Controller
 
                 $orgName = $agreement->organization_name ?? 'N/A';
                 $dateSigned = $agreement->date_signed ?? 'N/A';
+                $mouLink = $agreement->mou_link ?? 'N/A';
+                $moaLink = $agreement->moa_link ?? 'N/A';
                 $userLine = $user ? "{$user->first_name} {$user->last_name} ({$user->email})" : 'Unknown User';
 
                 // Admin email
-                $adminBody = "A new agreement has been submitted.\n\n" . "User: {$userLine}\n" . "User ID: {$userId}\n" . "Organization: {$orgName}\n" . "Date Signed: {$dateSigned}\n";
+                $adminBody = "A new agreement has been submitted.\n\n" . "User: {$userLine}\n" . "User ID: {$userId}\n" . "Organization: {$orgName}\n" . "Date Signed: {$dateSigned}\n" . "MOU Link: {$mouLink}\n" . "Proposal Link: {$moaLink}\n";
 
                 Mail::raw($adminBody, function ($message) use ($adminEmail) {
                     $message->to($adminEmail)->subject('New Agreement Submitted');
@@ -182,7 +196,7 @@ class AgreementController extends Controller
 
                 // User email
                 if ($user && $user->email) {
-                    $userBody = "Dear {$user->first_name},\n\n" . "Thank you for submitting your agreement documents.\n\n" . "Here are the details we received:\n" . "Organization: {$orgName}\n" . "Date Signed: {$dateSigned}\n\n" . "Our admin team will review your submission and contact you if anything else is needed.\n\n" . "Best regards,\n";
+                    $userBody = "Dear {$user->first_name},\n\n" . "Thank you for submitting your agreement documents.\n\n" . "Here are the details we received:\n" . "Organization: {$orgName}\n" . "Date Signed: {$dateSigned}\n" . "MOU Link: {$mouLink}\n" . "Proposal Link: {$moaLink}\n\n" . "Our admin team will review your submission and contact you if anything else is needed.\n\n" . "Best regards,\n";
 
                     Mail::raw($userBody, function ($message) use ($user) {
                         $message->to($user->email, $user->first_name . ' ' . $user->last_name)->subject('Your Agreement Submission Has Been Received');

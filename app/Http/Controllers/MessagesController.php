@@ -15,7 +15,7 @@ class MessagesController extends Controller
     public function index()
     {
         // Pending proposals (from your previous requirement)
-        $pendingProposals = Proposal::where('status', 'pending')->get();
+        $pendingProposals = Proposal::with('user')->where('status', 'pending')->get();  
 
         // Public messages (everyone can see)
         $publicMessages = PublicMessage::with('user')

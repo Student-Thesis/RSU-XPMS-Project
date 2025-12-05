@@ -36,7 +36,7 @@ class LoginController extends Controller
     {
         $request->validate(
             [
-                $this->username() => ['required', 'string'], // usually "email"
+                'email'           => ['required', 'string'], // usually "email"
                 'password'        => ['required', 'string'],
                 'captcha'         => ['required', 'captcha'],
             ],

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Proposal;
+use App\Models\User;
 use App\Models\SettingsClassification;
 use App\Models\SettingsTargetAgenda;
 use App\Models\ActivityLog;

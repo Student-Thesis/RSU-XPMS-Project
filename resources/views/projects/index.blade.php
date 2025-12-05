@@ -15,10 +15,10 @@
                         <div class="page_title d-flex align-items-center justify-content-between gap-2 flex-wrap">
                             <h3 class="m-0">Project Proposals</h3>
 
-                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#addProposalModal">
+                            {{-- Go to full-page create form --}}
+                            <a href="{{ route('projects.create') }}" class="btn btn-success btn-sm">
                                 <i class="fa fa-plus"></i> Add Proposal
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -80,7 +80,6 @@
                                 <th>MOA/MOU</th>
                                 <th>Activity Design</th>
 
-
                                 <th>Budget</th>
                                 <th>Funds</th>
                                 <th>Expenditure</th>
@@ -126,7 +125,6 @@
                                     <td>{{ $college }}</td>
                                     <td>{{ $agenda }}</td>
 
-                                    {{-- EXACTLY MATCH COLUMNS IN THEAD --}}
                                     {{-- 1. In-House --}}
                                     <td>
                                         <select class="dropdown-yesno {{ $proposal->in_house ? 'yes' : 'no' }}"
@@ -232,7 +230,21 @@
 
                                     <td>{{ $proposal->partner ?? '—' }}</td>
 
-                                    <td>{{ $proposal->status ?? '—' }}</td>
+                                    <td>
+                                        @php
+                                            $status = $proposal->status ?? '—';
+
+                                            $color = match ($status) {
+                                                'Pending'   => 'text-danger fw-bold',
+                                                'Approved'  => 'text-success fw-bold', // green
+                                                'Ongoing'   => 'text-warning fw-bold', // orange
+                                                'Cancelled' => 'text-danger fw-bold', // red
+                                                default     => 'text-success',        // default
+                                            };
+                                        @endphp
+
+                                        <span class="{{ $color }}">{{ $status }}</span>
+                                    </td>
 
                                     <td contenteditable="true" class="inline-cell" data-col="documentation_report">
                                         {{ $proposal->documentation_report ?? '—' }}
@@ -310,16 +322,14 @@
             color: #b42318;
         }
 
-        /* Status dropdown sizing */
+        /* Status dropdown sizing (if you use select somewhere) */
         .status-select {
             min-width: 120px !important;
             width: auto !important;
             display: inline-block !important;
             padding-right: 24px;
-            /* space for caret */
         }
 
-        /* Status option backgrounds */
         .status-ongoing {
             background-color: #fff3cd;
             color: #856404;
@@ -402,146 +412,4 @@
             });
         });
     </script>
-
-    <!-- Add Proposal Modal -->
-    <div class="modal fade" id="addProposalModal" tabindex="-1" aria-labelledby="addProposalModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header py-2">
-                    <h5 class="modal-title">
-                        <i class="fa fa-plus-circle me-1"></i> Add New Proposal
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <form method="POST" action="{{ route('projects.store') }}">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <label class="form-label">Title <span class="text-danger">*</span></label>
-                                <input type="text" name="title" class="form-control" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Classification <span class="text-danger">*</span></label>
-                                <select name="classification" class="form-control" required>
-                                    <option value="Program">Program</option>
-                                    <option value="Project">Project</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Leader</label>
-                                <input name="leader" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Team Members</label>
-                                <input name="team_members" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">College/Campus</label>
-                                <select name="location" class="form-control">
-                                    <option value="">—</option>
-                                    @foreach (['CAS', 'CBA', 'CET', 'CAFES', 'CCMADI', 'CED', 'GEPS', 'CALATRAVA CAMPUS', 'STA. MARIA CAMPUS', 'SANTA FE CAMPUS', 'SAN ANDRES CAMPUS', 'SAN AGUSTIN CAMPUS', 'ROMBLON CAMPUS', 'CAJIDIOCAN CAMPUS', 'SAN FERNANDO CAMPUS'] as $opt)
-                                        <option value="{{ $opt }}">{{ $opt }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Target Agenda</label>
-                                <select name="target_agenda" class="form-select">
-                                    <option value="">Select Target Agenda</option>
-
-                                    @foreach ($targetAgendas as $agenda)
-                                        <option value="{{ $agenda->name }}">
-                                            {{ $agenda->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-
-                            @php
-                                $yesNo = [
-                                    'in_house' => 'In-House',
-                                    'revised_proposal' => 'Revised Proposal',
-                                    'ntp' => 'NTP',
-                                    'endorsement' => 'Endorsement',
-                                    'proposal_presentation' => 'Proposal Presentation',
-                                    'proposal_documents' => 'Proposal Documents',
-                                    'program_proposal' => 'Program Proposal',
-                                    'project_proposal' => 'Project Proposal',
-                                    'moa_mou' => 'MOA/MOU',
-                                    'activity_design' => 'Activity Design',
-                                    'certificate_of_appearance' => 'Certificate of Appearance',
-                                    'attendance_sheet' => 'Attendance Sheet',
-                                ];
-                            @endphp
-
-                            @foreach ($yesNo as $name => $label)
-                                <div class="col-6 col-md-4">
-                                    <label class="form-label">{{ $label }}</label>
-                                    <select name="{{ $name }}" class="form-control">
-                                        <option value="0">No</option>
-                                        <option value="1">Yes</option>
-                                    </select>
-                                </div>
-                            @endforeach
-
-                            <div class="col-md-4">
-                                <label class="form-label">Approved Budget</label>
-                                <input type="number" step="0.01" name="approved_budget" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Expenditure</label>
-                                <input type="number" step="0.01" name="expenditure" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Fund Utilization Rate</label>
-                                <input name="fund_utilization_rate" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Source of Funds</label>
-                                <input name="source_of_funds" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Partner</label>
-                                <input name="partner" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Status</label>
-                                <select name="status" class="form-control">
-                                    <option>Ongoing</option>
-                                    <option>Completed</option>
-                                    <option>Cancelled</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Code</label>
-                                <input name="code" class="form-control">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Drive Link</label>
-                                <input name="drive_link" class="form-control">
-                            </div>
-                            <div class="col-md-12">
-                                <label class="form-label">Documentation Report</label>
-                                <input name="documentation_report" class="form-control">
-                            </div>
-                            <div class="col-md-12">
-                                <label class="form-label">Remarks</label>
-                                <textarea name="remarks" class="form-control" rows="2"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer py-2">
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success btn-sm">
-                            <i class="fa fa-save"></i> Save
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 @endsection

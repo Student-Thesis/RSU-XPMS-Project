@@ -22979,6 +22979,84 @@ namespace Illuminate\Support\Facades {
             }
     }
 
+namespace Mews\Captcha\Facades {
+    /**
+     * @see \Mews\Captcha\Captcha
+     */
+    class Captcha {
+        /**
+         * Create captcha image
+         *
+         * @param string $config
+         * @param bool $api
+         * @return array|mixed
+         * @throws Exception
+         * @static
+         */
+        public static function create($config = 'default', $api = false)
+        {
+            /** @var \Mews\Captcha\Captcha $instance */
+            return $instance->create($config, $api);
+        }
+
+        /**
+         * Captcha check
+         *
+         * @param string $value
+         * @return bool
+         * @static
+         */
+        public static function check($value)
+        {
+            /** @var \Mews\Captcha\Captcha $instance */
+            return $instance->check($value);
+        }
+
+        /**
+         * Captcha check
+         *
+         * @param string $value
+         * @param string $key
+         * @param string $config
+         * @return bool
+         * @static
+         */
+        public static function check_api($value, $key, $config = 'default')
+        {
+            /** @var \Mews\Captcha\Captcha $instance */
+            return $instance->check_api($value, $key, $config);
+        }
+
+        /**
+         * Generate captcha image source
+         *
+         * @param string $config
+         * @return string
+         * @static
+         */
+        public static function src($config = 'default')
+        {
+            /** @var \Mews\Captcha\Captcha $instance */
+            return $instance->src($config);
+        }
+
+        /**
+         * Generate captcha image html tag
+         *
+         * @param string $config
+         * @param array $attrs $attrs -> HTML attributes supplied to the image tag where key is the attribute and the value is the attribute value
+         * @return string
+         * @static
+         */
+        public static function img($config = 'default', $attrs = [])
+        {
+            /** @var \Mews\Captcha\Captcha $instance */
+            return $instance->img($config, $attrs);
+        }
+
+            }
+    }
+
 namespace Illuminate\Http {
     /**
      */
@@ -27968,6 +28046,7 @@ namespace  {
     class Validator extends \Illuminate\Support\Facades\Validator {}
     class View extends \Illuminate\Support\Facades\View {}
     class Vite extends \Illuminate\Support\Facades\Vite {}
+    class Captcha extends \Mews\Captcha\Facades\Captcha {}
 }
 
 

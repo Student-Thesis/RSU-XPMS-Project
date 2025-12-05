@@ -85,7 +85,7 @@ Route::middleware(['auth'])->group(function () {
     /* ================== DASHBOARD / STATIC PAGES ================== */
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
     Route::get('/settings',  [SettingsController::class, 'index'])->middleware('dept.can:settings,view')->name('settings');
-    Route::get('/help',      [HelpController::class, 'index'])->middleware('dept.can:help,view')->name('help');
+    Route::get('/help',      [HelpController::class, 'index'])->name('help');
     Route::get('/messages',  [MessagesController::class, 'index'])->middleware('dept.can:messages,view')->name('messages');
     Route::post('/messages/public', [MessagesController::class, 'storePublic'])->name('messages.public.store');
     Route::post('/messages/private', [MessagesController::class, 'storePrivate'])->name('messages.private.store');

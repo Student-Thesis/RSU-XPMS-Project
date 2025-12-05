@@ -16,98 +16,241 @@
                     </div>
                 </div>
 
-                <div class="row column1 text-center">
-                    <div class="col-md-2 col-lg-2">
-                        <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon"><i class="fa fa-user yellow_color"></i></div>
-                            <div class="counter_no">
-                                <p class="total_no">{{ number_format($kpi['involved_extension_total']) }}</p>
-                                <p class="head_couter">Involved in Extension</p>
+                {{-- KPI CARDS --}}
+                <div class="row text-center">
+
+                    <!-- 1 -->
+                    <div class="kpi-col mb-3">
+                        <div class="card kpi-card h-100">
+                            <div class="card-header">Involved in </br>Extension</div>
+                            <div class="card-body">
+                                <p>{{ number_format($kpi['involved_extension_total']) }}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-2 col-lg-2">
-                        <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon"><i class="fa fa-clock-o blue1_color"></i></div>
-                            <div class="counter_no">
-                                <p class="total_no">{{ number_format($kpi['iec_developed_total']) }}</p>
-                                <p class="head_couter">IEC Developed</p>
+                    <!-- 2 -->
+                    <div class="kpi-col mb-3">
+                        <div class="card kpi-card h-100">
+                            <div class="card-header">IEC </br>Developed</div>
+                            <div class="card-body">
+                                <p>{{ number_format($kpi['iec_developed_total']) }}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-2 col-lg-2">
-                        <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon"><i class="fa fa-cloud-download green_color"></i></div>
-                            <div class="counter_no">
-                                <p class="total_no">{{ number_format($kpi['iec_reproduced_total']) }}</p>
-                                <p class="head_couter">IEC Reproduced</p>
+                    <!-- 3 -->
+                    <div class="kpi-col mb-3">
+                        <div class="card kpi-card h-100">
+                            <div class="card-header">IEC </br>Reproduced</div>
+                            <div class="card-body">
+                                <p>{{ number_format($kpi['iec_reproduced_total']) }}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-2 col-lg-2">
-                        <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon"><i class="fa fa-comments-o red_color"></i></div>
-                            <div class="counter_no">
-                                <p class="total_no">{{ number_format($kpi['iec_distributed_total']) }}</p>
-                                <p class="head_couter">IEC Distributed</p>
+                    <!-- 4 -->
+                    <div class="kpi-col mb-3">
+                        <div class="card kpi-card h-100">
+                            <div class="card-header">IEC </br> Distributed</div>
+                            <div class="card-body">
+                                <p>{{ number_format($kpi['iec_distributed_total']) }}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-2 col-lg-2">
-                        <div class="full counter_section margin_bottom_30">
-                            <div class="couter_icon"><i class="fa fa-check-square-o red_color"></i></div>
-                            <div class="counter_no">
-                                <p class="total_no">{{ number_format($kpi['proposals_approved_total']) }}</p>
-                                <p class="head_couter">Proposals Approved</p>
+                    <!-- 5 -->
+                    <div class="kpi-col mb-3">
+                        <div class="card kpi-card h-100">
+                            <div class="card-header">Proposals </br>Approved</div>
+                            <div class="card-body">
+                                <p>{{ number_format($kpi['proposals_approved_total']) }}</p>
                             </div>
                         </div>
                     </div>
+
                 </div>
 
+                <div class="row text-center mt-4">
 
-                {{-- Chart --}}
+                    <!-- 1 -->
+                    <div class="kpi-col mb-3">
+                        <div class="card kpi-card h-100">
+                            <div class="card-header text-uppercase">
+                                No. of Quality Extension </br>Proposals Implemented
+                            </div>
+                            <div class="card-body">
+                                <p>{{ number_format($kpi['proposals_implemented_total']) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2 -->
+                    <div class="kpi-col mb-3">
+                        <div class="card kpi-card h-100">
+                            <div class="card-header text-uppercase">
+                                No. of Quality Extension </br>Proposals Documented
+                            </div>
+                            <div class="card-body">
+                                <p>{{ number_format($kpi['proposals_documented_total']) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3 -->
+                    <div class="kpi-col mb-3">
+                        <div class="card kpi-card h-100">
+                            <div class="card-header text-uppercase">
+                                No. of Community </br>Population Served
+                            </div>
+                            <div class="card-body">
+                                <p>{{ number_format($kpi['population_served_total']) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4 -->
+                    <div class="kpi-col mb-3">
+                        <div class="card kpi-card h-100">
+                            <div class="card-header text-uppercase">
+                                No. of Beneficiaries of </br>Technical Assistance
+                            </div>
+                            <div class="card-body">
+                                <p>{{ number_format($kpi['beneficiaries_total']) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5 -->
+                    <div class="kpi-col mb-3">
+                        <div class="card kpi-card h-100">
+                            <div class="card-header text-uppercase">
+                                No. of </br>MOA/MOU Signed
+                            </div>
+                            <div class="card-body">
+                                <p>{{ number_format($kpi['moa_mou_total']) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <style>
+                    .kpi-col {
+                        width: 20%;
+                        padding-left: 0 !important;
+                        padding-right: 0 !important;
+                    }
+
+                    .kpi-card {
+                        margin: 6px;
+                        /* spacing between cards */
+                        border-radius: 8px;
+                    }
+
+                    .kpi-card .card-body p {
+                        font-size: 38px;
+                        font-weight: 700;
+                        margin: 0;
+                    }
+                </style>
+
+
+
+                {{-- METRIC LABELS (for chart) --}}
+                @php
+                    $metricLabels = [
+                        ['NO. OF', 'FACULTY', 'INVOLVED', 'IN EXTENSION', '(60% = 173)'],
+                        ['NO. OF', 'IEC MATERIALS', 'DEVELOPED', '(25)'],
+                        ['NO. OF', 'IEC MATERIALS', 'REPRODUCED', '(600)'],
+                        ['NO. OF', 'IEC MATERIALS', 'DISTRIBUTED', '(600)'],
+                        ['NO. OF', 'QUALITY', 'EXTENSION', 'PROPOSALS', 'APPROVED', '(13)'],
+                        ['NO. OF', 'QUALITY', ' EXTENSION', 'PROPOSALS', 'IMPLEMENTED', '(13)'],
+                        ['NO. OF', 'QUALITY', ' EXTENSION', 'PROPOSALS', 'DOCUMENTED', '(13)'],
+                        ['NO. OF', 'COMMUNITY', 'POPULATION', 'SERVED', '(5,939)'],
+                        ['NO. OF', 'BENEFICIARIES', 'OF TECHNICAL', 'ASSISTANCE', '(813)'],
+                        ['NO. OF', 'MOA / MOU', 'SIGNED', '(8)'],
+                    ];
+                @endphp
+
+                {{-- CHART --}}
                 <div class="row column2 graph margin_bottom_30">
-                    <div class="col-md-l2 col-lg-12">
+                    <div class="col-md-12 col-lg-12">
                         <div class="white_shd full">
-                            <div class="full graph_head d-flex justify-content-between align-items-center gap-2 flex-wrap">
-                                <div class="heading1 margin_0">
-                                    <h2>Monthly Trends (Dummy Data)</h2>
-                                </div>
+                            <style>
+                                .graph_head {
+                                    margin-bottom: 1rem;
+                                }
 
-                                <div class="d-flex align-items-center gap-2">
-                                    <label for="campusSelect" class="mb-0"
-                                        style="font-size:.8rem;">College/Campus:</label>
-                                    <select id="campusSelect" class="form-control form-control-sm" style="min-width:220px;">
-                                        <option value="CAFES">CAFES</option>
-                                        <option value="Cajidiocan Campus">Cajidiocan Campus</option>
-                                        <option value="Calatrava Campus">Calatrava Campus</option>
-                                        <option value="CAS">CAS</option>
-                                        <option value="CBA">CBA</option>
-                                        <option value="CCMADI">CCMADI</option>
-                                        <option value="CED">CED</option>
-                                        <option value="CET">CET</option>
-                                        <option value="GEPS">GEPS</option>
-                                        <option value="Sta. Maria Campus">Sta. Maria Campus</option>
-                                        <option value="Santa Fe Campus">Santa Fe Campus</option>
-                                        <option value="San Andres Campus">San Andres Campus</option>
-                                        <option value="San Agustin Campus">San Agustin Campus</option>
-                                        <option value="Romblon Campus">Romblon Campus</option>
-                                        <option value="San Fernando Campus">San Fernando Campus</option>
-                                    </select>
+                                .graph_head .kpi-title {
+                                    font-size: 1.4rem;
+                                    /* not too big */
+                                    font-weight: 700;
+                                    margin-bottom: .5rem;
+                                    line-height: 1.2;
+                                }
+
+                                .graph_head label,
+                                .graph_head span.label-text {
+                                    font-size: .8rem;
+                                    color: #666;
+                                }
+
+                                .graph_head .form-control-sm {
+                                    max-width: 230px;
+                                }
+
+                                .graph_head .chart-type-options label {
+                                    font-size: .8rem;
+                                    margin-bottom: 0;
+                                }
+                            </style>
+
+                            <div class="full graph_head">
+                                <!-- Title on its own row -->
+                                <h4 class="kpi-title">KPI Summary by Campus ({{ $year }})</h4>
+
+                                <!-- Controls below the title -->
+                                <div class="row align-items-center g-2">
+                                    <!-- Campus dropdown -->
+                                    <div class="col-md-4 col-sm-12 mb-2">
+
+                                        <select id="campusSelect" class="form-control form-control-sm">
+                                            <option value="__all__" selected>All Campuses</option>
+                                            @foreach (array_keys($chart ?? []) as $campusName)
+                                                <option value="{{ $campusName }}">{{ $campusName }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <!-- Chart type radios -->
+                                    <div class="col-md-4 col-sm-12 mb-2">
+                                        <div class="chart-type-options d-flex flex-wrap align-items-center gap-2">
+                                            <span class="label-text">Chart type:</span>
+
+                                            <label class="ms-1">
+                                                <input type="radio" name="chartType" value="line"> Line
+                                            </label>
+
+                                            <label class="ms-1">
+                                                <input type="radio" name="chartType" value="bar"> Bar
+                                            </label>
+
+                                            <label class="ms-1">
+                                                <input type="radio" name="chartType" value="both" checked> Both
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
 
                             <div class="full graph_revenue">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="content">
-                                            <div class="area_chart">
-                                                {{-- 👇 use a UNIQUE id so theme scripts won't draw their demo chart here --}}
-                                                <canvas id="monthlyTrendsChart" height="120"></canvas>
+                                            <div class="area_chart" style="height: 450px;">
+                                                <canvas id="monthlyTrendsChart"></canvas>
                                             </div>
                                         </div>
                                     </div>
@@ -144,94 +287,203 @@
         .margin_bottom_30 {
             margin-bottom: 30px;
         }
+
+        /* Ensure the chart area has enough vertical space */
+        .area_chart {
+            min-height: 200px;
+        }
     </style>
 @endsection
-
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
-        (function() {
-            const canvas = document.getElementById('monthlyTrendsChart');
-            const select = document.getElementById('campusSelect');
-            if (!canvas || !select) return;
+        const chartData = @json($chart); // { campus: [values...] }
+        const metricLabels = @json($metricLabels); // multi-line labels
 
-            const ctx = canvas.getContext('2d');
+        const campuses = Object.keys(chartData);
 
-            // this comes from controller: ['CAS' => [..12 nums..], 'CBA' => [...], ...]
-            const chartData = @json($chart ?? []);
+        // Color palette for campuses
+        const colors = [
+            'rgba(54, 162, 235, 0.7)',
+            'rgba(255, 99, 132, 0.7)',
+            'rgba(255, 206, 86, 0.7)',
+            'rgba(75, 192, 192, 0.7)',
+            'rgba(153, 102, 255, 0.7)',
+            'rgba(255, 159, 64, 0.7)',
+            'rgba(199, 199, 199, 0.7)',
+            'rgba(0, 128, 0, 0.7)',
+            'rgba(128, 0, 128, 0.7)',
+            'rgba(0, 0, 128, 0.7)',
+            'rgba(128, 128, 0, 0.7)',
+            'rgba(0, 128, 128, 0.7)',
+        ];
+        const borderColors = colors.map(c => c.replace('0.7', '1'));
 
-            // months
-            const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September',
-                'October', 'November', 'December'
-            ];
+        // Single-campus base color
+        const baseBackgroundColor = colors[0];
+        const baseBorderColor = borderColors[0];
 
-            let chart = null;
+        const campusSelect = document.getElementById('campusSelect');
+        const chartTypeRadios = document.querySelectorAll('input[name="chartType"]');
+        const ctx = document.getElementById('monthlyTrendsChart').getContext('2d');
 
-            function render(campus) {
-                if (chart) chart.destroy();
+        function getSelectedCampus() {
+            return campusSelect.value; // "__all__" or campus name
+        }
 
-                const data = chartData[campus] || Array(12).fill(0);
+        function getSelectedChartType() {
+            const checked = document.querySelector('input[name="chartType"]:checked');
+            return checked ? checked.value : 'both';
+        }
 
-                chart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: campus + ' ({{ $year ?? now()->year }})',
-                            data: data,
-                            borderColor: 'rgba(0, 168, 120, 1)',
-                            backgroundColor: 'rgba(0, 168, 120, .15)',
-                            tension: 0.35,
-                            pointRadius: 3,
-                            fill: true,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        animation: false,
-                        plugins: {
-                            legend: {
-                                position: 'top'
-                            },
-                            tooltip: {
-                                mode: 'index',
-                                intersect: false
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    precision: 0
-                                }
-                            }
-                        }
+        /**
+         * Build datasets depending on selection:
+         * - "__all__"  => all campuses, each with its own color
+         * - campusName => single campus (bar / line / both logic)
+         */
+        function buildDatasets(selection, chartType) {
+            // 🔹 ALL CAMPUSES
+            if (selection === '__all__') {
+                const typeForAll = (chartType === 'line') ? 'line' : 'bar';
+                // For "both", we still just show bars for clarity
+
+                return campuses.map((campus, index) => {
+                    const data = chartData[campus] || [];
+                    const ds = {
+                        label: campus,
+                        data: data,
+                        type: typeForAll,
+                        backgroundColor: colors[index % colors.length],
+                        borderColor: borderColors[index % borderColors.length],
+                        borderWidth: 1,
+                    };
+
+                    if (typeForAll === 'line') {
+                        ds.fill = false;
+                        ds.tension = 0.2;
+                        ds.pointRadius = 3;
                     }
+
+                    return ds;
                 });
             }
 
-            // fill dropdown from PHP keys (so it always matches DB)
-           // Get the campuses that have actual DB data
-const campusNames = Object.keys(chartData);
+            // 🔹 SINGLE CAMPUS (same logic as before)
+            const data = chartData[selection] || [];
 
-// If DB has something, select the first one
-if (campusNames.length) {
-    // If the first database campus exists in the dropdown, select it
-    const firstCampus = campusNames[0];
+            const datasets = [{
+                label: selection + ' (Bar)',
+                data: data,
+                type: 'bar',
+                backgroundColor: baseBackgroundColor,
+                borderColor: baseBorderColor,
+                borderWidth: 1,
+            }];
 
-    if ([...select.options].some(opt => opt.value === firstCampus)) {
-        select.value = firstCampus;
-    }
+            if (chartType === 'both') {
+                datasets.push({
+                    label: selection + ' (Line)',
+                    data: data,
+                    type: 'line',
+                    borderColor: baseBorderColor,
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.2,
+                    pointRadius: 3,
+                });
+            }
 
-    render(firstCampus);
-} else {
-    render('(No data)');
-}
+            if (chartType === 'line') {
+                datasets[0].type = 'line';
+                datasets[0].label = selection + ' (Line)';
+                datasets[0].fill = false;
+                datasets[0].tension = 0.2;
+                datasets[0].pointRadius = 3;
+            }
 
-            // change handler
-            select.addEventListener('change', function() {
-                render(this.value);
+            return datasets;
+        }
+
+        const initialSelection = getSelectedCampus(); // "__all__"
+        const initialType = getSelectedChartType();
+        const initialBaseType = (initialType === 'line') ? 'line' : 'bar';
+
+        let campusChart = new Chart(ctx, {
+            type: initialBaseType,
+            data: {
+                labels: metricLabels,
+                datasets: buildDatasets(initialSelection, initialType),
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    x: {
+                        stacked: false,
+                        ticks: {
+                            autoSkip: false,
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            stepSize: 10,
+                            autoSkip: false,
+                            padding: 8,
+                            callback: v => v
+                        },
+                        title: {
+                            display: true,
+                            text: 'Counts'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(items) {
+                                const label = items[0].label;
+                                if (Array.isArray(label)) {
+                                    return label.join(' ');
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        campusSelect.addEventListener('change', function() {
+            const selection = getSelectedCampus();
+            const type = getSelectedChartType();
+            const baseType = (type === 'line') ? 'line' : 'bar';
+
+            campusChart.config.type = baseType;
+            campusChart.data.datasets = buildDatasets(selection, type);
+            campusChart.update();
+        });
+
+        chartTypeRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const selection = getSelectedCampus();
+                const type = getSelectedChartType();
+                const baseType = (type === 'line') ? 'line' : 'bar';
+
+                campusChart.config.type = baseType;
+                campusChart.data.datasets = buildDatasets(selection, type);
+                campusChart.update();
             });
-        })();
+        });
     </script>
 @endpush
