@@ -1,4 +1,9 @@
 <!-- Sidebar  -->
+@php
+    use App\Support\DeptGate;
+    $user = auth()->user();
+@endphp
+
 <nav id="sidebar">
     <div class="sidebar_blog_1">
         <div class="sidebar-header">
@@ -20,63 +25,75 @@
                          alt="Logo" />
                 </div>
                 <div class="user_info">
-                    <h2>ESCEO</h2>
+                    <h2>{{ $user->first_name ?? 'User' }}</h2>
                 </div>
             </div>
         </div>
     </div>
-<div class="sidebar_blog_2">
-    <ul class="list-unstyled components">
-        <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-            <a href="{{ route('dashboard') }}">
-                <i class="fa fa-dashboard yellow_color"></i>
-                <span class="hideInSmall">Dashboard</span>
-            </a>
-        </li>
 
-        <li class="{{ request()->routeIs('projects*') ? 'active' : '' }}">
-            <a href="{{ route('projects') }}">
-                <i class="fa fa-folder-open green_color"></i>
-                <span class="hideInSmall">Projects</span>
-            </a>
-        </li>
+    <div class="sidebar_blog_2">
+        <ul class="list-unstyled components">
 
-        <li class="{{ request()->routeIs('forms.*') ? 'active' : '' }}">
-            <a href="{{ route('forms.index') }}">
-                <i class="fa fa-file orange_color"></i>
-                <span class="hideInSmall">Forms</span>
-            </a>
-        </li>
+            {{-- DASHBOARD --}}
+            @if (DeptGate::can($user, 'dashboard', 'view') || true)
+            <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                <a href="{{ route('dashboard') }}">
+                    <i class="fa fa-dashboard yellow_color"></i>
+                    <span class="hideInSmall">Dashboard</span>
+                </a>
+            </li>
+            @endif
 
-        <li class="{{ request()->routeIs('faculties*') ? 'active' : '' }}">
-            <a href="{{ route('faculties.index') }}">
-                <i class="fa fa-graduation-cap yellow_color"></i>
-                <span class="hideInSmall">Faculty</span>
-            </a>
-        </li>
+            {{-- PROJECTS --}}
+            @if (DeptGate::can($user, 'project', 'view'))
+            <li class="{{ request()->routeIs('projects*') ? 'active' : '' }}">
+                <a href="{{ route('projects') }}">
+                    <i class="fa fa-folder-open green_color"></i>
+                    <span class="hideInSmall">Projects</span>
+                </a>
+            </li>
+            @endif
 
-        @php
-            $userType = auth()->user()->user_type ?? null;
-        @endphp
-        
+            {{-- FORMS --}}
+            @if (DeptGate::can($user, 'forms', 'view'))
+            <li class="{{ request()->routeIs('forms.*') ? 'active' : '' }}">
+                <a href="{{ route('forms.index') }}">
+                    <i class="fa fa-file orange_color"></i>
+                    <span class="hideInSmall">Forms</span>
+                </a>
+            </li>
+            @endif
 
-        @if (in_array($userType, ['root', 'admin']))
+            {{-- FACULTY --}}
+            @if (DeptGate::can($user, 'faculty', 'view'))
+            <li class="{{ request()->routeIs('faculties*') ? 'active' : '' }}">
+                <a href="{{ route('faculties.index') }}">
+                    <i class="fa fa-graduation-cap yellow_color"></i>
+                    <span class="hideInSmall">Faculty</span>
+                </a>
+            </li>
+            @endif
+
+            {{-- USERS --}}
+            @if (DeptGate::can($user, 'users', 'view'))
             <li class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
-                  <a href="{{ route('users.index') }}">
+                <a href="{{ route('users.index') }}">
                     <i class="fa fa-users blue2_color"></i>
                     <span class="hideInSmall">Users</span>
                 </a>
             </li>
-        @endif
+            @endif
 
-        <li class="{{ request()->routeIs('calendar') ? 'active' : '' }}">
-            <a href="{{ route('calendar') }}">
-                <i class="fa fa-calendar red_color"></i>
-                <span class="hideInSmall">Calendar</span>
-            </a>
-        </li>
-    </ul>
-</div>
+            {{-- CALENDAR --}}
+            @if (DeptGate::can($user, 'calendar', 'view'))
+            <li class="{{ request()->routeIs('calendar') ? 'active' : '' }}">
+                <a href="{{ route('calendar') }}">
+                    <i class="fa fa-calendar red_color"></i>
+                    <span class="hideInSmall">Calendar</span>
+                </a>
+            </li>
+            @endif
 
+        </ul>
+    </div>
 </nav>
-

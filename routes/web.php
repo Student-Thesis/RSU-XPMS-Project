@@ -70,6 +70,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('{department}/edit',    [DepartmentPermissionController::class, 'edit'])->middleware('dept.can:users,update')->name('edit');
         Route::put('{department}',         [DepartmentPermissionController::class, 'update'])->middleware('dept.can:users,update')->name('update');
         Route::delete('{dept_permission}', [DepartmentPermissionController::class, 'destroy'])->middleware('dept.can:users,delete')->name('destroy');
+
+        // =================== USER-LEVEL PERMISSIONS ===================
+Route::get('user/{user}/edit', [DepartmentPermissionController::class, 'editUser'])
+    ->middleware('dept.can:users,update')
+    ->name('user.edit');
+
+Route::put('user/{user}', [DepartmentPermissionController::class, 'updateUser'])
+    ->middleware('dept.can:users,update')
+    ->name('user.update');
+
     });
 
     /* ================== FORMS ================== */

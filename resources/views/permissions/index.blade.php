@@ -38,15 +38,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($departments as $dept)
+                            @forelse($departments as $dept) 
                                 <tr>
                                     <td>{{ $dept->name }}</td>
                                     <td class="text-center">{{ $dept->permissions_count }}</td>
                                     <td>
-                                        <a href="{{ route('departments.permissions.edit', $dept) }}"
-                                           class="btn btn-xs btn-warning">
-                                            <i class="fa fa-edit"></i> Edit
-                                        </a>
+                                       <a href="{{ route('departments.permissions.show', $dept) }}"
+   class="btn btn-xs btn-warning">
+    <i class="fa fa-eye"></i> View
+</a>
+
                                     </td>
                                 </tr>
                             @empty

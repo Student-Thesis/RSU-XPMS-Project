@@ -583,3 +583,12 @@ namespace App\Models{
 	class User extends \Eloquent {}
 }
 
+namespace App\Models{
+/**
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserPermission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserPermission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|UserPermission query()
+ */
+	class UserPermission extends \Eloquent {}
+}
+
