@@ -101,7 +101,7 @@
                                 placeholder="Enter G-Drive Link">
                         </div>
 
-                        <div class="mb-3">
+                        {{-- <div class="mb-3">
                             <label class="form-label">Proposal</label> 
                             <input type="file" name="moaFile" class="form-control"
                                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" data-max-size="10240">
@@ -112,7 +112,7 @@
                             <label class="form-label">Proposal G-Link</label>
                             <input type="text" name="moa_link" class="form-control"
                                 placeholder="Enter G-Drive Link">
-                        </div>
+                        </div> --}}
 
                         @if(!empty($registeredUserId))
                             <input type="hidden" name="user_id" value="{{ $registeredUserId }}">

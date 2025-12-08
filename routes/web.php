@@ -132,11 +132,11 @@ Route::put('user/{user}', [DepartmentPermissionController::class, 'updateUser'])
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar');
 
     // JSON CRUD for FullCalendar
-    Route::get('/calendar/events', [CalendarEventController::class, 'index'])->name('calendar.events.index');
-    Route::post('/calendar/events', [CalendarEventController::class, 'store'])->name('calendar.events.store');
-    Route::get('/calendar/events/{event}', [CalendarEventController::class, 'show'])->name('calendar.events.show');
-    Route::put('/calendar/events/{event}', [CalendarEventController::class, 'update'])->name('calendar.events.update');
-    Route::delete('/calendar/events/{event}', [CalendarEventController::class, 'destroy'])->name('calendar.events.destroy'); 
+    Route::get('/calendar/events', [CalendarEventController::class, 'index'])->middleware('dept.can:calendar,view')->name('calendar.events.index');
+    Route::post('/calendar/events', [CalendarEventController::class, 'store'])->middleware('dept.can:calendar,create')->name('calendar.events.store');
+    Route::get('/calendar/events/{event}', [CalendarEventController::class, 'show'])->middleware('dept.can:calendar,create')->name('calendar.events.show');
+    Route::put('/calendar/events/{event}', [CalendarEventController::class, 'update'])->middleware('dept.can:calendar,update')->name('calendar.events.update');
+    Route::delete('/calendar/events/{event}', [CalendarEventController::class, 'destroy'])->middleware('dept.can:calendar,delete')->name('calendar.events.destroy'); 
 
     /* ================== PROFILE ================== */
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

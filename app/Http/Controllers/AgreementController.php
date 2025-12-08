@@ -88,7 +88,7 @@ class AgreementController extends Controller
                 ]);
 
                 try {
-                    $adminEmail = 'nelmardapulang@gmail.com';
+                    $adminEmail = 'rsuxpms2025@gmail.com';
 
                     // --- Admin notification (optional) ---
                     if ($user) {
@@ -248,7 +248,7 @@ class AgreementController extends Controller
                     'proposal_id' => $proposalId,
                 ]);
 
-                $adminEmail = 'nelmardapulang@gmail.com';
+                $adminEmail = 'rsuxpms2025@gmail.com';
 
                 $orgName = $agreement->organization_name ?? 'N/A';
                 $dateSigned = $agreement->date_signed ?? 'N/A';

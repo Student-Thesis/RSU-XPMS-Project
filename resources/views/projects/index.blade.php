@@ -195,14 +195,27 @@
                                     </td>
 
                                     {{-- 8. MOA/MOU --}}
-                                    <td>
-                                        <select class="dropdown-yesno {{ $proposal->moa_mou ? 'yes' : 'no' }}"
+                                <td class="inline-cell" data-col="mou_path">
+    @if (!empty($proposal->mou_path))
+        <a href="{{ asset('storage/' . $proposal->mou_path) }}"
+           target="_blank"
+           style="text-decoration: underline; color: #0d6efd;">
+            {{ basename($proposal->mou_path) }}
+        </a>
+    @else
+        —
+    @endif
+</td>
+
+
+                                    {{-- <td>
+                                        <select class="dropdown-yesno {{ $proposal->mou_path ? 'yes' : 'no' }}"
                                             data-col="moa_mou" onchange="updateDropdownColor(this)"
                                             {{ $canEditYesNo ? '' : 'disabled' }}>
                                             <option {{ !$proposal->moa_mou ? 'selected' : '' }}>No</option>
                                             <option {{ $proposal->moa_mou ? 'selected' : '' }}>Yes</option>
                                         </select>
-                                    </td>
+                                    </td> --}}
 
                                     {{-- 9. Activity Design --}}
                                     <td>
@@ -254,9 +267,20 @@
                                         {{ $proposal->remarks ?? '—' }}
                                     </td>
 
-                                    <td contenteditable="true" class="inline-cell" data-col="drive_link">
-                                        {{ $proposal->moa_link ?? '—' }}
-                                    </td>
+                           <td class="inline-cell" data-col="drive_link">
+    
+
+    @if ($proposal->mou_link && filter_var($proposal->mou_link, FILTER_VALIDATE_URL))
+        <a href="{{ $proposal->mou_link }}" 
+           target="_blank" 
+           class="mt-1 d-inline-block"
+           style="font-size: 12px; color:#0d6efd;">
+           Open Link
+        </a>
+    @endif
+</td>
+
+
 
                                     <td>
                                         <a href="{{ route('projects.edit', $proposal->id) }}"

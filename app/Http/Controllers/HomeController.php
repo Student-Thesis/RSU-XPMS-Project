@@ -126,18 +126,18 @@ class HomeController extends Controller
 
         // 3) KPI CARDS (overall totals across all campuses, still using q1–q4)
        $kpi = [
-    'involved_extension_total' => $faculties->sum('involved_extension_total'),
-    'iec_developed_total'      => $faculties->sum('iec_developed_total'),
-    'iec_reproduced_total'     => $faculties->sum('iec_reproduced_total'),
-    'iec_distributed_total'    => $faculties->sum('iec_distributed_total'),
-    'proposals_approved_total' => $faculties->sum('proposals_approved_total'),
+            'involved_extension_total' => $faculties->sum('involved_extension_total'),
+            'iec_developed_total'      => $faculties->sum('iec_developed_total'),
+            'iec_reproduced_total'     => $faculties->sum('iec_reproduced_total'),
+            'iec_distributed_total'    => $faculties->sum('iec_distributed_total'),
+            'proposals_approved_total' => $faculties->sum('proposals_approved_total'),
 
-      'proposals_implemented_total' => null,
-    'proposals_documented_total'  => null,
-    'population_served_total'     => null,
-    'beneficiaries_total'         => null,
-    'moa_mou_total'               => null,
-];
+            'proposals_implemented_total' => null,
+            'proposals_documented_total'  => null,
+            'population_served_total'     => null,
+            'beneficiaries_total'         => null,
+            'moa_mou_total'               => null,
+        ];
 
         return view('dashboard', [
             'kpi'      => $kpi,

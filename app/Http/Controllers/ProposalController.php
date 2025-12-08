@@ -70,7 +70,7 @@ class ProposalController extends Controller
                 'beneficiaries_how_many' => 'nullable|integer|min:0',
                 'budget_ps' => 'nullable|string|max:50',
                 'budget_mooe' => 'nullable|string|max:50',
-                'budget_co' => 'nullable|string|max:50',
+                'budget_co' => 'nullable|string|max:50', 
                 'partner' => 'nullable|string|max:255',
 
                 // this comes from the hidden field on the create page
@@ -105,6 +105,7 @@ class ProposalController extends Controller
 
             // Set user_id on proposal (this is what you asked)
             $data['user_id'] = $userId;
+            $data['status'] = "Pending";
 
             // We don't need this in the Proposal model itself
             unset($data['registered_user_id']);

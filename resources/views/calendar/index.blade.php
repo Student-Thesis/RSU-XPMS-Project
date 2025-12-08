@@ -143,179 +143,94 @@
 
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
 
-    <script>
-        let currentCalendar;
-        let currentSelectedEvent = null;
-        let editingEventId = null;
+  <script>
+    let currentCalendar;
+    let currentSelectedEvent = null;
+    let editingEventId = null;
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const calendarEl = document.getElementById('calendar');
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('calendar');
 
-            if (calendarEl) {
-                currentCalendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    selectable: true,
-                    editable: false,
-                    headerToolbar: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth'
-                    },
-                    height: 'auto',
-                    events: '{{ route('calendar.events.index') }}',
-                    dateClick: function (info) {
-                        openAddEventModal(info.dateStr);
-                    },
-                    eventClick: function (info) {
-                        currentSelectedEvent = info.event;
-                        showEventDetails(info.event);
-                    },
-                    eventDidMount: function (info) {
-                        if (info.event.extendedProps.description) {
-                            info.el.setAttribute(
-                                'title',
-                                info.event.title + '\n' + info.event.extendedProps.description
-                            );
-                        }
+        if (calendarEl) {
+            currentCalendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                selectable: true,
+                editable: false,
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth'
+                },
+                height: 'auto',
+                events: '{{ route('calendar.events.index') }}',
+
+                dateClick: function (info) {
+                    openAddEventModal(info.dateStr);
+                },
+
+                eventClick: function (info) {
+                    currentSelectedEvent = info.event;
+                    showEventDetails(info.event);
+                },
+
+                eventDidMount: function (info) {
+                    if (info.event.extendedProps.description) {
+                        info.el.setAttribute(
+                            'title',
+                            info.event.title + '\n' + info.event.extendedProps.description
+                        );
                     }
-                });
+                }
+            });
 
-                currentCalendar.render();
-            }
-
-            setupFormSubmit();
-        });
-
-        function openAddEventModal(dateStr = '') {
-            editingEventId = null;
-            document.getElementById('eventForm').reset();
-            document.getElementById('addEventModalTitle').textContent = 'Add New Project Event';
-            document.getElementById('eventSubmitBtn').textContent = 'Add Event';
-            document.getElementById('eventDate').value = dateStr;
-            document.getElementById('eventVisibility').value = 'public';
-            document.getElementById('eventPriority').value = 'Medium';
-
-            document.getElementById('addEventModal').classList.add('show');
-            document.getElementById('eventTitle').focus();
+            currentCalendar.render();
         }
 
-        function closeAddEventModal() {
-            document.getElementById('addEventModal').classList.remove('show');
-            editingEventId = null;
-        }
+        setupFormSubmit();
+    });
 
-        function showEventDetails(event) {
-            const modal = document.getElementById('viewEventModal');
-            const detailsContainer = document.getElementById('eventDetails');
+    function openAddEventModal(dateStr = '') {
+        editingEventId = null;
+        document.getElementById('eventForm').reset();
+        document.getElementById('addEventModalTitle').textContent = 'Add New Project Event';
+        document.getElementById('eventSubmitBtn').textContent = 'Add Event';
+        document.getElementById('eventDate').value = dateStr;
+        document.getElementById('eventVisibility').value = 'public';
+        document.getElementById('eventPriority').value = 'Medium';
 
-            const rangeStartStr = event.extendedProps.range_start || event.startStr.substring(0, 10);
-            const rangeEndStr   = event.extendedProps.range_end   || rangeStartStr;
+        document.getElementById('addEventModal').classList.add('show');
+    }
 
-            const startDate  = new Date(rangeStartStr);
-            const endDate    = new Date(rangeEndStr);
-            const visibility = event.extendedProps.visibility || 'public';
-            const priority   = event.extendedProps.priority || 'Medium';
-            const priorityColor = getPriorityColor(priority);
+    function closeAddEventModal() {
+        document.getElementById('addEventModal').classList.remove('show');
+        editingEventId = null;
+    }
 
-            detailsContainer.innerHTML = `
-                <div class="calendar-event-detail">
-                    <div class="calendar-event-detail-label">Project Title:</div>
-                    <div class="calendar-event-detail-value">
-                        <span class="calendar-event-color-indicator" style="background-color:${priorityColor}"></span>
-                        ${event.title}
-                    </div>
-                </div>
-                <div class="calendar-event-detail">
-                    <div class="calendar-event-detail-label">Description:</div>
-                    <div class="calendar-event-detail-value">${event.extendedProps.description || 'No description provided'}</div>
-                </div>
-                <div class="calendar-event-detail">
-                    <div class="calendar-event-detail-label">Start Date:</div>
-                    <div class="calendar-event-detail-value">${startDate.toLocaleDateString()}</div>
-                </div>
-                <div class="calendar-event-detail">
-                    <div class="calendar-event-detail-label">End Date:</div>
-                    <div class="calendar-event-detail-value">${endDate.toLocaleDateString()}</div>
-                </div>
-                <div class="calendar-event-detail">
-                    <div class="calendar-event-detail-label">Project Type:</div>
-                    <div class="calendar-event-detail-value">${event.extendedProps.type || 'Not specified'}</div>
-                </div>
-                <div class="calendar-event-detail">
-                    <div class="calendar-event-detail-label">Location:</div>
-                    <div class="calendar-event-detail-value">${event.extendedProps.location || 'Not specified'}</div>
-                </div>
-                <div class="calendar-event-detail">
-                    <div class="calendar-event-detail-label">Priority:</div>
-                    <div class="calendar-event-detail-value">
-                        <span style="color:${priorityColor};font-weight:bold;">
-                            ${priority}
-                        </span>
-                    </div>
-                </div>
-                <div class="calendar-event-detail">
-                    <div class="calendar-event-detail-label">Visibility:</div>
-                    <div class="calendar-event-detail-value">
-                        ${visibility === 'private'
-                            ? '<span style="color:#dc3545;font-weight:bold;">Private</span>'
-                            : '<span style="color:#28a745;font-weight:bold;">Public</span>'
-                        }
-                    </div>
-                </div>
-            `;
+    function setupFormSubmit() {
+        document.getElementById('eventForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-            const btnRow = modal.querySelector('.calendar-btn-row');
-            if (!btnRow.querySelector('.btn-edit-event')) {
-                const editBtn = document.createElement('button');
-                editBtn.type = 'button';
-                editBtn.className = 'btn btn-primary btn-edit-event';
-                editBtn.textContent = 'Edit Event';
-                editBtn.onclick = () => editEvent(event);
-                btnRow.insertBefore(editBtn, btnRow.firstChild);
-            }
+            const payload = {
+                title: document.getElementById('eventTitle').value,
+                description: document.getElementById('eventDescription').value,
+                start_date: document.getElementById('eventDate').value,
+                end_date: document.getElementById('eventEndDate').value || null,
+                type: document.getElementById('eventType').value,
+                location: document.getElementById('eventLocation').value,
+                priority: document.getElementById('eventPriority').value || 'Medium',
+                visibility: document.getElementById('eventVisibility').value,
+            };
 
-            modal.classList.add('show');
-        }
+            const url = editingEventId
+                ? `/calendar/events/${editingEventId}`
+                : `{{ route('calendar.events.store') }}`;
 
-        function closeViewEventModal() {
-            document.getElementById('viewEventModal').classList.remove('show');
-            currentSelectedEvent = null;
-        }
+            const method = editingEventId ? 'PUT' : 'POST';
 
-        // Priority → Color mapping (Low/Medium/High/Critical)
-        function getPriorityColor(priority) {
-            switch (priority) {
-                case 'Critical': return '#8B0000';
-                case 'High':     return '#dc3545';
-                case 'Medium':   return '#ffc107';
-                case 'Low':      return '#28a745';
-                default:         return '#6c757d';
-            }
-        }
+            let res;
 
-        function setupFormSubmit() {
-            document.getElementById('eventForm').addEventListener('submit', async function (e) {
-                e.preventDefault();
-
-                const priority = document.getElementById('eventPriority').value || 'Medium';
-                const payload = {
-                    title:       document.getElementById('eventTitle').value,
-                    description: document.getElementById('eventDescription').value,
-                    start_date:  document.getElementById('eventDate').value,
-                    end_date:    document.getElementById('eventEndDate').value || null,
-                    type:        document.getElementById('eventType').value,
-                    location:    document.getElementById('eventLocation').value,
-                    priority:    priority,
-                    visibility:  document.getElementById('eventVisibility').value,
-                };
-
-                const url = editingEventId
-                    ? `/calendar/events/${editingEventId}`
-                    : `{{ route('calendar.events.store') }}`;
-
-                const method = editingEventId ? 'PUT' : 'POST';
-
-                const res = await fetch(url, {
+            try {
+                res = await fetch(url, {
                     method,
                     headers: {
                         'Content-Type': 'application/json',
@@ -324,91 +239,130 @@
                     },
                     body: JSON.stringify(payload)
                 });
+            } catch (networkError) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Network Error',
+                    text: 'Unable to contact the server.',
+                });
+                return;
+            }
 
-                if (res.ok) {
-                    currentCalendar.refetchEvents();
-                    closeAddEventModal();
-                    closeViewEventModal();
-                } else {
-                    let data = {};
-                    try {
-                        data = await res.json();
-                    } catch (e) {
-                        data = {};
-                    }
+            // 🔥 CASE 1: Middleware redirected → HTML, not JSON
+            if (res.redirected) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Access Denied',
+                    text: 'You do not have permission to create or update calendar events.',
+                });
+                return;
+            }
 
-                    const msg = data.message || 'Failed to save event.';
+            // 🔥 CASE 2: Success
+            if (res.ok) {
+                currentCalendar.refetchEvents();
+                closeAddEventModal();
+                Swal.fire({
+                    icon: 'success',
+                    title: editingEventId ? 'Event Updated' : 'Event Created',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+                return;
+            }
 
-                    if (window.Swal) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Cannot save event',
-                            text: msg,
-                        });
-                    } else {
-                        alert(msg);
-                    }
-                }
+            // 🔥 CASE 3: Try parsing JSON error message
+            let data = {};
+            try {
+                data = await res.json();
+            } catch (err) {
+                // HTML from middleware OR server error
+            }
+
+            let msg = data.message || 'Failed to save event.';
+
+            // Laravel validation errors
+            if (data.errors) {
+                const firstErrorKey = Object.keys(data.errors)[0];
+                msg = data.errors[firstErrorKey][0];
+            }
+
+            // HTTP permission error
+            if (res.status === 403) {
+                msg = "You don't have permission to perform this action.";
+            }
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Cannot Save Event',
+                text: msg,
             });
-        }
+        });
+    }
 
-        async function deleteEvent() {
-            if (!currentSelectedEvent) return;
-            if (!confirm('Delete this event?')) return;
+    async function deleteEvent() {
+        if (!currentSelectedEvent) return;
 
-            const res = await fetch(`/calendar/events/${currentSelectedEvent.id}`, {
+        const confirm = await Swal.fire({
+            icon: 'warning',
+            title: 'Delete event?',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it',
+        });
+
+        if (!confirm.isConfirmed) return;
+
+        const id = currentSelectedEvent.id;
+
+        let res;
+
+        try {
+            res = await fetch(`/calendar/events/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     'Accept': 'application/json'
                 }
             });
-
-            if (res.ok) {
-                currentCalendar.refetchEvents();
-                closeViewEventModal();
-            } else {
-                alert('Failed to delete event.');
-            }
+        } catch (networkErr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Network Error',
+                text: 'Could not contact server.',
+            });
+            return;
         }
 
-        window.deleteEvent = deleteEvent;
+        // Middleware redirect
+        if (res.redirected) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Permission Denied',
+                text: 'You cannot delete calendar events.',
+            });
+            return;
+        }
 
-        function editEvent(event) {
-            editingEventId = event.id;
-            document.getElementById('addEventModalTitle').textContent = 'Edit Project Event';
-            document.getElementById('eventSubmitBtn').textContent = 'Update Event';
-
-            const rangeStartStr = event.extendedProps.range_start || event.startStr.substring(0, 10);
-            const rangeEndStr   = event.extendedProps.range_end   || rangeStartStr;
-
-            document.getElementById('eventTitle').value       = event.title;
-            document.getElementById('eventDescription').value = event.extendedProps.description || '';
-            document.getElementById('eventDate').value        = rangeStartStr;
-            document.getElementById('eventEndDate').value     = rangeEndStr;
-            document.getElementById('eventType').value        = event.extendedProps.type || '';
-            document.getElementById('eventLocation').value    = event.extendedProps.location || '';
-            document.getElementById('eventPriority').value    = event.extendedProps.priority || 'Medium';
-            document.getElementById('eventVisibility').value  = event.extendedProps.visibility || 'public';
-
+        if (res.ok) {
+            currentCalendar.refetchEvents();
             closeViewEventModal();
-            document.getElementById('addEventModal').classList.add('show');
+            Swal.fire({
+                icon: 'success',
+                title: 'Event Deleted',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed to Delete Event',
+                text: 'Something went wrong.',
+            });
         }
+    }
 
-        document.addEventListener('click', function (e) {
-            if (e.target.classList.contains('calendar-modal-overlay')) {
-                if (e.target.id === 'addEventModal') closeAddEventModal();
-                else if (e.target.id === 'viewEventModal') closeViewEventModal();
-            }
-        });
-
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                closeAddEventModal();
-                closeViewEventModal();
-            }
-        });
-    </script>
+    window.deleteEvent = deleteEvent;
+</script>
 
     <style>
         .calendar-page #calendar {
