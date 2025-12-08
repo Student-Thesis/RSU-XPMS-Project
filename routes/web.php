@@ -12,7 +12,7 @@ use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProposalController;
 use App\Http\Controllers\AgreementController;
-use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\CalendarController; 
 use App\Http\Controllers\CalendarEventController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\HomeController;
@@ -26,9 +26,11 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-Route::get('captcha/refresh', function(){
-    return captcha_src('math');
-});
+Route::get('/captcha/refresh', function () {
+    return response()->json([
+        'captcha' => captcha_src('default'),
+    ]);
+})->name('captcha.refresh');
 
 
 Auth::routes();

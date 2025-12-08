@@ -20,9 +20,17 @@
         }
 
         @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         .card {
@@ -64,6 +72,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
 
+            {{-- Global error (if any) --}}
             @if(session('error'))
                 <div class="alert alert-danger">
                     {{ session('error') }}
@@ -119,10 +128,17 @@
                         <label class="form-label">Security Check</label>
 
                         <div class="d-flex align-items-center gap-2">
-                            <img src="{{ captcha_src('default') }}" alt="captcha" id="captchaImg" style="border-radius: 8px;">
+                            {{-- Captcha image --}}
+                            <img src="{{ captcha_src('default') }}"
+                                 alt="captcha"
+                                 id="captchaImg"
+                                 style="border-radius: 8px;">
+
+                            {{-- Refresh button --}}
                             <button type="button"
                                     id="refreshCaptchaBtn"
-                                    class="btn btn-sm btn-outline-primary">
+                                    class="btn btn-sm btn-outline-primary"
+                                    title="Refresh Captcha">
                                 <i class="bi bi-arrow-clockwise"></i>
                             </button>
                         </div>
@@ -149,7 +165,9 @@
                             <a href="{{ route('password.request') }}">Forgot Password?</a>
                         @endif
 
-                        <a href="{{ route('register') }}">Create Account</a>
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}">Create Account</a>
+                        @endif
                     </div>
 
                 </form>
@@ -169,22 +187,25 @@
         input.type = this.checked ? 'text' : 'password';
     });
 
-    // Refresh captcha image and clear input
+    /**
+     * SIMPLE CAPTCHA REFRESH (NO FETCH)
+     *
+     * Just change the image src with a new random query param.
+     * Mews Captcha (and similar) will generate a new image whenever the query changes.
+     */
     function refreshCaptcha() {
-        fetch('/captcha/refresh')
-            .then(res => res.text())
-            .then(data => {
-                const img = document.getElementById('captchaImg');
-                const input = document.querySelector('input[name="captcha"]');
+        const img = document.getElementById('captchaImg');
+        const input = document.querySelector('input[name="captcha"]');
 
-                if (img) {
-                    img.src = data;
-                }
+        if (img) {
+            // Remove existing query and add a new random one to avoid caching
+            const baseSrc = img.src.split('?')[0];
+            img.src = baseSrc + '?rand=' + Date.now();
+        }
 
-                if (input) {
-                    input.value = '';
-                }
-            });
+        if (input) {
+            input.value = '';
+        }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
