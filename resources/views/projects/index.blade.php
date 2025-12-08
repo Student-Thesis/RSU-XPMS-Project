@@ -255,7 +255,7 @@
                                     </td>
 
                                     <td contenteditable="true" class="inline-cell" data-col="drive_link">
-                                        {{ $proposal->drive_link ?? '—' }}
+                                        {{ $proposal->moa_link ?? '—' }}
                                     </td>
 
                                     <td>

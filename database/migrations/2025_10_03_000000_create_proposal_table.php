@@ -59,9 +59,9 @@ return new class extends Migration
             $table->boolean('photos')->default(false);
             $table->boolean('terminal_report')->default(false);
 
-            // Finance/display fields
+            // Finance/display fields 
             $table->string('source_of_funds')->nullable();
-            $table->decimal('expenditure', 12, 2)->nullable();
+            $table->decimal('expenditure', 12, 2)->nullable(); 
             $table->string('fund_utilization_rate')->nullable();
 
             // Status & docs
@@ -81,6 +81,13 @@ return new class extends Migration
             $table->index(['college_campus']);
             $table->index(['location']);
             $table->index(['code']);
+
+            $table->string('organization_name')->nullable();
+            $table->date('date_signed')->nullable();
+            $table->string('mou_path')->nullable();
+            $table->string('mou_link')->nullable();
+            $table->string('moa_path')->nullable();
+            $table->string('moa_link')->nullable();
         });
     }
 

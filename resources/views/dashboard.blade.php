@@ -238,10 +238,10 @@
         <span>&nbsp Bar</span>
     </label>
 
-    <label class="d-flex align-items-center ms-3 mr-2">
+    {{-- <label class="d-flex align-items-center ms-3 mr-2">
         <input type="radio" name="chartType" value="both" checked class="me-1">
         <span>&nbsp Both</span>
-    </label>
+    </label> --}}
 </div>
 
                                     </div>
@@ -385,18 +385,18 @@
                 borderWidth: 1,
             }];
 
-            if (chartType === 'both') {
-                datasets.push({
-                    label: selection + ' (Line)',
-                    data: data,
-                    type: 'line',
-                    borderColor: baseBorderColor,
-                    borderWidth: 2,
-                    fill: false,
-                    tension: 0.2,
-                    pointRadius: 3,
-                });
-            }
+            // if (chartType === 'both') {
+            //     datasets.push({
+            //         label: selection + ' (Line)',
+            //         data: data,
+            //         type: 'line',
+            //         borderColor: baseBorderColor,
+            //         borderWidth: 2,
+            //         fill: false,
+            //         tension: 0.2,
+            //         pointRadius: 3,
+            //     });
+            // }
 
             if (chartType === 'line') {
                 datasets[0].type = 'line';
@@ -436,9 +436,9 @@
                     y: {
                         beginAtZero: true,
                         min: 0,
-                        max: 100,
+                        max: 1000,
                         ticks: {
-                            stepSize: 10,
+                            stepSize: 100,
                             autoSkip: false,
                             padding: 8,
                             callback: v => v

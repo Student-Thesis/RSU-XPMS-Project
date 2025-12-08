@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
+use App\Models\Proposal;
 
 class AgreementController extends Controller
 {
@@ -47,15 +48,22 @@ class AgreementController extends Controller
                 'date_signed' => ['nullable', 'date'],
                 'mouFile' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
                 'moaFile' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
-                'mou_link' => ['nullable', 'string', 'max:2048'], // or 'url' if you want stricter validation
-                'moa_link' => ['nullable', 'string', 'max:2048'], // or 'url'
+                'mou_link' => ['nullable', 'string', 'max:2048'],
+                'moa_link' => ['nullable', 'string', 'max:2048'],
                 'user_id' => ['nullable', 'string'],
+                'proposal_id' => ['nullable', 'string'],
             ]);
 
             // Resolve user_id as early as possible
             $userId = auth()->id() ?: $data['user_id'] ?? null ?: session('registered_user_id');
 
-            Log::info('Agreement resolved userId (pre-hasAnyData)', ['user_id' => $userId]);
+            // Resolve proposal_id from request or session
+            $proposalId = $data['proposal_id'] ?? session('proposal_id');
+
+            Log::info('Agreement resolved IDs', [
+                'user_id' => $userId,
+                'proposal_id' => $proposalId,
+            ]);
 
             if (!$userId) {
                 return back()->withInput()->with('error', 'User information is missing. Please register or login again.');
@@ -76,6 +84,7 @@ class AgreementController extends Controller
             if (!$hasAnyData) {
                 Log::info('Agreement: no data provided, skipping Agreement::create but still sending account email', [
                     'user_id' => $userId,
+                    'proposal_id' => $proposalId,
                 ]);
 
                 try {
@@ -83,7 +92,7 @@ class AgreementController extends Controller
 
                     // --- Admin notification (optional) ---
                     if ($user) {
-                        $adminBody = "A new user account has been registered (no agreement data submitted).\n\n" . "User: {$user->first_name} {$user->last_name} ({$user->email})\n" . "User ID: {$userId}\n" . "Status: Waiting for admin review and approval of the proposal.\n";
+                        $adminBody = "A new user account has been registered (no agreement data submitted).\n\n" . "User: {$user->first_name} {$user->last_name} ({$user->email})\n" . "User ID: {$userId}\n" . "Proposal ID: {$proposalId}\n" . "Status: Waiting for admin review and approval of the proposal.\n";
 
                         Mail::raw($adminBody, function ($message) use ($adminEmail) {
                             $message->to($adminEmail)->subject('New User Registered - Approval Pending');
@@ -91,6 +100,8 @@ class AgreementController extends Controller
 
                         Log::info('Admin account-created email sent (no agreement data)', [
                             'to' => $adminEmail,
+                            'user_id' => $userId,
+                            'proposal_id' => $proposalId,
                         ]);
                     }
 
@@ -104,6 +115,7 @@ class AgreementController extends Controller
 
                         Log::info('User account-created email sent (no agreement data)', [
                             'to' => $user->email,
+                            'user_id' => $userId,
                         ]);
                     } else {
                         Log::warning('User account-created email not sent: user missing or no email', [
@@ -114,6 +126,7 @@ class AgreementController extends Controller
                     Log::warning('Account-created email(s) failed to send (no agreement data)', [
                         'error' => $mailEx->getMessage(),
                         'user_id' => $userId,
+                        'proposal_id' => $proposalId,
                     ]);
                 }
 
@@ -127,6 +140,7 @@ class AgreementController extends Controller
             // Build payload for Agreement
             $payload = [
                 'user_id' => $userId,
+                'proposal_id' => $proposalId,
             ];
 
             if (!empty($data['organization_name'])) {
@@ -153,17 +167,75 @@ class AgreementController extends Controller
                 $payload['moa_path'] = $request->file('moaFile')->storeAs('agreements', self::uniqueName($request->file('moaFile')), 'public');
             }
 
-            unset($data['user_id']);
+            unset($data['user_id'], $data['proposal_id']);
 
-            $agreement = Agreement::create($payload);
+            // ✅ Create OR update Agreement for this proposal
+            $agreement = Agreement::updateOrCreate(['proposal_id' => $proposalId], $payload);
 
-            Log::info('Agreement created', [
+            Log::info('Agreement stored/updated', [
                 'agreement_id' => $agreement->id,
                 'user_id' => $userId,
+                'proposal_id' => $proposalId,
             ]);
 
-            $this->logActivity('Created Agreement', [
+            // ✅ ALSO UPDATE THE RELATED PROPOSAL
+            if ($proposalId) {
+                $proposal = Proposal::find($proposalId);
+
+                if ($proposal) {
+                    // Build update array for proposals table
+                    $proposalUpdate = [
+                        'moa_mou' => 1,
+                    ];
+
+                    // Mirror fields from agreement → proposals table
+                    if (!empty($agreement->organization_name)) {
+                        $proposalUpdate['organization_name'] = $agreement->organization_name;
+                    }
+
+                    if (!empty($agreement->date_signed)) {
+                        $proposalUpdate['date_signed'] = $agreement->date_signed;
+                    }
+
+                    if (!empty($agreement->mou_path)) {
+                        $proposalUpdate['mou_path'] = $agreement->mou_path;
+                    }
+
+                    if (!empty($agreement->mou_link)) {
+                        $proposalUpdate['mou_link'] = $agreement->mou_link;
+                    }
+
+                    if (!empty($agreement->moa_path)) {
+                        $proposalUpdate['moa_path'] = $agreement->moa_path;
+                    }
+
+                    if (!empty($agreement->moa_link)) {
+                        $proposalUpdate['moa_link'] = $agreement->moa_link;
+                    }
+
+                    // Optionally mirror best link into drive_link
+                    if (!empty($agreement->moa_link)) {
+                        $proposalUpdate['drive_link'] = $agreement->moa_link;
+                    } elseif (!empty($agreement->mou_link) && empty($proposal->drive_link)) {
+                        $proposalUpdate['drive_link'] = $agreement->mou_link;
+                    }
+
+                    $proposal->update($proposalUpdate);
+
+                    Log::info('Proposal updated from Agreement', [
+                        'proposal_id' => $proposalId,
+                        'proposal_update' => $proposalUpdate,
+                    ]);
+                } else {
+                    Log::warning('Proposal not found when trying to update from Agreement', [
+                        'proposal_id' => $proposalId,
+                    ]);
+                }
+            }
+
+            $this->logActivity('Created/Updated Agreement', [
                 'agreement' => $agreement->toArray(),
+                'proposal_id' => $proposalId,
             ]);
 
             // ================
@@ -173,6 +245,7 @@ class AgreementController extends Controller
                 Log::info('Agreement email block entered', [
                     'user_id' => $userId,
                     'agreement_id' => $agreement->id,
+                    'proposal_id' => $proposalId,
                 ]);
 
                 $adminEmail = 'nelmardapulang@gmail.com';
@@ -184,7 +257,7 @@ class AgreementController extends Controller
                 $userLine = $user ? "{$user->first_name} {$user->last_name} ({$user->email})" : 'Unknown User';
 
                 // Admin email
-                $adminBody = "A new agreement has been submitted.\n\n" . "User: {$userLine}\n" . "User ID: {$userId}\n" . "Organization: {$orgName}\n" . "Date Signed: {$dateSigned}\n" . "MOU Link: {$mouLink}\n" . "Proposal Link: {$moaLink}\n";
+                $adminBody = "A new agreement has been submitted.\n\n" . "User: {$userLine}\n" . "User ID: {$userId}\n" . "Proposal ID: {$proposalId}\n" . "Organization: {$orgName}\n" . "Date Signed: {$dateSigned}\n" . "MOU Link: {$mouLink}\n" . "Proposal Link: {$moaLink}\n";
 
                 Mail::raw($adminBody, function ($message) use ($adminEmail) {
                     $message->to($adminEmail)->subject('New Agreement Submitted');
@@ -192,11 +265,13 @@ class AgreementController extends Controller
 
                 Log::info('Admin agreement email sent (Mail::raw executed)', [
                     'to' => $adminEmail,
+                    'user_id' => $userId,
+                    'proposal_id' => $proposalId,
                 ]);
 
                 // User email
                 if ($user && $user->email) {
-                    $userBody = "Dear {$user->first_name},\n\n" . "Thank you for submitting your agreement documents.\n\n" . "Here are the details we received:\n" . "Organization: {$orgName}\n" . "Date Signed: {$dateSigned}\n" . "MOU Link: {$mouLink}\n" . "Proposal Link: {$moaLink}\n\n" . "Our admin team will review your submission and contact you if anything else is needed.\n\n" . "Best regards,\n";
+                    $userBody = "Dear {$user->first_name},\n\n" . "Thank you for submitting your agreement documents.\n\n" . "Proposal ID: {$proposalId}\n" . "Organization: {$orgName}\n" . "Date Signed: {$dateSigned}\n" . "MOU Link: {$mouLink}\n" . "Proposal Link: {$moaLink}\n\n" . "Our admin team will review your submission and contact you if anything else is needed.\n\n" . "Best regards,\n";
 
                     Mail::raw($userBody, function ($message) use ($user) {
                         $message->to($user->email, $user->first_name . ' ' . $user->last_name)->subject('Your Agreement Submission Has Been Received');
@@ -204,10 +279,13 @@ class AgreementController extends Controller
 
                     Log::info('User agreement email sent (Mail::raw executed)', [
                         'to' => $user->email,
+                        'user_id' => $userId,
+                        'proposal_id' => $proposalId,
                     ]);
                 } else {
                     Log::warning('User email not sent: user missing or no email', [
                         'user_id' => $userId,
+                        'proposal_id' => $proposalId,
                     ]);
                 }
             } catch (\Throwable $mailEx) {
@@ -215,6 +293,7 @@ class AgreementController extends Controller
                     'error' => $mailEx->getMessage(),
                     'user_id' => $userId,
                     'agreement_id' => $agreement->id ?? null,
+                    'proposal_id' => $proposalId,
                 ]);
             }
 
@@ -225,11 +304,13 @@ class AgreementController extends Controller
                 'trace' => $e->getTraceAsString(),
                 'input' => $request->except(['mouFile', 'moaFile']),
                 'user_id' => auth()->id() ?: session('registered_user_id'),
+                'proposal_id' => $request->input('proposal_id') ?? session('proposal_id'),
             ]);
 
             $this->logActivity('Agreement Upload Failed', [
                 'error' => $e->getMessage(),
                 'input' => $request->except(['mouFile', 'moaFile']),
+                'proposal_id' => $request->input('proposal_id') ?? session('proposal_id'),
             ]);
 
             return back()->withInput()->with('error', 'Upload failed. Please try again.');

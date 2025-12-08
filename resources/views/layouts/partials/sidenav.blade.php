@@ -25,7 +25,7 @@
                          alt="Logo" />
                 </div>
                 <div class="user_info">
-                    <h2>{{ $user->first_name ?? 'User' }}</h2>
+                    <h2>ESCEO</h2>
                 </div>
             </div>
         </div>
@@ -74,15 +74,16 @@
             </li>
             @endif
 
-            {{-- USERS --}}
-            @if (DeptGate::can($user, 'users', 'view'))
-            <li class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
-                <a href="{{ route('users.index') }}">
-                    <i class="fa fa-users blue2_color"></i>
-                    <span class="hideInSmall">Users</span>
-                </a>
-            </li>
-            @endif
+          {{-- USERS --}}
+@if (in_array(auth()->user()->user_type, ['root', 'admin']))
+    <li class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
+        <a href="{{ route('users.index') }}">
+            <i class="fa fa-users blue2_color"></i>
+            <span class="hideInSmall">Users</span>
+        </a>
+    </li>
+@endif
+
 
             {{-- CALENDAR --}}
             @if (DeptGate::can($user, 'calendar', 'view'))

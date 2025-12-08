@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use App\Models\Agreement; 
 
 class Proposal extends Model
 {
@@ -16,7 +17,15 @@ class Proposal extends Model
         'attendance_sheet','photos','terminal_report',
         'source_of_funds','expenditure','fund_utilization_rate','status',
         'documentation_report','code','remarks','drive_link',
+        'organization_name',
+        'date_signed',
+        'mou_path',
+        'mou_link',
+        'moa_path',
+        'moa_link'
+
     ];
+
 
     protected $casts = [
         'budget_ps' => 'decimal:2',
@@ -41,7 +50,13 @@ class Proposal extends Model
     }
 
     public function user()
-{
-    return $this->belongsTo(User::class, 'user_id');
-}
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function agreement()
+    {
+        return $this->hasMany(Agreement::class, 'proposal_id', 'id');
+    }
+
 }

@@ -22,6 +22,11 @@
                 <div class="alert alert-danger">{{ $errors->first() }}</div>
             @endif
 
+            @php
+                // Determine if user being edited is admin or root
+                $isRootOrAdmin = in_array($user->user_type, ['admin', 'root']);
+            @endphp
+
             <!-- Form Start -->
             <form action="{{ route('departments.permissions.user.update', $user->id) }}" method="POST">
                 @csrf
@@ -46,6 +51,15 @@
 
                             <tbody>
                                 @foreach ($resources as $res)
+                                    @php
+                                        $isUsersResource = strtolower($res) === 'users';
+                                    @endphp
+
+                                    {{-- 🔥 Hide entire Users row if user is NOT admin/root --}}
+                                    @if ($isUsersResource && !$isRootOrAdmin)
+                                        @continue
+                                    @endif
+
                                     <tr>
                                         <td><strong>{{ ucfirst($res) }}</strong></td>
 
@@ -54,10 +68,11 @@
                                                 <input type="checkbox"
                                                     name="permissions[{{ $res }}][{{ $perm }}]"
                                                     value="1"
-                                                    {{ $matrix[$res][$perm] ? 'checked' : '' }}>
+                                                    {{ !empty($matrix[$res][$perm]) ? 'checked' : '' }}>
                                             </td>
                                         @endforeach
                                     </tr>
+
                                 @endforeach
                             </tbody>
                         </table>
