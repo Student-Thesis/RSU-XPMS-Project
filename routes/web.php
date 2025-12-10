@@ -15,7 +15,7 @@ use App\Http\Controllers\AgreementController;
 use App\Http\Controllers\CalendarController; 
 use App\Http\Controllers\CalendarEventController;
 use App\Http\Controllers\HelpController;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\HomeController; 
 use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\SettingsController; 
 use App\Http\Controllers\NotificationsController; 
@@ -25,6 +25,13 @@ use App\Http\Controllers\EventLocationController;
 Route::get('/', function () { 
     return view('auth.login');
 });
+
+// Show Reset Password Request (email input)
+Route::get('/pass/reset', [App\Http\Controllers\Auth\ResetController::class, 'showEmailForm'])->name('password.request.custom');
+Route::post('/pass/send-code', [App\Http\Controllers\Auth\ResetController::class, 'sendCode'])->name('pass.sendCode.custom');
+Route::get('/pass/verify', [App\Http\Controllers\Auth\ResetController::class, 'showVerifyForm'])->name('password.verify.custom');
+Route::post('/pass/reset', [App\Http\Controllers\Auth\ResetController::class, 'resetPassword'])->name('password.reset.custom');
+
 
 Route::get('/captcha/refresh', function () {
     return response()->json([
@@ -109,7 +116,7 @@ Route::put('user/{user}', [DepartmentPermissionController::class, 'updateUser'])
     /* ================== PROJECTS ================== */
     Route::prefix('projects')->group(function () {
         Route::get('/',                   [ProjectController::class, 'index'])->middleware('dept.can:project,view')->name('projects');
-        Route::patch('/{project}/inline', [ProjectController::class, 'inlineUpdate'])->middleware('dept.can:project,update')->name('projects.inline');
+        Route::post('/{project}/inline', [ProjectController::class, 'inlineUpdate'])->middleware('dept.can:project,update')->name('projects.inline-update');
         Route::get('/create',             [ProjectController::class, 'create'])->middleware('dept.can:project,create')->name('projects.create');
         Route::post('/',                  [ProjectController::class, 'store'])->middleware('dept.can:project,create')->name('projects.store');
         Route::get('/{project}/edit',     [ProjectController::class, 'edit'])->middleware('dept.can:project,update')->name('projects.edit');

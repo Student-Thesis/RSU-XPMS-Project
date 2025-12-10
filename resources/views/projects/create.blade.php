@@ -1,23 +1,26 @@
 @extends('layouts.app')
 
 @section('content')
-<div id="content">
-    @include('layouts.partials.topnav')
 
-    <div class="midde_cont">
+    {{-- PAGE HEADER --}}
+    <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row column_title">
-                <div class="col-md-12 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <div class="page_title">
-                        <h3 class="m-0">Create New Proposal</h3>
-                    </div>
-
+            <div class="row align-items-center">
+                <div class="col-sm-6">
+                    <h3 class="mb-0">Create New  Proposals</h3>
+                </div>
+                <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
                     <a href="{{ route('projects') }}" class="btn btn-secondary btn-sm">
-                        <i class="fa fa-arrow-left"></i> Back
-                    </a>
+                            <i class="fa fa-arrow-left"></i> Back
+                        </a>
                 </div>
             </div>
+        </div>
+    </div>
 
+    {{-- PAGE CONTENT --}}
+    <div class="app-content">
+        <div class="container-fluid">
             <div class="card p-4">
                 <form method="POST" action="{{ route('projects.store') }}" enctype="multipart/form-data">
                     @csrf
@@ -101,7 +104,7 @@
                         {{-- MOU File --}}
                         <div class="col-md-6">
                             <label class="form-label">MOU Document</label>
-                            <input type="file" name="mouFile" class="form-control"
+                            <input type="file" name="mou_path" class="form-control"
                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" data-max-size="10240">
                             <small class="text-muted">Max file size: 10 MB</small>
                         </div>
@@ -114,19 +117,19 @@
                         </div>
 
                         {{-- MOA File --}}
-                        <div class="col-md-6">
+                        {{-- <div class="col-md-6">
                             <label class="form-label">Proposal Document</label>
                             <input type="file" name="moaFile" class="form-control"
                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" data-max-size="10240">
                             <small class="text-muted">Max file size: 10 MB</small>
-                        </div>
+                        </div> --}}
 
                         {{-- MOA Link --}}
-                        <div class="col-md-6">
+                        {{-- <div class="col-md-6">
                             <label class="form-label">Proposal G-Drive Link</label>
                             <input type="text" name="moa_link" class="form-control"
                                 value="{{ old('moa_link') }}" placeholder="Enter G-Drive Link">
-                        </div>
+                        </div> --}}
 
 
 

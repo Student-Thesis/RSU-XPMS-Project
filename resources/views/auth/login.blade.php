@@ -161,9 +161,9 @@
 
                     {{-- Links --}}
                     <div class="d-flex justify-content-between">
-                        @if (Route::has('password.request'))
-                            <a href="{{ route('password.request') }}">Forgot Password?</a>
-                        @endif
+                      
+                        <a href="{{ route('password.request.custom') }}">Forgot Password?</a>
+                       
 
                         @if (Route::has('register'))
                             <a href="{{ route('register') }}">Create Account</a>

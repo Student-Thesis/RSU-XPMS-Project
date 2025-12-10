@@ -5,7 +5,7 @@
     <!-- Content -->
     <div id="content">
 
-        @include('layouts.partials.topnav')
+
         <!-- Main Content -->
         <div class="midde_cont">
             <div class="container-fluid">

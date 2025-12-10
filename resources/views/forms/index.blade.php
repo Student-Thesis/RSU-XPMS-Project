@@ -2,101 +2,108 @@
 @extends('layouts.app')
 
 @section('content')
-    <div id="content">
-        @include('layouts.partials.topnav')
 
-        <div class="midde_cont">
-            <div class="container-fluid">
-                <div class="row column_title">
-                    <div class="col-md-12">
-                        <div class="page_title d-flex align-items-center justify-content-between gap-2 flex-wrap">
-                            <h3 class="m-0">Forms / List of Records</h3>
-
-                            <a href="{{ route('forms.create') }}" class="btn-primary btn"
-                               style="margin-left: 20px;">
-                                <i class="fa fa-plus"></i> Add New Record / Form
-                            </a>
-                        </div>
-                    </div>
+    {{-- PAGE HEADER --}}
+    <div class="app-content-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-sm-8">
+                    <h3 class="mb-0">Forms / List of Records</h3>
                 </div>
-
-                @if (session('success'))
-                    <div class="alert alert-success mt-3">{{ session('success') }}</div>
-                @endif
-
-                <div class="row mt-2">
-                    <div class="col-md-12">
-                        <div class="white_shd full margin_bottom_30">
-                            <div class="full">
-                                <div class="table_section">
-                                    <div class="table-responsive-sm">
-                                        <table id="recordFormsTable"
-                                               class="table table-bordered align-middle records-table">
-                                            <thead class="thead-dark">
-                                                <tr>
-                                                    <th style="width:70px;">No.</th>
-                                                    <th style="width:140px;">Record Code</th>
-                                                    <th>Record Title (Link)</th>
-                                                    <th style="width:150px;">Maintenance_Period</th>
-                                                    <th style="width:150px;">Preservation_Period</th>
-                                                    <th>Remarks</th>
-                                                    <th align="center">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse ($forms as $form)
-                                                    <tr>
-                                                        <td>{{ $form->display_order ?: $loop->iteration }}</td>
-                                                        <td>{{ $form->record_code }}</td>
-                                                        <td>
-                                                            <a href="{{ $form->link_url }}" target="_blank" style="color:#007bff;">
-                                                                {{ $form->title }}
-                                                            </a>
-                                                            @unless ($form->is_active)
-                                                                <span class="badge bg-secondary ms-1">inactive</span>
-                                                            @endunless
-                                                        </td>
-                                                        <td>{{ $form->maintenance_years }} Years</td>
-                                                        <td>{{ $form->preservation_years }} Years</td>
-                                                        <td>{{ $form->remarks ?? '—' }}</td>
-                                                        <td class="text-nowrap" align="center">
-                                                            <a class="btn btn-warning btn-xs text-white"
-                                                               href="{{ route('forms.edit', $form->id) }}" style="padding:2px 5px">
-                                                                <i class="fa fa-pencil"></i>
-                                                            </a>
-                                                            <form action="{{ route('forms.destroy', $form) }}"
-                                                                  method="POST"
-                                                                  class="d-inline"
-                                                                  onsubmit="return confirmDelete(event, this)">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <button type="submit" class="btn btn-danger btn-xs" style="padding:2px 5px">
-                                                                    <i class="fa fa-trash"></i>
-                                                                </button>
-                                                            </form>
-                                                        </td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="7" class="text-center text-muted py-4">No records yet.</td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
-
-                                        <p style="font-size: 13px; color: gray;">
-                                            *Click on the blue title to fill out the corresponding Google Form.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- If you have pagination: --}}
-                        {{-- {{ $forms->links() }} --}}
-                    </div>
+                <div class="col-sm-4 text-sm-end mt-2 mt-sm-0">
+                    <a href="{{ route('forms.create') }}" class="btn btn-primary btn-sm">
+                        <i class="fa fa-plus me-1"></i> Add New Record / Form
+                    </a>
                 </div>
             </div>
+
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show mt-3 mb-0" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                            aria-label="Close"></button>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    {{-- PAGE CONTENT --}}
+    <div class="app-content">
+        <div class="container-fluid">
+
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table id="recordFormsTable"
+                               class="table table-bordered table-striped table-sm align-middle records-table">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width:70px;">No.</th>
+                                    <th style="width:140px;">Record Code</th>
+                                    <th>Record Title (Link)</th>
+                                    <th style="width:150px;">Maintenance Period</th>
+                                    <th style="width:150px;">Preservation Period</th>
+                                    <th>Remarks</th>
+                                    <th class="text-center" style="width:120px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($forms as $form)
+                                    <tr>
+                                        <td>{{ $form->display_order ?: $loop->iteration }}</td>
+                                        <td>{{ $form->record_code }}</td>
+                                        <td>
+                                            <a href="{{ $form->link_url }}"
+                                               target="_blank"
+                                               class="text-primary text-decoration-underline">
+                                                {{ $form->title }}
+                                            </a>
+                                            @unless ($form->is_active)
+                                                <span class="badge bg-secondary ms-1">inactive</span>
+                                            @endunless
+                                        </td>
+                                        <td>{{ $form->maintenance_years }} Years</td>
+                                        <td>{{ $form->preservation_years }} Years</td>
+                                        <td>{{ $form->remarks ?? '—' }}</td>
+                                        <td class="text-nowrap text-center">
+                                            <a class="btn btn-warning btn-xs text-white me-1"
+                                               href="{{ route('forms.edit', $form->id) }}">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <form action="{{ route('forms.destroy', $form) }}"
+                                                  method="POST"
+                                                  class="d-inline"
+                                                  onsubmit="return confirmDelete(event, this)">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-danger btn-xs">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-4">
+                                            No records yet.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+
+                        <p class="mt-2 mb-0" style="font-size: 13px; color: gray;">
+                            * Click on the blue title to fill out the corresponding Google Form.
+                        </p>
+                    </div>
+
+                    {{-- If you have pagination: --}}
+                    {{-- <div class="mt-3">{{ $forms->links() }}</div> --}}
+
+                </div>
+            </div>
+
         </div>
     </div>
 @endsection
@@ -135,59 +142,44 @@
 
 @push('styles')
 <style>
-/* ✅ Make table fit contents nicely */
-#recordFormsTable,
-.records-table {
-    table-layout: auto !important;
-    width: auto;
-    min-width: 100%;
-}
+    /* Table layout */
+    #recordFormsTable,
+    .records-table {
+        table-layout: auto !important;
+        width: 100%;
+        font-size: 0.8rem;
+    }
 
-#recordFormsTable th,
-#recordFormsTable td {
-    white-space: nowrap;
-}
+    #recordFormsTable th,
+    #recordFormsTable td {
+        white-space: nowrap;
+        padding: 4px 8px !important;
+        vertical-align: middle !important;
+    }
 
-/* Compact cells */
-#recordFormsTable td,
-#recordFormsTable th {
-    padding: 4px 6px !important;
-    vertical-align: middle !important;
-}
+    #recordFormsTable thead th {
+        text-align: center;
+    }
 
-/* ✅ Compact uniform buttons across Bootstrap/AdminLTE overrides */
-.btn-xs,
-.btn-xs.btn,
-.btn-xs.btn-sm {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 4px !important;
+    /* Extra small buttons – consistent across app */
+    .btn-xs {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 2px 6px !important;
+        font-size: 0.7rem !important;
+        line-height: 1 !important;
+        height: 22px !important;
+        min-height: 22px !important;
+        border-radius: 4px !important;
+        vertical-align: middle !important;
+    }
 
-    /* Force smaller size */
-    padding: 2px 6px !important;
-    font-size: 11px !important;
-    line-height: 1 !important;
-    height: 22px !important;
-    min-height: 22px !important;
-    border-radius: 4px !important;
-    vertical-align: middle !important;
-}
-
-.btn-xs i {
-    font-size: 0.8em !important;
-    line-height: 1 !important;
-}
-
-/* Ensure buttons don't expand in table cells */
-.table td .btn-xs,
-.table td .btn-xs i {
-    margin: 0 !important;
-}
-
-/* Optional: make Add New button consistent too if you switch it to btn-xs */
-/* .page_title .btn-xs {
-    font-weight: 500;
-} */
+    .btn-xs i {
+        font-size: 0.8em !important;
+        line-height: 1 !important;
+        margin: 0 !important;
+    }
 </style>
 @endpush

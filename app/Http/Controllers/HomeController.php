@@ -9,36 +9,73 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Current year
         $year = now()->year;
 
-        // 🔹 Define ALL campuses you want to appear in the filter + chart
-        $allCampuses = [
+        // 🔹 Canonical list of campuses (must match what you store in DB)
+        $campusOptions = [
             'CAFES',
-            'Cajidiocan Campus',
-            'Calatrava Campus',
+            'CAJIDIOCAN CAMPUS',
+            'CALATRAVA CAMPUS',
             'CAS',
             'CBA',
             'CCMADI',
             'CED',
             'CET',
             'GEPS',
-            'Sta. Maria Campus',
-            'Santa Fe Campus',
-            'San Andres Campus',
-            'San Agustin Campus',
-            'Romblon Campus',
-            'San Fernando Campus',
+            'STA. MARIA CAMPUS',
+            'SANTA FE CAMPUS',
+            'SAN ANDRES CAMPUS',
+            'SAN AGUSTIN CAMPUS',
+            'ROMBLON CAMPUS',
+            'SAN FERNANDO CAMPUS',
         ];
 
-        // 1) Get all faculty rows for this year (one query only)
-        $faculties = Faculty::whereYear('created_at', $year)->get();
+        // 🔹 Get logged-in user
+        $user = auth()->user();
 
-        // 2) Build chart array for ALL campuses (even if no rows → all 0)
-        // Each value is computed from q1 + q2 + q3 + q4
+        // user_type logic: root/admin can see everything
+        $userType   = $user->user_type ?? null;
+        $isSuper    = in_array($userType, ['root', 'admin']);
+
+        // Try to read campus/college from user record
+        // adjust if your column name is different
+        $userCampus = $user->campus_college
+            ?? $user->college
+            ?? null;
+
+        // 🔹 Decide which campuses to include in the chart
+        if ($isSuper) {
+            // root/admin → all campuses
+            $campusesForChart = $campusOptions;
+        } else {
+            // normal user → only their campus, if valid; otherwise fallback to none/all
+            if ($userCampus && in_array($userCampus, $campusOptions)) {
+                $campusesForChart = [$userCampus];
+            } else {
+                // fallback: no campus match → you can either:
+                //  - show nothing: []
+                //  - or show all: $campusOptions
+                // Here we choose to show nothing rather than wrong data
+                $campusesForChart = [];
+            }
+        }
+
+        // 🔹 Base faculty query for this year
+        $facultiesQuery = Faculty::whereYear('created_at', $year);
+
+        // If not super, filter faculty rows to the user's campus
+        if (!$isSuper && $userCampus) {
+            $facultiesQuery->where('campus_college', $userCampus);
+        }
+
+        // Execute query once
+        $faculties = $facultiesQuery->get();
+
+        // 🔹 Build chart data (using only $campusesForChart)
         $chart = [];
 
-        foreach ($allCampuses as $campus) {
+        foreach ($campusesForChart as $campus) {
+            // Filter current campus from loaded collection
             $group = $faculties->where('campus_college', $campus);
 
             $chart[$campus] = [
@@ -124,31 +161,39 @@ class HomeController extends Controller
             ];
         }
 
-        // 3) KPI CARDS (overall totals across all campuses, still using q1–q4)
-       $kpi = [
-            'involved_extension_total' => $faculties->sum('involved_extension_total'),
-            'iec_developed_total'      => $faculties->sum('iec_developed_total'),
-            'iec_reproduced_total'     => $faculties->sum('iec_reproduced_total'),
-            'iec_distributed_total'    => $faculties->sum('iec_distributed_total'),
-            'proposals_approved_total' => $faculties->sum('proposals_approved_total'),
-
-            'proposals_implemented_total' => null,
-            'proposals_documented_total'  => null,
-            'population_served_total'     => null,
-            'beneficiaries_total'         => null,
-            'moa_mou_total'               => null,
+        // 🔹 KPI cards – will automatically be:
+        //  - ALL campuses for root/admin
+        //  - Only that campus for normal users (due to query filter above)
+        $kpi = [
+            'involved_extension_total'    => $faculties->sum('involved_extension_total'),
+            'iec_developed_total'         => $faculties->sum('iec_developed_total'),
+            'iec_reproduced_total'        => $faculties->sum('iec_reproduced_total'),
+            'iec_distributed_total'       => $faculties->sum('iec_distributed_total'),
+            'proposals_approved_total'    => $faculties->sum('proposals_approved_total'),
+            'proposals_implemented_total' => $faculties->sum('proposals_implemented_total'),
+            'proposals_documented_total'  => $faculties->sum('proposals_documented_total'),
+            'population_served_total'     => $faculties->sum('community_served_total'),
+            'beneficiaries_total'         => $faculties->sum('beneficiaries_assistance_total'),
+            'moa_mou_total'               => $faculties->sum('moa_mou_total'),
         ];
 
         return view('dashboard', [
-            'kpi'      => $kpi,
-            'chart'    => $chart,      // campus => [metrics...], derived from q1–q4
-            'year'     => $year,
-            'campuses' => $allCampuses, // if you need it in Blade
+            'kpi'          => $kpi,
+            'chart'        => $chart,
+            'year'         => $year,
+            'campuses'     => $campusesForChart, // campuses actually shown
+            'isSuper'      => $isSuper,
+            'userCampus'   => $userCampus,
         ]);
     }
 
     public function register()
     {
         return view('auth.register');
+    }
+
+    public function showForgotForm()
+    {
+        return view('auth.reset');
     }
 }

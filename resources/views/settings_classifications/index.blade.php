@@ -2,7 +2,7 @@
 
 @section('content')
     <div id="content">
-        @include('layouts.partials.topnav')
+         
         <div class="midde_cont">
             <div class="container-fluid">
                 <!-- Page Title -->

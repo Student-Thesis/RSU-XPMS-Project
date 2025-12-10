@@ -1,18 +1,20 @@
-@include('layouts.partials.header')
-@include('layouts.partials.sidenav')
-@yield('content')
-@if(session('permission_error'))
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Access Denied',
-            text: '{{ session('permission_error') }}',
-            confirmButtonColor: '#d33'
-        });
-    </script>
-@endif
+@include('layouts.header')
+<!--begin::Body-->
 
- @stack('scripts') 
-@include('layouts.partials.footer')
+<body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-collapse bg-body-tertiary">
+
+    <!--begin::App Wrapper-->
+    <div class="app-wrapper">
+        @include('layouts.topnav')
+        <!--begin::Sidebar-->
+        @include('layouts.sidenav')
+        <!--end::Sidebar-->
+        <!--begin::App Main-->
+        <main class="app-main">
+            @yield('content')
+        </main>
+        <!--end::App Main-->
+
+        @include('layouts.footer')
 
 

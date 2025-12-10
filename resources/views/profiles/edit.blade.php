@@ -2,7 +2,6 @@
 
 @section('content')
 <div id="content">
-    @include('layouts.partials.topnav')
 
     <div class="midde_cont p-3" style="width: 100% !important; max-width: 100% !important;">
         
