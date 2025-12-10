@@ -4,13 +4,16 @@
 @endphp
 
 <aside class="app-sidebar sidebar-bg shadow" data-bs-theme="dark">
-    <div class="sidebar-brand" style="background:green;">
-        <a href="{{ route('dashboard') }}" class="brand-link">
-            <img src="{{ $basePath }}/images/logo/logo.png" alt="ESCEO Logo"
-                 class="brand-image opacity-75 shadow" />
-            <span class="brand-text fw-light">ESCEO</span>
-        </a>
-    </div>
+   <div class="sidebar-brand" style="background: green; height: 62px; display:flex; align-items:center; justify-content:center;">
+    <a href="{{ route('dashboard') }}" class="brand-link">
+        <img src="{{ $basePath }}/images/logo/logo.png"
+             alt="ESCEO Logo"
+             class="brand-image opacity-75 shadow"
+             style="height:55px; width:auto;" />
+        <span class="brand-text fw-light">ESCEO</span>
+    </a>
+</div>
+
 
     <div class="sidebar-wrapper">
         <nav class="mt-2">
