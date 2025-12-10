@@ -293,6 +293,13 @@
                                 @endphp
                                 <select name="status" class="form-control status-select">
                                     <option
+                                        value="Pending"
+                                        class="status-cancelled"
+                                        {{ $statusValue === 'Pending' ? 'selected' : '' }}
+                                    >
+                                        Pending
+                                    </option>
+                                    <option
                                         value="Ongoing"
                                         class="status-ongoing"
                                         {{ $statusValue === 'Ongoing' ? 'selected' : '' }}
