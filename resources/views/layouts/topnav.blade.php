@@ -106,9 +106,9 @@
 
                     <img
                         src="{{ $user && $user->avatar_path
-                                ? asset('storage/' . $user->avatar_path)
+                                ? asset($basePath . $user->avatar_path)
                                 : asset($basePath . '/adminlte/assets/img/avatar5.png') }}"
-                        class="user-image rounded-circle shadow"
+                        class="user-image rounded-circle shadow" 
                         alt="User Image">
 
                     <span class="d-none d-md-inline">
@@ -118,9 +118,13 @@
 
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
 
-                    <li class="user-header text-bg-primary">
-                        <img src="{{ asset($basePath . '/adminlte/assets/img/avatar5.png') }}"
-                             class="rounded-circle shadow" alt="User Image" />
+                    <li class="user-header text-bg-success">
+                        <img
+                        src="{{ $user && $user->avatar_path
+                                ? asset($basePath . $user->avatar_path)
+                                : asset($basePath . '/adminlte/assets/img/avatar5.png') }}"
+                        class="user-image rounded-circle shadow" 
+                        alt="User Image">
                         <p>{{ $user->first_name ?? 'Guest' }} {{ $user->last_name ?? '' }}</p>
                     </li>
 

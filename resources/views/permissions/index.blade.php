@@ -1,67 +1,109 @@
 @extends('layouts.app')
 
 @section('content')
-<div id="content">
 
-    <div class="midde_cont">
+    {{-- PAGE HEADER --}}
+    <div class="app-content-header">
         <div class="container-fluid">
-            <!-- Page Title -->
-            <div class="row column_title">
-                <div class="col-md-12">
-                    <div class="page_title">
-                        <h2>Department Permissions</h2>
-                    </div>
+            <div class="row align-items-center">
+
+                <div class="col-sm-6">
+                    <h3 class="mb-0">Department Permissions</h3>
                 </div>
+
+                {{-- If you later have a Settings page route, you can add a back button here --}}
+                {{-- 
+                <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
+                    <a href="{{ route('settings.index') }}" class="btn btn-light btn-sm">
+                        <i class="bi bi-gear me-1"></i> System Settings
+                    </a>
+                </div>
+                --}}
+
             </div>
+        </div>
+    </div>
 
-            <!-- Alerts -->
+    {{-- PAGE CONTENT --}}
+    <div class="app-content">
+        <div class="container-fluid">
+
+            {{-- Alerts --}}
             @if (session('ok'))
-                <div class="alert alert-success">{{ session('ok') }}</div>
-            @endif
-            @if ($errors->any())
-                <div class="alert alert-danger">{{ $errors->first() }}</div>
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle me-1"></i>
+                    {{ session('ok') }}
+                </div>
             @endif
 
-            <!-- Permissions Table -->
-            <div class="card">
-                <div class="card-header">
-                    <strong>Departments with Permissions</strong>
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                    {{ $errors->first() }}
                 </div>
+            @endif
+
+            <div class="card">
+
+                <div class="card-header">
+                    <strong>
+                        <i class="bi bi-people-fill me-1"></i>
+                        Departments with Permissions
+                    </strong>
+                </div>
+
                 <div class="card-body table-responsive">
-                    <table class="table table-bordered table-striped align-middle">
-                        <thead>
+                    <table class="table table-bordered table-striped align-middle mb-0">
+                        <thead class="table-light">
                             <tr>
                                 <th>Department</th>
                                 <th class="text-center" style="width:160px;"># of Permission Rows</th>
-                                <th style="width:160px;">Actions</th>
+                                <th class="text-center" style="width:160px;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($departments as $dept) 
+                            @forelse($departments as $dept)
                                 <tr>
                                     <td>{{ $dept->name }}</td>
                                     <td class="text-center">{{ $dept->permissions_count }}</td>
-                                    <td>
-                                       <a href="{{ route('departments.permissions.show', $dept) }}"
-   class="btn btn-xs btn-warning">
-    <i class="fa fa-eye"></i> View
-</a>
-
+                                    <td class="text-center">
+                                        <a href="{{ route('departments.permissions.show', $dept) }}"
+                                           class="btn btn-sm btn-warning text-white">
+                                            <i class="bi bi-eye"></i>
+                                            View
+                                        </a>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="text-center">No departments have permissions yet.</td>
+                                    <td colspan="3" class="text-center text-muted py-4">
+                                        <i class="bi bi-info-circle me-1"></i>
+                                        No departments have permissions yet.
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
+
                 <div class="card-footer">
                     {{ $departments->links() }}
                 </div>
+
             </div>
         </div>
     </div>
-</div>
+
+    {{-- SMALL UI TOUCHES --}}
+    <style>
+        .table td,
+        .table th {
+            vertical-align: middle !important;
+        }
+
+        .btn.btn-sm {
+            font-size: 0.75rem;
+        }
+    </style>
+
 @endsection

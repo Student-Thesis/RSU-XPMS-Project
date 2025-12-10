@@ -274,67 +274,69 @@
                     </div>
 
                     {{-- UPCOMING EVENTS (next 7 days) --}}
-<div class="col-md-4">
-    <div class="card card-info">
-        <div class="card-header">
-            <h3 class="card-title mb-0">
-                <i class="bi bi-calendar-event me-1"></i>
-                Upcoming Events (7 days)
-            </h3>
-        </div>
-        <div class="card-body p-0">
-            @if($upcomingEvents->isEmpty())
-                <p class="text-muted p-3 mb-0">
-                    No upcoming events in the next 7 days.
-                </p>
-            @else
-                <ul class="list-group list-group-flush">
-                    @foreach($upcomingEvents as $event)
-                        <li class="list-group-item d-flex flex-column">
-                            <div class="fw-semibold">
-                                {{ $event->title }}
+                    <div class="col-md-4">
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title mb-0">
+                                    <i class="bi bi-calendar-event me-1"></i>
+                                    Upcoming Events (7 days)
+                                </h3>
                             </div>
-
-                            <div class="small text-muted">
-                                @php
-                                    $start = \Carbon\Carbon::parse($event->start_date);
-                                    $end   = $event->end_date ? \Carbon\Carbon::parse($event->end_date) : null;
-                                @endphp
-
-                                <i class="bi bi-clock"></i>
-                                {{ $start->format('M d, Y') }}
-                                @if($end && $end->toDateString() !== $start->toDateString())
-                                    – {{ $end->format('M d, Y') }}
-                                @endif
-                            </div>
-
-                            @if($event->location)
-                                <div class="small">
-                                    <i class="bi bi-geo-alt"></i>
-                                    {{ $event->location }}
-                                </div>
-                            @endif
-
-                            <div class="mt-1">
-                                @if($event->visibility === 'private')
-                                    <span class="badge bg-secondary">Private</span>
+                            <div class="card-body p-0">
+                                @if ($upcomingEvents->isEmpty())
+                                    <p class="text-muted p-3 mb-0">
+                                        No upcoming events in the next 7 days.
+                                    </p>
                                 @else
-                                    <span class="badge bg-success">Public</span>
-                                @endif
+                                    <ul class="list-group list-group-flush">
+                                        @foreach ($upcomingEvents as $event)
+                                            <li class="list-group-item d-flex flex-column">
+                                                <div class="fw-semibold">
+                                                    {{ $event->title }}
+                                                </div>
 
-                                @if($event->priority)
-                                    <span class="badge bg-light text-dark border">
-                                        {{ $event->priority }}
-                                    </span>
+                                                <div class="small text-muted">
+                                                    @php
+                                                        $start = \Carbon\Carbon::parse($event->start_date);
+                                                        $end = $event->end_date
+                                                            ? \Carbon\Carbon::parse($event->end_date)
+                                                            : null;
+                                                    @endphp
+
+                                                    <i class="bi bi-clock"></i>
+                                                    {{ $start->format('M d, Y') }}
+                                                    @if ($end && $end->toDateString() !== $start->toDateString())
+                                                        – {{ $end->format('M d, Y') }}
+                                                    @endif
+                                                </div>
+
+                                                @if ($event->location)
+                                                    <div class="small">
+                                                        <i class="bi bi-geo-alt"></i>
+                                                        {{ $event->location }}
+                                                    </div>
+                                                @endif
+
+                                                <div class="mt-1">
+                                                    @if ($event->visibility === 'private')
+                                                        <span class="badge bg-secondary">Private</span>
+                                                    @else
+                                                        <span class="badge bg-success">Public</span>
+                                                    @endif
+
+                                                    @if ($event->priority)
+                                                        <span class="badge bg-light text-dark border">
+                                                            {{ $event->priority }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </li>
+                                        @endforeach
+                                    </ul>
                                 @endif
                             </div>
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
-        </div>
-    </div>
-</div>
+                        </div>
+                    </div>
 
                 </div>
             </div>

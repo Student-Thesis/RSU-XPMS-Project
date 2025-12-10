@@ -98,13 +98,16 @@
                             <input type="date" name="date_signed" value="{{ old('date_signed') }}" class="form-control">
                         </div>
 
-                        {{-- MOU File --}}
-                        <div class="col-md-6">
-                            <label class="form-label">MOU Document</label>
-                            <input type="file" name="mou_path" class="form-control"
-                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" data-max-size="10240">
-                            <small class="text-muted">Max file size: 10 MB</small>
-                        </div>
+                      {{-- MOU File --}}
+<div class="col-md-6">
+    <label class="form-label">MOU Document</label>
+    <input type="file"
+           name="mouFile"
+           class="form-control"
+           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+           data-max-size="10240">
+    <small class="text-muted">Max file size: 10 MB</small>
+</div>
 
                         {{-- MOU Link --}}
                         <div class="col-md-6">

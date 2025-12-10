@@ -146,34 +146,36 @@
                             </div>
 
                             {{-- MOU File --}}
-                            <div class="col-md-6">
-                                <label class="form-label">MOU Document</label>
-                                <input
-                                    type="file"
-                                    name="mou_path"
-                                    class="form-control"
-                                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                                    data-max-size="10240"
-                                >
-                                <small class="text-muted">Max file size: 10 MB</small>
+                      <div class="col-md-6">
+    <label class="form-label">MOU Document</label>
 
-                                @if($project->mou_path)
-                                    <div class="mt-1 small">
-                                        <strong>Current MOU File:</strong>
-                                        <a href="{{ asset('storage/'.$project->mou_path) }}"
-                                           target="_blank"
-                                           rel="noopener noreferrer">
-                                            View
-                                        </a>
-                                        &nbsp;|&nbsp;
-                                        <a href="{{ asset('storage/'.$project->mou_path) }}"
-                                           download
-                                           rel="noopener noreferrer">
-                                            Download
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
+    <input
+        type="file"
+        name="mouFile"
+        class="form-control"
+        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+        data-max-size="10240"
+    >
+
+    <small class="text-muted">Max file size: 10 MB</small>
+
+    @if (!empty($project->mou_path))
+        <div class="mt-1 small">
+            <strong>Current MOU File:</strong>
+            <a href="{{ asset($project->mou_path) }}"
+               target="_blank"
+               rel="noopener noreferrer">
+                View
+            </a>
+            &nbsp;|&nbsp;
+            <a href="{{ asset($project->mou_path) }}"
+               download
+               rel="noopener noreferrer">
+                Download
+            </a>
+        </div>
+    @endif
+</div>
 
                             {{-- MOU Link --}}
                             {{-- <div class="col-md-6">

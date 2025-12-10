@@ -245,18 +245,19 @@
                                             </select>
                                         </td>
 
-                                        {{-- 8. MOA/MOU --}}
-                                        <td class="inline-cell" data-col="mou_path">
-                                            @if (!empty($proposal->mou_path))
-                                                <a href="{{ asset('storage/' . $proposal->mou_path) }}"
-                                                   target="_blank"
-                                                   class="link-primary text-decoration-underline">
-                                                    {{ basename($proposal->mou_path) }}
-                                                </a>
-                                            @else
-                                                —
-                                            @endif
-                                        </td>
+                                     {{-- 8. MOA/MOU --}}
+<td class="inline-cell" data-col="mou_path">
+    @if (!empty($proposal->mou_path))
+        <a href="{{ asset($proposal->mou_path) }}"
+           target="_blank"
+           class="link-primary text-decoration-underline">
+            {{ basename($proposal->mou_path) }}
+        </a>
+    @else
+        —
+    @endif
+</td>
+
 
                                         {{-- 9. Activity Design --}}
                                         <td>

@@ -73,7 +73,7 @@
                     </div>
 
                     <div class="calendar-form-group">
-                        <label class="calendar-form-label">Project Type</label>
+                        <label class="calendar-form-label"></label>
                         <select id="eventType" class="calendar-form-input">
                             <option value="">Select project type...</option>
                             <option value="Development">Development</option>
@@ -89,13 +89,12 @@
                     <div class="calendar-form-group">
                         <label class="calendar-form-label d-flex justify-content-between align-items-center">
                             <span>Location</span>
-                           
                         </label>
 
-                         <input type="text"
-           id="eventLocation"
-           class="calendar-form-input"
-           placeholder="Enter location (e.g. Room 201, Main Building)">
+                        <input type="text"
+                               id="eventLocation"
+                               class="calendar-form-input"
+                               placeholder="Enter location (e.g. Room 201, Main Building)">
                     </div>
 
                     <div class="calendar-form-group">
@@ -213,7 +212,7 @@
         .calendar-form-input,
         .calendar-form-textarea {
             background: #fff;
-            color:black;
+            color: black;
             width: 100%;
             border: 1px solid #ced4da;
             border-radius: .25rem;
@@ -393,13 +392,16 @@
                 }
 
                 if (res.ok) {
+                    // ✅ capture before closing modal (because closeAddEventModal resets editingEventId)
+                    const isEdit = !!editingEventId;
+
                     projectCalendar?.refetchEvents();
                     closeAddEventModal();
 
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({
                             icon: 'success',
-                            title: editingEventId ? 'Event Updated' : 'Event Created',
+                            title: isEdit ? 'Event Updated' : 'Event Created',
                             timer: 1500,
                             showConfirmButton: false
                         });

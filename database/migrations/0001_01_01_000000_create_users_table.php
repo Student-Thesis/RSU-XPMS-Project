@@ -17,7 +17,7 @@ return new class extends Migration {
     $table->string('user_type')->default('user'); // 'admin', 'user', etc.
 
     // Authentication
-    $table->string('username')->unique();  // login username
+    $table->string('username')->unique()->nullable();  // login username
     $table->string('email')->unique();
     $table->timestamp('email_verified_at')->nullable();
     $table->string('password');
