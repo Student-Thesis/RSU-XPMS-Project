@@ -92,11 +92,11 @@
                                     <th>NTP</th>
                                     <th>Endorsement</th>
 
-                                    <th>Documents</th>
-                                    <th>Program</th>
-                                    <th>Project</th>
+                                    <th width="100px">Documents</th>
+                                    <th width="1150px">Program</th>
+                                    <th width="1150px">Project</th>
                                     <th>MOA/MOU</th>
-                                    <th>Activity Design</th>
+                                    <th width="100px">Activity Design</th>
 
                                     <th>Budget</th>
                                     <th>Funds</th>
@@ -361,7 +361,7 @@
                         </table>
                     </div>
 
-                    {{-- classification datalist (needs to be outside the loop) --}}
+                    {{-- classification datalist --}}
                     <datalist id="classifications">
                         <option value="Program">
                         <option value="Project">
@@ -372,7 +372,7 @@
         </div>
     </div>
 
-    {{-- ====== PAGE STYLES (AdminLTE-friendly) ====== --}}
+    {{-- ====== PAGE STYLES ====== --}}
     <style>
         .proposal-table td,
         .proposal-table th {
@@ -383,7 +383,6 @@
             cursor: text;
         }
 
-        /* Yes/No dropdown subtle colors (Bootstrap 5 / AdminLTE 4 friendly) */
         .dropdown-yesno.yes {
             background-color: #e7f7ef;
             color: #1f7a4a;
@@ -393,11 +392,80 @@
             background-color: #fdecea;
             color: #b42318;
         }
+
+        .btn-xs {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            line-height: 1;
+            border-radius: 4px;
+        }
+
+        <style>
+    /* Make columns fit data nicely */
+    #proposalTable {
+        table-layout: auto !important;
+        width: auto;
+        min-width: 100%;
+    }
+
+    #proposalTable th,
+    #proposalTable td {
+        white-space: nowrap;
+        padding: .35rem .5rem !important;
+        vertical-align: middle !important;
+    }
+
+    .inline-cell {
+        cursor: text;
+    }
+
+    /* Base style for Yes/No dropdowns */
+    .dropdown-yesno {
+        min-width: 70px;          /* 👈 gives space for full "Yes" / "No" */
+        text-align: center;
+        font-weight: 600;
+        font-size: 0.8rem;
+        border-width: 1px;
+        padding-inline: .25rem;
+        transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+    }
+
+    /* YES = green */
+    .dropdown-yesno.yes {
+        background-color: #d4edda;   /* light green */
+        color: #155724;              /* dark green text */
+        border-color: #198754;       /* bootstrap success */
+    }
+
+    /* NO = red */
+    .dropdown-yesno.no {
+        background-color: #f8d7da;   /* light red */
+        color: #842029;              /* dark red text */
+        border-color: #dc3545;       /* bootstrap danger */
+    }
+</style>
+
     </style>
 
-    {{-- ====== PAGE SCRIPTS ====== --}}
+    {{-- Make sure SweetAlert2 is loaded (if not already in your layout) --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
-        const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        function getCsrfToken() {
+            const meta = document.querySelector('meta[name="csrf-token"]');
+            if (meta) return meta.getAttribute('content');
+
+            const input = document.querySelector('input[name="_token"]');
+            if (input) return input.value;
+
+            console.warn('CSRF token not found in meta or input[name="_token"].');
+            return '';
+        }
+
+        const CSRF_TOKEN = getCsrfToken();
 
         function setYesNoColor(el) {
             el.classList.remove('yes', 'no');
@@ -406,15 +474,22 @@
         }
 
         async function handleYesNoChange(el) {
-            const row   = el.closest('tr');
-            const id    = row.dataset.id;
-            const url   = el.dataset.url;
+            if (typeof Swal === 'undefined') {
+                console.warn('SweetAlert2 (Swal) is not loaded.');
+                return;
+            }
+
+            const row    = el.closest('tr');
+            const id     = row.dataset.id;
+            const url    = el.dataset.url;
             const column = el.dataset.col;
             const label  = el.dataset.label || column;
 
             const newValue = el.value;
             const newLabel = newValue === '1' ? 'Yes' : 'No';
             const oldValue = el.dataset.prev;
+
+            console.log('Inline change:', { id, url, column, oldValue, newValue });
 
             const result = await Swal.fire({
                 title: 'Update field?',
@@ -423,6 +498,7 @@
                 showCancelButton: true,
                 confirmButtonText: 'Yes, update',
                 cancelButtonText: 'Cancel',
+                reverseButtons: true,
             });
 
             if (!result.isConfirmed) {
@@ -431,27 +507,35 @@
                 return;
             }
 
+            const formData = new FormData();
+            formData.append('column', column);
+            formData.append('value', newValue);
+
             try {
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': CSRF_TOKEN,
+                        'X-Requested-With': 'XMLHttpRequest',
                         'Accept': 'application/json',
                     },
-                    body: JSON.stringify({
-                        id: id,
-                        column: column,
-                        value: newValue,
-                    }),
+                    body: formData,
                 });
 
+                const contentType = response.headers.get('content-type') || '';
+                let data = {};
+
                 if (!response.ok) {
-                    throw new Error('Network error');
+                    const text = await response.text();
+                    console.error('HTTP error:', response.status, text);
+                    throw new Error('Network error (' + response.status + ')');
                 }
 
-                const data = await response.json();
-                if (!data.success && !data.ok) {
+                if (contentType.includes('application/json')) {
+                    data = await response.json();
+                }
+
+                if (data.success === false || data.ok === false) {
                     throw new Error(data.message || 'Update failed.');
                 }
 
@@ -466,6 +550,8 @@
                     showConfirmButton: false,
                 });
             } catch (err) {
+                console.error('Update failed:', err);
+
                 Swal.fire({
                     icon: 'error',
                     title: 'Update failed',
@@ -503,7 +589,14 @@
                 if (!btn) return;
 
                 const id = btn.dataset.id;
-                const form = document.getElementById(`delete-form-${id}`);
+                const delForm = document.getElementById(`delete-form-${id}`);
+
+                if (typeof Swal === 'undefined') {
+                    if (confirm('Delete proposal? This cannot be undone.')) {
+                        delForm.submit();
+                    }
+                    return;
+                }
 
                 const ok = await Swal.fire({
                     title: 'Delete proposal?',
@@ -511,9 +604,11 @@
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Yes, delete it',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true,
                 }).then(r => r.isConfirmed);
 
-                if (ok) form.submit();
+                if (ok) delForm.submit();
             });
 
             // Debounced search
@@ -533,7 +628,7 @@
                 });
             }
 
-            // Auto submit filters
+            // Auto-submit filters
             selects.forEach(function (sel) {
                 sel.addEventListener('change', function () {
                     form.submit();

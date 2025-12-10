@@ -4,7 +4,7 @@
 @endphp
 
 <aside class="app-sidebar sidebar-bg shadow" data-bs-theme="dark">
-    <div class="sidebar-brand">
+    <div class="sidebar-brand" style="background:green;">
         <a href="{{ route('dashboard') }}" class="brand-link">
             <img src="{{ $basePath }}/images/logo/logo.png" alt="ESCEO Logo"
                  class="brand-image opacity-75 shadow" />
@@ -23,7 +23,7 @@
                     <li class="nav-item">
                         <a href="{{ route('dashboard') }}"
                            class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-speedometer2"></i>
+                            <i class="nav-icon bi bi-speedometer2" style="color:orange"></i>
                             <p>Dashboard</p>
                         </a>
                     </li>
@@ -34,7 +34,7 @@
                     <li class="nav-item">
                         <a href="{{ route('projects') }}"
                            class="nav-link {{ request()->routeIs('projects*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-folder2-open"></i>
+                            <i class="nav-icon bi bi-folder2-open" style="color:rgb(0, 228, 187)"></i>
                             <p>Projects</p>
                         </a>
                     </li>
@@ -45,7 +45,7 @@
                     <li class="nav-item">
                         <a href="{{ route('forms.index') }}"
                            class="nav-link {{ request()->routeIs('forms.*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-file-earmark-text"></i>
+                            <i class="nav-icon bi bi-file-earmark-text" style="color:rgb(209, 105, 0)"></i>
                             <p>Forms</p>
                         </a>
                     </li>
@@ -56,7 +56,7 @@
                     <li class="nav-item">
                         <a href="{{ route('faculties.index') }}"
                            class="nav-link {{ request()->routeIs('faculties*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-mortarboard"></i>
+                            <i class="nav-icon bi bi-mortarboard" style="color:orange"></i>
                             <p>Faculty</p>
                         </a>
                     </li>
@@ -67,7 +67,7 @@
                     <li class="nav-item">
                         <a href="{{ route('users.index') }}"
                            class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-people-fill"></i>
+                            <i class="nav-icon bi bi-people-fill" style="color:rgb(26, 255, 0)"></i>
                             <p>Users</p>
                         </a>
                     </li>
@@ -78,7 +78,7 @@
                     <li class="nav-item">
                         <a href="{{ route('calendar') }}"
                            class="nav-link {{ request()->routeIs('calendar') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-calendar-week"></i>
+                            <i class="nav-icon bi bi-calendar-week" style="color:rgb(223, 0, 0)"></i>
                             <p>Calendar</p>
                         </a>
                     </li>

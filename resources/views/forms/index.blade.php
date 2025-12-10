@@ -69,7 +69,7 @@
                                         <td class="text-nowrap text-center">
                                             <a class="btn btn-warning btn-xs text-white me-1"
                                                href="{{ route('forms.edit', $form->id) }}">
-                                                <i class="fa fa-pencil"></i>
+                                                <i class="bi bi-pencil"></i>
                                             </a>
                                             <form action="{{ route('forms.destroy', $form) }}"
                                                   method="POST"
@@ -78,7 +78,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger btn-xs">
-                                                    <i class="fa fa-trash"></i>
+                                                    <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
                                         </td>
@@ -137,6 +137,18 @@
 
             return false;
         }
+
+        function setYesNoColor(el) {
+    el.classList.remove('yes', 'no');
+
+    const isYes = el.value === '1';
+    if (isYes) {
+        el.classList.add('yes');
+    } else {
+        el.classList.add('no');
+    }
+}
+
     </script>
 @endpush
 
@@ -166,15 +178,41 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 4px;
-        padding: 2px 6px !important;
-        font-size: 0.7rem !important;
-        line-height: 1 !important;
-        height: 22px !important;
-        min-height: 22px !important;
-        border-radius: 4px !important;
-        vertical-align: middle !important;
+        padding: 2px 6px;
+        font-size: 0.75rem;
+        line-height: 1;
+        border-radius: 4px;
     }
+      .proposal-table td,
+    .proposal-table th {
+        padding: .35rem .5rem !important;
+    }
+
+    .inline-cell {
+        cursor: text;
+    }
+
+    /* Base style for all Yes/No selects */
+    .dropdown-yesno {
+        font-weight: 600;
+        border-width: 1px;
+        transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+    }
+
+    /* YES = green */
+    .dropdown-yesno.yes {
+        background-color: #d1f7d6;   /* light green */
+        color: #155724;              /* dark green text */
+        border-color: #198754;       /* bootstrap success */
+    }
+
+    /* NO = red */
+    .dropdown-yesno.no {
+        background-color: #f8d7da;   /* light red */
+        color: #842029;              /* dark red text */
+        border-color: #dc3545;       /* bootstrap danger */
+    }
+
 
     .btn-xs i {
         font-size: 0.8em !important;

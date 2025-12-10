@@ -48,7 +48,7 @@ class ProjectController extends Controller
     /**
      * Inline update (AJAX)
      */
-    public function inline(Request $request, Proposal $project)
+    public function inlineUpdate(Request $request, Proposal $project)
     {
         $request->validate([
             'column' => 'required|string',
