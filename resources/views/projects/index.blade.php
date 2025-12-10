@@ -93,10 +93,10 @@
                                     <th>Endorsement</th>
 
                                     <th width="100px">Documents</th>
-                                    <th width="1150px">Program</th>
-                                    <th width="1150px">Project</th>
+                                    <th width="115px">Program</th>
+                                    <th width="115px">Project</th>
                                     <th>MOA/MOU</th>
-                                    <th width="100px">Activity Design</th>
+                                    <th width="115px">Activity Design</th>
 
                                     <th>Budget</th>
                                     <th>Funds</th>
@@ -329,7 +329,7 @@
                                         <td>
                                             <a href="{{ route('projects.edit', $proposal->id) }}"
                                                class="btn btn-warning btn-xs">
-                                                <i class="fa fa-edit"></i>
+                                                <i class="bi bi-pencil"></i>
                                             </a>
 
                                             <button
@@ -338,7 +338,7 @@
                                                 data-id="{{ $proposal->id }}"
                                                 data-action="{{ route('projects.destroy', $proposal->id) }}"
                                             >
-                                                <i class="fa fa-trash"></i>
+                                                <i class="bi bi-trash"></i>
                                             </button>
 
                                             <form
@@ -383,14 +383,34 @@
             cursor: text;
         }
 
-        .dropdown-yesno.yes {
-            background-color: #e7f7ef;
-            color: #1f7a4a;
+        .dropdown-yesno {
+            min-width: 70px;
+            font-weight: 600;
         }
 
+        /* Selected value = YES (1) */
+        .dropdown-yesno.yes {
+            background-color: #d1e7dd !important;  /* green-ish */
+            color: #0f5132 !important;
+            border-color: #0f5132 !important;
+        }
+
+        /* Selected value = NO (0) */
         .dropdown-yesno.no {
-            background-color: #fdecea;
-            color: #b42318;
+            background-color: #f8d7da !important;  /* red-ish */
+            color: #842029 !important;
+            border-color: #842029 !important;
+        }
+
+        /* Options inside the dropdown */
+        .dropdown-yesno option[value="0"] {
+            background-color: #f8d7da;
+            color: #842029;
+        }
+
+        .dropdown-yesno option[value="1"] {
+            background-color: #d1e7dd;
+            color: #0f5132;
         }
 
         .btn-xs {
@@ -402,55 +422,9 @@
             line-height: 1;
             border-radius: 4px;
         }
-
-        <style>
-    /* Make columns fit data nicely */
-    #proposalTable {
-        table-layout: auto !important;
-        width: auto;
-        min-width: 100%;
-    }
-
-    #proposalTable th,
-    #proposalTable td {
-        white-space: nowrap;
-        padding: .35rem .5rem !important;
-        vertical-align: middle !important;
-    }
-
-    .inline-cell {
-        cursor: text;
-    }
-
-    /* Base style for Yes/No dropdowns */
-    .dropdown-yesno {
-        min-width: 70px;          /* 👈 gives space for full "Yes" / "No" */
-        text-align: center;
-        font-weight: 600;
-        font-size: 0.8rem;
-        border-width: 1px;
-        padding-inline: .25rem;
-        transition: background-color .2s ease, color .2s ease, border-color .2s ease;
-    }
-
-    /* YES = green */
-    .dropdown-yesno.yes {
-        background-color: #d4edda;   /* light green */
-        color: #155724;              /* dark green text */
-        border-color: #198754;       /* bootstrap success */
-    }
-
-    /* NO = red */
-    .dropdown-yesno.no {
-        background-color: #f8d7da;   /* light red */
-        color: #842029;              /* dark red text */
-        border-color: #dc3545;       /* bootstrap danger */
-    }
-</style>
-
     </style>
 
-    {{-- Make sure SweetAlert2 is loaded (if not already in your layout) --}}
+    {{-- SweetAlert2 (if not already loaded in layout) --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
@@ -488,8 +462,6 @@
             const newValue = el.value;
             const newLabel = newValue === '1' ? 'Yes' : 'No';
             const oldValue = el.dataset.prev;
-
-            console.log('Inline change:', { id, url, column, oldValue, newValue });
 
             const result = await Swal.fire({
                 title: 'Update field?',
