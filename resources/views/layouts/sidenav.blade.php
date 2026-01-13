@@ -95,7 +95,7 @@
 <style>
     /* Apply geometric dark background */
     .sidebar-bg {
-        background-image: url("/images/nav.png");
+        background-image: url("/public/images/nav.png");
         background-size: cover;
         background-repeat: repeat-y;
         background-position: center center;
