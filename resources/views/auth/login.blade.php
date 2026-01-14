@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
+    <!-- Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
     <!-- Custom Styling -->
     <style>
         body {
@@ -20,17 +23,9 @@
         }
 
         @keyframes gradientShift {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .card {
@@ -56,18 +51,16 @@
             color: #fff;
         }
 
-        /* Small spin on refresh icon */
-        #refreshCaptchaBtn i {
-            transition: transform .3s ease-in-out;
-        }
-
-        #refreshCaptchaBtn:active i {
-            transform: rotate(360deg);
+        /* Make Turnstile fit on mobile */
+        .cf-turnstile {
+            display: flex;
+            justify-content: center;
         }
     </style>
 </head>
 
 <body class="d-flex justify-content-center align-items-center min-vh-100">
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5">
@@ -82,7 +75,10 @@
             <div class="card p-4">
 
                 <div class="text-center mb-4">
-                    <img src="/images/logo/logonobg.png" alt="Logo" class="mb-3" style="height: 100px;">
+                    <img src="{{ $basePath }}/images/logo/logonobg.png"
+                         alt="Logo"
+                         class="mb-3"
+                         style="height: 100px;">
                     <h4>Login</h4>
                 </div>
 
@@ -123,35 +119,20 @@
                         <label for="showPassword">Show Password</label>
                     </div>
 
-                    {{-- CAPTCHA --}}
+                    {{-- ✅ TURNSTILE (replaces captcha image) --}}
                     <div class="mb-3">
                         <label class="form-label">Security Check</label>
 
-                        <div class="d-flex align-items-center gap-2">
-                            {{-- Captcha image --}}
-                            <img src="{{ captcha_src('default') }}"
-                                 alt="captcha"
-                                 id="captchaImg"
-                                 style="border-radius: 8px;">
-
-                            {{-- Refresh button --}}
-                            <button type="button"
-                                    id="refreshCaptchaBtn"
-                                    class="btn btn-sm btn-outline-primary"
-                                    title="Refresh Captcha">
-                                <i class="bi bi-arrow-clockwise"></i>
-                            </button>
+                        <div class="cf-turnstile"
+                             data-sitekey="{{ config('services.turnstile.site_key') }}">
                         </div>
 
-                        <input type="text"
-                               name="captcha"
-                               class="form-control mt-2 @error('captcha') is-invalid @enderror"
-                               placeholder="Enter the code shown above"
-                               required>
-
-                        @error('captcha')
-                        <div class="text-danger small mt-1">{{ $message }}</div>
-                        @enderror
+                        {{-- Turnstile errors --}}
+                        @if ($errors->has('captcha'))
+                            <div class="text-danger small mt-2">
+                                {{ $errors->first('captcha') }}
+                            </div>
+                        @endif
                     </div>
 
                     {{-- Login Button --}}
@@ -161,9 +142,7 @@
 
                     {{-- Links --}}
                     <div class="d-flex justify-content-between">
-                      
                         <a href="{{ route('password.request.custom') }}">Forgot Password?</a>
-                       
 
                         @if (Route::has('register'))
                             <a href="{{ route('register') }}">Create Account</a>
@@ -185,34 +164,6 @@
     document.getElementById('showPassword').addEventListener('change', function () {
         const input = document.getElementById('password');
         input.type = this.checked ? 'text' : 'password';
-    });
-
-    /**
-     * SIMPLE CAPTCHA REFRESH (NO FETCH)
-     *
-     * Just change the image src with a new random query param.
-     * Mews Captcha (and similar) will generate a new image whenever the query changes.
-     */
-    function refreshCaptcha() {
-        const img = document.getElementById('captchaImg');
-        const input = document.querySelector('input[name="captcha"]');
-
-        if (img) {
-            // Remove existing query and add a new random one to avoid caching
-            const baseSrc = img.src.split('?')[0];
-            img.src = baseSrc + '?rand=' + Date.now();
-        }
-
-        if (input) {
-            input.value = '';
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const refreshBtn = document.getElementById('refreshCaptchaBtn');
-        if (refreshBtn) {
-            refreshBtn.addEventListener('click', refreshCaptcha);
-        }
     });
 </script>
 

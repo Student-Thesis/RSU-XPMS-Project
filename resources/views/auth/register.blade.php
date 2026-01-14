@@ -56,7 +56,7 @@
 
                 <div class="card p-4">
                     <div class="text-center mb-4">
-                        <img src="{{ asset('images/logo/logonobg.png') }}" alt="Logo" class="mb-3"
+                        <img src="{{ asset('public/images/logo/logonobg.png') }}" alt="Logo" class="mb-3"
                             style="height: 100px;">
                         <h4>New here?</h4>
                         <p class="text-muted">Signing up is easy. It only takes a few steps.</p>

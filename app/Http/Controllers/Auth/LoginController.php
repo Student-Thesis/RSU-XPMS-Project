@@ -5,23 +5,14 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
     protected $redirectTo = '/dashboard';
 
-    /**
-     * Create a new controller instance.
-     *
-     * Only guests can access login, except logout.
-     */
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
@@ -29,22 +20,40 @@ class LoginController extends Controller
     }
 
     /**
-     * Override the default login validation
-     * to include image CAPTCHA (mews/captcha).
+     * ✅ Override login validation
+     * Replaces image captcha with Cloudflare Turnstile
      */
     protected function validateLogin(Request $request)
     {
         $request->validate(
             [
-                'email'           => ['required', 'string'], // usually "email"
-                'password'        => ['required', 'string'],
-                'captcha'         => ['required', 'captcha'],
+                'email' => ['required', 'string'],
+                'password' => ['required', 'string'],
+                'cf-turnstile-response' => ['required'],
             ],
             [
-                'captcha.required' => 'Please enter the security code shown in the image.',
-                'captcha.captcha'  => 'Invalid security code. Please try again.',
+                'cf-turnstile-response.required' => 'Please confirm you are human.',
             ]
         );
+
+        // ✅ Verify Turnstile server-side
+        $resp = Http::asForm()->post(
+            'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+            [
+                'secret' => config('services.turnstile.secret_key'),
+                'response' => $request->input('cf-turnstile-response'),
+                'remoteip' => $request->ip(),
+            ]
+        );
+
+        if (!($resp->json('success') ?? false)) {
+            // attach to "captcha" error key for easy display
+            abort(
+                redirect()->back()
+                    ->withErrors(['captcha' => 'Security verification failed. Please try again.'])
+                    ->withInput()
+            );
+        }
     }
 
     /**
@@ -52,10 +61,8 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        // Check if user status is not Approved
         if ($user->status !== 'Approved') {
-
-            auth()->logout(); // logout immediately
+            auth()->logout();
 
             return redirect()
                 ->route('login')

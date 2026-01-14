@@ -3,10 +3,10 @@
     $user = auth()->user();
 @endphp
 
-<aside class="app-sidebar sidebar-bg shadow" data-bs-theme="dark">
+<aside class="app-sidebar sidebar-bg shadow" data-bs-theme="dark" style="z-index: 99999999999999">
    <div class="sidebar-brand" style="background: green; height: 62px; display:flex; align-items:center; justify-content:center;">
     <a href="{{ route('dashboard') }}" class="brand-link">
-        <img src="{{ $basePath }}/images/logo/logo.png"
+        <img src="{{ $basePath }}/images/logo/logonobg.png"
              alt="ESCEO Logo"
              class="brand-image opacity-75 shadow"
              style="height:55px; width:auto;" />

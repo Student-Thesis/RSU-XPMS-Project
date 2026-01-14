@@ -29,32 +29,19 @@
                 <div class="card-body">
 
                     {{-- FILTERS --}}
-                    <form method="GET"
-                          action="{{ route('projects') }}"
-                          class="row g-3 align-items-end mb-3"
-                          id="filterForm">
+                    <form method="GET" action="{{ route('projects') }}" class="row g-3 align-items-end mb-3"
+                        id="filterForm">
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Search</label>
-                            <input
-                                type="text"
-                                name="q"
-                                id="searchInput"
-                                value="{{ $q ?? '' }}"
-                                class="form-control form-control-sm"
-                                placeholder="Search project..."
-                            >
+                            <input type="text" name="q" id="searchInput" value="{{ $q ?? '' }}"
+                                class="form-control form-control-sm" placeholder="Search project...">
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Filter by College/Campus</label>
                             <select name="college" class="form-select form-select-sm">
                                 <option value="All" {{ ($college ?? '') === 'All' ? 'selected' : '' }}>All</option>
-                                @foreach ([
-                                    'CAS', 'CBA', 'CET', 'CAFES', 'CCMADI', 'CED', 'GEPS',
-                                    'CALATRAVA CAMPUS', 'STA. MARIA CAMPUS', 'SANTA FE CAMPUS',
-                                    'SAN ANDRES CAMPUS', 'SAN AGUSTIN CAMPUS', 'ROMBLON CAMPUS',
-                                    'CAJIDIOCAN CAMPUS', 'SAN FERNANDO CAMPUS'
-                                ] as $opt)
+                                @foreach (['CAS', 'CBA', 'CET', 'CAFES', 'CCMADI', 'CED', 'GEPS', 'CALATRAVA CAMPUS', 'STA. MARIA CAMPUS', 'SANTA FE CAMPUS', 'SAN ANDRES CAMPUS', 'SAN AGUSTIN CAMPUS', 'ROMBLON CAMPUS', 'CAJIDIOCAN CAMPUS', 'SAN FERNANDO CAMPUS'] as $opt)
                                     <option value="{{ $opt }}" {{ ($college ?? '') === $opt ? 'selected' : '' }}>
                                         {{ $opt }}
                                     </option>
@@ -66,9 +53,12 @@
                             <label class="form-label fw-semibold">Filter by Status</label>
                             <select name="status" class="form-select form-select-sm">
                                 <option value="All" {{ ($status ?? '') === 'All' ? 'selected' : '' }}>All</option>
-                                <option value="Ongoing" {{ ($status ?? '') === 'Ongoing' ? 'selected' : '' }}>Ongoing</option>
-                                <option value="Completed" {{ ($status ?? '') === 'Completed' ? 'selected' : '' }}>Completed</option>
-                                <option value="Cancelled" {{ ($status ?? '') === 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                <option value="Ongoing" {{ ($status ?? '') === 'Ongoing' ? 'selected' : '' }}>Ongoing
+                                </option>
+                                <option value="Completed" {{ ($status ?? '') === 'Completed' ? 'selected' : '' }}>Completed
+                                </option>
+                                <option value="Cancelled" {{ ($status ?? '') === 'Cancelled' ? 'selected' : '' }}>Cancelled
+                                </option>
                             </select>
                         </div>
                         {{-- No submit button – auto-submit via JS --}}
@@ -77,7 +67,7 @@
                     {{-- TABLE --}}
                     <div class="table-responsive">
                         <table id="proposalTable"
-                               class="table table-bordered table-striped table-hover table-sm align-middle text-center text-nowrap proposal-table">
+                            class="table table-bordered table-striped table-hover table-sm align-middle text-center text-nowrap proposal-table">
                             <thead class="table-dark">
                                 <tr>
                                     <th>No.</th>
@@ -114,11 +104,11 @@
                             <tbody>
                                 @forelse($proposals as $proposal)
                                     @php
-                                        $leader  = $proposal->leader ?? '—';
+                                        $leader = $proposal->leader ?? '—';
                                         $college = $proposal->location ?? '—';
-                                        $team    = $proposal->team_members ?: '—';
-                                        $agenda  = $proposal->target_agenda ?: '—';
-                                        $budget  = number_format($proposal->approved_budget, 2);
+                                        $team = $proposal->team_members ?: '—';
+                                        $agenda = $proposal->target_agenda ?: '—';
+                                        $budget = number_format($proposal->approved_budget, 2);
                                     @endphp
 
                                     <tr data-id="{{ $proposal->id }}">
@@ -127,12 +117,8 @@
 
                                         {{-- Classification --}}
                                         <td>
-                                            <input
-                                                list="classifications"
-                                                class="form-control form-control-sm inline-edit"
-                                                data-col="classification"
-                                                value="{{ $proposal->classification }}"
-                                            >
+                                            <input list="classifications" class="form-control form-control-sm inline-edit"
+                                                data-col="classification" value="{{ $proposal->classification }}">
                                         </td>
 
                                         <td>{{ $leader }}</td>
@@ -142,44 +128,39 @@
 
                                         {{-- 1. In-House --}}
                                         <td>
-                                            <select
-                                                class="form-select form-select-sm dropdown-yesno"
-                                                data-col="in_house"
+                                            <select class="form-select form-select-sm dropdown-yesno" data-col="in_house"
                                                 data-label="In-House"
                                                 data-url="{{ route('projects.inline-update', $proposal->id) }}"
                                                 data-prev="{{ $proposal->in_house ? 1 : 0 }}"
-                                                {{ $canEditYesNo ? '' : 'disabled' }}
-                                            >
-                                                <option value="0" {{ !$proposal->in_house ? 'selected' : '' }}>No</option>
-                                                <option value="1" {{ $proposal->in_house ? 'selected' : '' }}>Yes</option>
+                                                {{ $canEditYesNo ? '' : 'disabled' }}>
+                                                <option value="0" {{ !$proposal->in_house ? 'selected' : '' }}>No
+                                                </option>
+                                                <option value="1" {{ $proposal->in_house ? 'selected' : '' }}>Yes
+                                                </option>
                                             </select>
                                         </td>
 
                                         {{-- 2. Revised --}}
                                         <td>
-                                            <select
-                                                class="form-select form-select-sm dropdown-yesno"
-                                                data-col="revised_proposal"
-                                                data-label="Revised Proposal"
+                                            <select class="form-select form-select-sm dropdown-yesno"
+                                                data-col="revised_proposal" data-label="Revised Proposal"
                                                 data-url="{{ route('projects.inline-update', $proposal->id) }}"
                                                 data-prev="{{ $proposal->revised_proposal ? 1 : 0 }}"
-                                                {{ $canEditYesNo ? '' : 'disabled' }}
-                                            >
-                                                <option value="0" {{ !$proposal->revised_proposal ? 'selected' : '' }}>No</option>
-                                                <option value="1" {{ $proposal->revised_proposal ? 'selected' : '' }}>Yes</option>
+                                                {{ $canEditYesNo ? '' : 'disabled' }}>
+                                                <option value="0"
+                                                    {{ !$proposal->revised_proposal ? 'selected' : '' }}>No</option>
+                                                <option value="1" {{ $proposal->revised_proposal ? 'selected' : '' }}>
+                                                    Yes</option>
                                             </select>
                                         </td>
 
                                         {{-- 3. NTP --}}
                                         <td>
-                                            <select
-                                                class="form-select form-select-sm dropdown-yesno"
-                                                data-col="ntp"
+                                            <select class="form-select form-select-sm dropdown-yesno" data-col="ntp"
                                                 data-label="NTP"
                                                 data-url="{{ route('projects.inline-update', $proposal->id) }}"
                                                 data-prev="{{ $proposal->ntp ? 1 : 0 }}"
-                                                {{ $canEditYesNo ? '' : 'disabled' }}
-                                            >
+                                                {{ $canEditYesNo ? '' : 'disabled' }}>
                                                 <option value="0" {{ !$proposal->ntp ? 'selected' : '' }}>No</option>
                                                 <option value="1" {{ $proposal->ntp ? 'selected' : '' }}>Yes</option>
                                             </select>
@@ -187,97 +168,92 @@
 
                                         {{-- 4. Endorsement --}}
                                         <td>
-                                            <select
-                                                class="form-select form-select-sm dropdown-yesno"
-                                                data-col="endorsement"
+                                            <select class="form-select form-select-sm dropdown-yesno" data-col="endorsement"
                                                 data-label="Endorsement"
                                                 data-url="{{ route('projects.inline-update', $proposal->id) }}"
                                                 data-prev="{{ $proposal->endorsement ? 1 : 0 }}"
-                                                {{ $canEditYesNo ? '' : 'disabled' }}
-                                            >
-                                                <option value="0" {{ !$proposal->endorsement ? 'selected' : '' }}>No</option>
-                                                <option value="1" {{ $proposal->endorsement ? 'selected' : '' }}>Yes</option>
+                                                {{ $canEditYesNo ? '' : 'disabled' }}>
+                                                <option value="0" {{ !$proposal->endorsement ? 'selected' : '' }}>No
+                                                </option>
+                                                <option value="1" {{ $proposal->endorsement ? 'selected' : '' }}>Yes
+                                                </option>
                                             </select>
                                         </td>
 
                                         {{-- 5. Documents --}}
                                         <td>
-                                            <select
-                                                class="form-select form-select-sm dropdown-yesno"
-                                                data-col="proposal_documents"
-                                                data-label="Proposal Documents"
+                                            <select class="form-select form-select-sm dropdown-yesno"
+                                                data-col="proposal_documents" data-label="Proposal Documents"
                                                 data-url="{{ route('projects.inline-update', $proposal->id) }}"
                                                 data-prev="{{ $proposal->proposal_documents ? 1 : 0 }}"
-                                                {{ $canEditYesNo ? '' : 'disabled' }}
-                                            >
-                                                <option value="0" {{ !$proposal->proposal_documents ? 'selected' : '' }}>No</option>
-                                                <option value="1" {{ $proposal->proposal_documents ? 'selected' : '' }}>Yes</option>
+                                                {{ $canEditYesNo ? '' : 'disabled' }}>
+                                                <option value="0"
+                                                    {{ !$proposal->proposal_documents ? 'selected' : '' }}>No</option>
+                                                <option value="1"
+                                                    {{ $proposal->proposal_documents ? 'selected' : '' }}>Yes</option>
                                             </select>
                                         </td>
 
                                         {{-- 6. Program --}}
                                         <td>
-                                            <select
-                                                class="form-select form-select-sm dropdown-yesno"
-                                                data-col="program_proposal"
-                                                data-label="Program Proposal"
+                                            <select class="form-select form-select-sm dropdown-yesno"
+                                                data-col="program_proposal" data-label="Program Proposal"
                                                 data-url="{{ route('projects.inline-update', $proposal->id) }}"
                                                 data-prev="{{ $proposal->program_proposal ? 1 : 0 }}"
-                                                {{ $canEditYesNo ? '' : 'disabled' }}
-                                            >
-                                                <option value="0" {{ !$proposal->program_proposal ? 'selected' : '' }}>No</option>
-                                                <option value="1" {{ $proposal->program_proposal ? 'selected' : '' }}>Yes</option>
+                                                {{ $canEditYesNo ? '' : 'disabled' }}>
+                                                <option value="0"
+                                                    {{ !$proposal->program_proposal ? 'selected' : '' }}>No</option>
+                                                <option value="1" {{ $proposal->program_proposal ? 'selected' : '' }}>
+                                                    Yes</option>
                                             </select>
                                         </td>
 
                                         {{-- 7. Project --}}
                                         <td>
-                                            <select
-                                                class="form-select form-select-sm dropdown-yesno"
-                                                data-col="project_proposal"
-                                                data-label="Project Proposal"
+                                            <select class="form-select form-select-sm dropdown-yesno"
+                                                data-col="project_proposal" data-label="Project Proposal"
                                                 data-url="{{ route('projects.inline-update', $proposal->id) }}"
                                                 data-prev="{{ $proposal->project_proposal ? 1 : 0 }}"
-                                                {{ $canEditYesNo ? '' : 'disabled' }}
-                                            >
-                                                <option value="0" {{ !$proposal->project_proposal ? 'selected' : '' }}>No</option>
-                                                <option value="1" {{ $proposal->project_proposal ? 'selected' : '' }}>Yes</option>
+                                                {{ $canEditYesNo ? '' : 'disabled' }}>
+                                                <option value="0"
+                                                    {{ !$proposal->project_proposal ? 'selected' : '' }}>No</option>
+                                                <option value="1"
+                                                    {{ $proposal->project_proposal ? 'selected' : '' }}>Yes</option>
                                             </select>
                                         </td>
 
-                                     {{-- 8. MOA/MOU --}}
-<td class="inline-cell" data-col="mou_path">
-    @if (!empty($proposal->mou_path))
-        <a href="{{ asset($proposal->mou_path) }}"
-           target="_blank"
-           class="link-primary text-decoration-underline">
-            {{ basename($proposal->mou_path) }}
-        </a>
-    @else
-        —
-    @endif
-</td>
+                                        {{-- 8. MOA/MOU --}}
+                                        <td class="inline-cell" data-col="mou_path">
+                                            @if (!empty($proposal->mou_path))
+                                                <a href="{{ asset($proposal->mou_path) }}" target="_blank"
+                                                    class="link-primary text-decoration-underline">
+                                                    {{ basename($proposal->mou_path) }}
+                                                </a>
+                                            @else
+                                                —
+                                            @endif
+                                        </td>
 
 
                                         {{-- 9. Activity Design --}}
                                         <td>
-                                            <select
-                                                class="form-select form-select-sm dropdown-yesno"
-                                                data-col="activity_design"
-                                                data-label="Activity Design"
+                                            <select class="form-select form-select-sm dropdown-yesno"
+                                                data-col="activity_design" data-label="Activity Design"
                                                 data-url="{{ route('projects.inline-update', $proposal->id) }}"
                                                 data-prev="{{ $proposal->activity_design ? 1 : 0 }}"
-                                                {{ $canEditYesNo ? '' : 'disabled' }}
-                                            >
-                                                <option value="0" {{ !$proposal->activity_design ? 'selected' : '' }}>No</option>
-                                                <option value="1" {{ $proposal->activity_design ? 'selected' : '' }}>Yes</option>
+                                                {{ $canEditYesNo ? '' : 'disabled' }}>
+                                                <option value="0"
+                                                    {{ !$proposal->activity_design ? 'selected' : '' }}>No</option>
+                                                <option value="1" {{ $proposal->activity_design ? 'selected' : '' }}>
+                                                    Yes</option>
                                             </select>
                                         </td>
 
                                         {{-- Budget --}}
                                         <td>{{ $budget }}</td>
 
-                                        <td contenteditable="true" class="inline-cell text-start" data-col="source_of_funds">
+                                        <td contenteditable="true" class="inline-cell text-start"
+                                            data-col="source_of_funds">
                                             {{ $proposal->source_of_funds ?? '—' }}
                                         </td>
 
@@ -285,7 +261,8 @@
                                             {{ $proposal->expenditure ?? '—' }}
                                         </td>
 
-                                        <td contenteditable="true" class="inline-cell text-end" data-col="fund_utilization_rate">
+                                        <td contenteditable="true" class="inline-cell text-end"
+                                            data-col="fund_utilization_rate">
                                             {{ $proposal->fund_utilization_rate ?? '—' }}
                                         </td>
 
@@ -295,17 +272,19 @@
                                             @php
                                                 $status = $proposal->status ?? '—';
                                                 $color = match ($status) {
-                                                    'Pending'   => 'text-warning fw-semibold',
-                                                    'Approved'  => 'text-success fw-semibold',
-                                                    'Ongoing'   => 'text-primary fw-semibold',
+                                                    'Pending' => 'text-warning fw-semibold',
+                                                    'Approved' => 'text-success fw-semibold',
+                                                    'Ongoing' => 'text-primary fw-semibold',
                                                     'Cancelled' => 'text-danger fw-semibold',
-                                                    default     => 'text-muted',
+                                                    'Completed' => 'text-success fw-semibold',
+                                                    default => 'text-muted',
                                                 };
                                             @endphp
                                             <span class="{{ $color }}">{{ $status }}</span>
                                         </td>
 
-                                        <td contenteditable="true" class="inline-cell text-start" data-col="documentation_report">
+                                        <td contenteditable="true" class="inline-cell text-start"
+                                            data-col="documentation_report">
                                             {{ $proposal->documentation_report ?? '—' }}
                                         </td>
 
@@ -316,9 +295,8 @@
                                         {{-- Drive Link --}}
                                         <td class="inline-cell" data-col="drive_link">
                                             @if ($proposal->mou_link && filter_var($proposal->mou_link, FILTER_VALIDATE_URL))
-                                                <a href="{{ $proposal->mou_link }}"
-                                                   target="_blank"
-                                                   class="small link-primary">
+                                                <a href="{{ $proposal->mou_link }}" target="_blank"
+                                                    class="small link-primary">
                                                     Open Link
                                                 </a>
                                             @else
@@ -329,25 +307,19 @@
                                         {{-- Actions --}}
                                         <td>
                                             <a href="{{ route('projects.edit', $proposal->id) }}"
-                                               class="btn btn-warning btn-xs">
+                                                class="btn btn-warning btn-xs">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
 
-                                            <button
-                                                type="button"
-                                                class="btn btn-danger btn-xs btn-delete"
+                                            <button type="button" class="btn btn-danger btn-xs btn-delete"
                                                 data-id="{{ $proposal->id }}"
-                                                data-action="{{ route('projects.destroy', $proposal->id) }}"
-                                            >
+                                                data-action="{{ route('projects.destroy', $proposal->id) }}">
                                                 <i class="bi bi-trash"></i>
                                             </button>
 
-                                            <form
-                                                id="delete-form-{{ $proposal->id }}"
-                                                action="{{ route('projects.destroy', $proposal->id) }}"
-                                                method="POST"
-                                                class="d-none"
-                                            >
+                                            <form id="delete-form-{{ $proposal->id }}"
+                                                action="{{ route('projects.destroy', $proposal->id) }}" method="POST"
+                                                class="d-none">
                                                 @csrf
                                                 @method('DELETE')
                                             </form>
@@ -391,14 +363,16 @@
 
         /* Selected value = YES (1) */
         .dropdown-yesno.yes {
-            background-color: #d1e7dd !important;  /* green-ish */
+            background-color: #d1e7dd !important;
+            /* green-ish */
             color: #0f5132 !important;
             border-color: #0f5132 !important;
         }
 
         /* Selected value = NO (0) */
         .dropdown-yesno.no {
-            background-color: #f8d7da !important;  /* red-ish */
+            background-color: #f8d7da !important;
+            /* red-ish */
             color: #842029 !important;
             border-color: #842029 !important;
         }
@@ -454,11 +428,11 @@
                 return;
             }
 
-            const row    = el.closest('tr');
-            const id     = row.dataset.id;
-            const url    = el.dataset.url;
+            const row = el.closest('tr');
+            const id = row.dataset.id;
+            const url = el.dataset.url;
             const column = el.dataset.col;
-            const label  = el.dataset.label || column;
+            const label = el.dataset.label || column;
 
             const newValue = el.value;
             const newLabel = newValue === '1' ? 'Yes' : 'No';
@@ -536,7 +510,7 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('filterForm');
             const searchInput = document.getElementById('searchInput');
             const selects = form ? form.querySelectorAll('select[name="college"], select[name="status"]') : [];
@@ -550,7 +524,7 @@
                 setYesNoColor(el);
 
                 if (!el.disabled) {
-                    el.addEventListener('change', function () {
+                    el.addEventListener('change', function() {
                         handleYesNoChange(this);
                     });
                 }
@@ -586,14 +560,14 @@
 
             // Debounced search
             if (searchInput && form) {
-                searchInput.addEventListener('input', function () {
+                searchInput.addEventListener('input', function() {
                     clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(function () {
+                    searchTimeout = setTimeout(function() {
                         form.submit();
                     }, 500);
                 });
 
-                searchInput.addEventListener('keydown', function (e) {
+                searchInput.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         form.submit();
@@ -602,8 +576,8 @@
             }
 
             // Auto-submit filters
-            selects.forEach(function (sel) {
-                sel.addEventListener('change', function () {
+            selects.forEach(function(sel) {
+                sel.addEventListener('change', function() {
                     form.submit();
                 });
             });

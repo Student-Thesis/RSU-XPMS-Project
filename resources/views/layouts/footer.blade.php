@@ -214,6 +214,53 @@
  <!--end::Script-->
 
   @stack('scripts')
+
+  {{-- for date inputs --}}
+<style>
+.calendar-input-wrapper {
+    position: relative;
+}
+
+.calendar-form-input {
+    width: 100%;
+    padding-right: 42px;
+}
+
+.calendar-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.calendar-icon:hover {
+    color: #0d6efd;
+}
+
+
+</style>
+<script>
+document.addEventListener('click', function (e) {
+    const icon = e.target.closest('.calendar-icon');
+    if (!icon) return;
+
+    const wrapper = icon.closest('.calendar-input-wrapper');
+    if (!wrapper) return;
+
+    const input = wrapper.querySelector('input[type="date"]');
+    if (!input) return;
+
+    if (input.showPicker) {
+        input.showPicker(); // Chrome / Edge
+    } else {
+        input.focus(); // Safari / Firefox
+    }
+});
+</script>
+
+
  </body>
  <!--end::Body-->
 

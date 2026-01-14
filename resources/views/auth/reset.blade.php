@@ -38,7 +38,7 @@
 
 <div class="card p-4 col-md-4 col-11">
     <div class="text-center mb-4">
-        <img src="/images/logo/logonobg.png" alt="Logo" class="mb-3" style="height: 100px;">
+        <img src="{{ $basePath }}/images/logo/logonobg.png" alt="Logo" class="mb-3" style="height: 100px;">
     </div>
 
     <h3 class="text-center mb-3">Reset Password</h3>
