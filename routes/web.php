@@ -22,16 +22,6 @@ use App\Http\Controllers\NotificationsController;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\EventLocationController;
 
-Route::get('/mail-test', function () {
-    Mail::raw('SMTP test OK', function ($m) {
-        $m->to('nelmardapulang@gmail.com')
-          ->subject('Laravel SMTP Test');
-    });
-
-    return 'Email sent';
-});
-
-
 Route::get('/', function () { 
     return view('auth.login');
 });

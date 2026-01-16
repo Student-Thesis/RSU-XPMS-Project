@@ -207,23 +207,25 @@
                                         <td>{{ $row->moa_mou_q3 }}</td>
                                         <td>{{ $row->moa_mou_q4 }}</td>
 
-                                        <td class="text-nowrap">
-                                            <a href="{{ route('faculties.edit', $row) }}"
-                                               class="btn btn-warning btn-xs text-white me-1">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
+                                       <td class="text-nowrap">
+    <a href="{{ route('faculties.edit', $row) }}"
+       class="btn btn-warning btn-xs text-white me-1"
+       title="Edit">
+        <i class="bi bi-pencil-square"></i>
+    </a>
 
-                                            <form action="{{ route('faculties.destroy', $row) }}"
-                                                  method="POST"
-                                                  class="d-inline"
-                                                  onsubmit="return confirm('Delete this record?')">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button class="btn btn-danger btn-xs">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </form>
-                                        </td>
+    <form action="{{ route('faculties.destroy', $row) }}"
+          method="POST"
+          class="d-inline"
+          onsubmit="return confirm('Delete this record?')">
+        @csrf
+        @method('DELETE')
+        <button class="btn btn-danger btn-xs" title="Delete">
+            <i class="bi bi-trash-fill"></i>
+        </button>
+    </form>
+</td>
+
                                     </tr>
                                 @empty
                                     <tr>

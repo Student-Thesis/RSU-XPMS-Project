@@ -28,7 +28,7 @@
         <!-- RIGHT SECTION -->
         <ul class="navbar-nav ms-auto align-items-center">
 
-            {{-- ✉ Messages (department_id = 1 only) --}}
+            {{-- âœ‰ Messages (department_id = 1 only) --}}
             @auth
                 @if ($user->department_id == 1)
                     @php
@@ -48,7 +48,7 @@
                 @endif
             @endauth
 
-            {{-- 🔔 NOTIFICATIONS --}}
+            {{-- ðŸ”” NOTIFICATIONS --}}
             @auth
                 <li class="nav-item dropdown position-relative me-3" id="notif-wrapper">
                     <a href="#"
@@ -152,7 +152,7 @@
         font-size: 1.25rem;
     }
 
-    /* ✅ VERY IMPORTANT: Fix mobile content offset for AdminLTE 4 (.app-sidebar layout) */
+    /* âœ… VERY IMPORTANT: Fix mobile content offset for AdminLTE 4 (.app-sidebar layout) */
     @media (max-width: 991.98px) {
         /* Your dashboard content is pushed right by a left padding/margin variable */
         .app-main,
@@ -181,7 +181,7 @@
             width: min(92vw, 360px) !important;
         }
     }
-
+    
     /* ✅ Mobile: make notification dropdown full-width */
 @media (max-width: 575.98px) {
 

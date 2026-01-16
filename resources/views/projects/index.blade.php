@@ -72,6 +72,7 @@
                                 <tr>
                                     <th>No.</th>
                                     <th>Title</th>
+                                     <th>Drive Link</th>
                                     <th>Classification</th>
                                     <th>Leader</th>
                                     <th>Team Members</th>
@@ -97,7 +98,7 @@
                                     <th>Documentation</th>
 
                                     <th>Remarks</th>
-                                    <th>Drive Link</th>
+                                   
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -114,7 +115,17 @@
                                     <tr data-id="{{ $proposal->id }}">
                                         <td>{{ $loop->iteration }}</td>
                                         <td class="text-start">{{ $proposal->title }}</td>
-
+  {{-- Drive Link --}}
+                                        <td class="inline-cell" data-col="drive_link">
+                                            @if ($proposal->drive_link && filter_var($proposal->drive_link, FILTER_VALIDATE_URL))
+                                                <a href="{{ $proposal->drive_link }}" target="_blank"
+                                                    class="small link-primary">
+                                                    Open Link
+                                                </a>
+                                            @else
+                                                —
+                                            @endif
+                                        </td>
                                         {{-- Classification --}}
                                         <td>
                                             <input list="classifications" class="form-control form-control-sm inline-edit"
@@ -292,17 +303,7 @@
                                             {{ $proposal->remarks ?? '—' }}
                                         </td>
 
-                                        {{-- Drive Link --}}
-                                        <td class="inline-cell" data-col="drive_link">
-                                            @if ($proposal->mou_link && filter_var($proposal->mou_link, FILTER_VALIDATE_URL))
-                                                <a href="{{ $proposal->mou_link }}" target="_blank"
-                                                    class="small link-primary">
-                                                    Open Link
-                                                </a>
-                                            @else
-                                                —
-                                            @endif
-                                        </td>
+                                      
 
                                         {{-- Actions --}}
                                         <td>

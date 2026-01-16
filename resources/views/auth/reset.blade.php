@@ -59,6 +59,9 @@
         <button type="submit" class="btn btn-primary w-100" id="sendCodeBtn">
             Send Code
         </button>
+        
+         <br /><br />
+        <a href="{{ route('login') }}">Back to Login</a>
 
     </form>
 </div>

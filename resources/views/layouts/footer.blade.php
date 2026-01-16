@@ -214,7 +214,7 @@
  <!--end::Script-->
 
   @stack('scripts')
-
+  
   {{-- for date inputs --}}
 <style>
 .calendar-input-wrapper {
@@ -259,7 +259,6 @@ document.addEventListener('click', function (e) {
     }
 });
 </script>
-
 
  </body>
  <!--end::Body-->

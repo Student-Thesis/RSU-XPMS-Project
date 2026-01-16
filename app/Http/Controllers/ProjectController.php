@@ -100,9 +100,10 @@ class ProjectController extends Controller
             'mouFile' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
             'moaFile' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
 
-            // Links (these *are* DB columns: mou_link, moa_link)
-            'mou_link' => ['nullable', 'string', 'max:2048'],
+            // Links
+            // ✅ mou_link removed, replaced by drive_link
             'moa_link' => ['nullable', 'string', 'max:2048'],
+            'drive_link' => ['nullable', 'url', 'max:2048'],
 
             // YES/NO flags
             'in_house' => ['nullable', 'in:0,1'],
@@ -130,7 +131,6 @@ class ProjectController extends Controller
             'documentation_report' => ['nullable', 'string'],
             'code' => ['nullable', 'string', 'max:50'],
             'remarks' => ['nullable', 'string'],
-            'drive_link' => ['nullable', 'url'],
         ]);
 
         // Attach creator
@@ -140,11 +140,7 @@ class ProjectController extends Controller
         $flagFields = ['in_house', 'revised_proposal', 'ntp', 'endorsement', 'proposal_presentation', 'proposal_documents', 'program_proposal', 'project_proposal', 'moa_mou', 'activity_design', 'certificate_of_appearance', 'attendance_sheet'];
 
         foreach ($flagFields as $f) {
-            if ($request->has($f)) {
-                $validated[$f] = $request->input($f) == '1' ? 1 : 0;
-            } else {
-                $validated[$f] = 0;
-            }
+            $validated[$f] = $request->input($f) == '1' ? 1 : 0;
         }
 
         // 2) Sanitize numeric strings (if user types "1,000.00")
@@ -157,7 +153,7 @@ class ProjectController extends Controller
         // 3) Handle file uploads → store paths on proposals table
         //    Direct to public/uploads/agreements (no Laravel storage disk)
         if ($request->hasFile('mouFile')) {
-            $validated['mou_path'] = $this->moveToPublic($request->file('mouFile'), 'uploads/agreements'); // returns "uploads/agreements/filename.ext"
+            $validated['mou_path'] = $this->moveToPublic($request->file('mouFile'), 'uploads/agreements');
         }
 
         if ($request->hasFile('moaFile')) {
@@ -165,7 +161,8 @@ class ProjectController extends Controller
         }
 
         // 4) Auto-set MOA/MOU flag if any agreement data present
-        $hasMoaMouData = !empty($validated['organization_name']) || !empty($validated['date_signed']) || !empty($validated['mou_link']) || !empty($validated['moa_link']) || !empty($validated['mou_path'] ?? null) || !empty($validated['moa_path'] ?? null);
+        // ✅ replaced mou_link with drive_link
+        $hasMoaMouData = !empty($validated['organization_name']) || !empty($validated['date_signed']) || !empty($validated['drive_link']) || !empty($validated['moa_link']) || !empty($validated['mou_path'] ?? null) || !empty($validated['moa_path'] ?? null);
 
         if ($hasMoaMouData) {
             $validated['moa_mou'] = 1;
@@ -176,7 +173,8 @@ class ProjectController extends Controller
             $validated['status'] = 'Ongoing';
         }
 
-        // 6) If drive_link is empty but we have a proposal (MOA) link, use that
+        // 6) OPTIONAL: if drive_link is empty but moa_link exists, set drive_link = moa_link
+        // (keep this only if you want that behavior)
         if (empty($validated['drive_link']) && !empty($validated['moa_link'])) {
             $validated['drive_link'] = $validated['moa_link'];
         }
@@ -225,8 +223,9 @@ class ProjectController extends Controller
             'moaFile' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
 
             // LINKS
-            'mou_link' => ['nullable', 'string', 'max:2048'],
+            // ✅ mou_link removed, replaced by drive_link
             'moa_link' => ['nullable', 'string', 'max:2048'],
+            'drive_link' => ['nullable', 'url', 'max:2048'],
 
             // YES/NO flags
             'in_house' => ['nullable', 'in:0,1'],
@@ -254,7 +253,6 @@ class ProjectController extends Controller
             'documentation_report' => ['nullable', 'string'],
             'code' => ['nullable', 'string', 'max:50'],
             'remarks' => ['nullable', 'string'],
-            'drive_link' => ['nullable', 'url'],
         ]);
 
         $before = $project->toArray();
@@ -263,11 +261,7 @@ class ProjectController extends Controller
         $flagFields = ['in_house', 'revised_proposal', 'ntp', 'endorsement', 'proposal_presentation', 'proposal_documents', 'program_proposal', 'project_proposal', 'moa_mou', 'activity_design', 'certificate_of_appearance', 'attendance_sheet'];
 
         foreach ($flagFields as $f) {
-            if ($request->has($f)) {
-                $validated[$f] = $request->input($f) == '1' ? 1 : 0;
-            } else {
-                $validated[$f] = 0;
-            }
+            $validated[$f] = $request->input($f) == '1' ? 1 : 0;
         }
 
         // ✅ Sanitize numeric strings ("1,000.00" → 1000.00)
@@ -282,13 +276,14 @@ class ProjectController extends Controller
             $validated['mou_path'] = $this->moveToPublic($request->file('mouFile'), 'uploads/agreements');
         }
 
-        // ✅ Handle MOA file upload on edit (if you use it)
+        // ✅ Handle MOA file upload on edit
         if ($request->hasFile('moaFile')) {
             $validated['moa_path'] = $this->moveToPublic($request->file('moaFile'), 'uploads/agreements');
         }
 
         // ✅ Auto-set MOA/MOU flag if any agreement data present
-        $hasMoaMouData = !empty($validated['organization_name'] ?? $project->organization_name) || !empty($validated['date_signed'] ?? $project->date_signed) || !empty($validated['mou_link'] ?? $project->mou_link) || !empty($validated['moa_link'] ?? $project->moa_link) || !empty($validated['mou_path'] ?? $project->mou_path) || !empty($validated['moa_path'] ?? $project->moa_path);
+        // ✅ replaced mou_link with drive_link
+        $hasMoaMouData = !empty($validated['organization_name'] ?? $project->organization_name) || !empty($validated['date_signed'] ?? $project->date_signed) || !empty($validated['drive_link'] ?? $project->drive_link) || !empty($validated['moa_link'] ?? $project->moa_link) || !empty($validated['mou_path'] ?? $project->mou_path) || !empty($validated['moa_path'] ?? $project->moa_path);
 
         if ($hasMoaMouData) {
             $validated['moa_mou'] = 1;

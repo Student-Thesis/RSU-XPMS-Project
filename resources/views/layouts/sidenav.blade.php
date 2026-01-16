@@ -3,7 +3,7 @@
     $user = auth()->user();
 @endphp
 
-<aside class="app-sidebar sidebar-bg shadow" data-bs-theme="dark" style="z-index: 99999999999999">
+<aside class="app-sidebar sidebar-bg shadow" data-bs-theme="dark">
    <div class="sidebar-brand" style="background: green; height: 62px; display:flex; align-items:center; justify-content:center;">
     <a href="{{ route('dashboard') }}" class="brand-link">
         <img src="{{ $basePath }}/images/logo/logonobg.png"
@@ -65,16 +65,21 @@
                     </li>
                 @endif
 
-                {{-- USERS --}}
-                @if (DeptGate::can($user, 'users', 'view'))
-                    <li class="nav-item">
-                        <a href="{{ route('users.index') }}"
-                           class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-people-fill" style="color:rgb(26, 255, 0)"></i>
-                            <p>Users</p>
-                        </a>
-                    </li>
-                @endif
+               {{-- USERS --}}
+@php
+    $isAdminOrRoot = in_array(auth()->user()->user_type ?? null, ['admin', 'root']);
+@endphp
+
+@if ($isAdminOrRoot && DeptGate::can($user, 'users', 'view'))
+    <li class="nav-item">
+        <a href="{{ route('users.index') }}"
+           class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
+            <i class="nav-icon bi bi-people-fill" style="color:rgb(26, 255, 0)"></i>
+            <p>Users</p>
+        </a>
+    </li>
+@endif
+
 
                 {{-- CALENDAR --}}
                 @if (DeptGate::can($user, 'calendar', 'view'))

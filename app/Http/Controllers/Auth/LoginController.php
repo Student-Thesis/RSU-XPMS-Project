@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
@@ -20,44 +22,61 @@ class LoginController extends Controller
     }
 
     /**
-     * ✅ Override login validation
-     * Replaces image captcha with Cloudflare Turnstile
+     * ✅ VALIDATE LOGIN + TURNSTILE
      */
     protected function validateLogin(Request $request)
     {
-        $request->validate(
-            [
-                'email' => ['required', 'string'],
-                'password' => ['required', 'string'],
-                'cf-turnstile-response' => ['required'],
-            ],
-            [
-                'cf-turnstile-response.required' => 'Please confirm you are human.',
-            ]
-        );
+        /**
+         * 1️⃣ Basic field validation
+         */
+        $request->validate([
+            'email' => ['required', 'string'],
+            'password' => ['required', 'string'],
+            'cf-turnstile-response' => ['required'],
+        ], [
+            'cf-turnstile-response.required' => 'Please confirm you are human.',
+        ]);
 
-        // ✅ Verify Turnstile server-side
+        /**
+         * 2️⃣ Verify Cloudflare Turnstile
+         */
         $resp = Http::asForm()->post(
             'https://challenges.cloudflare.com/turnstile/v0/siteverify',
             [
-                'secret' => config('services.turnstile.secret_key'),
+                'secret'   => config('services.turnstile.secret_key'),
                 'response' => $request->input('cf-turnstile-response'),
                 'remoteip' => $request->ip(),
             ]
         );
 
-        if (!($resp->json('success') ?? false)) {
-            // attach to "captcha" error key for easy display
-            abort(
-                redirect()->back()
-                    ->withErrors(['captcha' => 'Security verification failed. Please try again.'])
-                    ->withInput()
-            );
+        $data = $resp->json();
+
+        /**
+         * 3️⃣ TEMP DEBUG LOG (check storage/logs/laravel.log)
+         */
+        Log::info('Turnstile verify', [
+            'success'     => $data['success'] ?? null,
+            'error_codes' => $data['error-codes'] ?? null,
+            'hostname'    => $data['hostname'] ?? null,
+        ]);
+
+        /**
+         * 4️⃣ If Turnstile fails → validation error
+         */
+        if (!($data['success'] ?? false)) {
+            Validator::make([], [
+                'captcha' => ['required'],
+            ], [
+                'captcha.required' =>
+                    'Security verification failed (' .
+                    implode(',', $data['error-codes'] ?? ['unknown']) .
+                    ').',
+            ])->validate();
         }
     }
 
     /**
-     * After user is authenticated...
+     * ✅ AFTER LOGIN CHECK
      */
     protected function authenticated(Request $request, $user)
     {
