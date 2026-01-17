@@ -101,7 +101,6 @@ class ProjectController extends Controller
             'moaFile' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
 
             // Links
-            // ✅ mou_link removed, replaced by drive_link
             'moa_link' => ['nullable', 'string', 'max:2048'],
             'drive_link' => ['nullable', 'url', 'max:2048'],
 
@@ -120,6 +119,8 @@ class ProjectController extends Controller
             'attendance_sheet' => ['nullable', 'in:0,1'],
 
             // Numbers
+            // NOTE: you have an accessor getApprovedBudgetAttribute() in the model,
+            // so this field should exist only if you really have a DB column for it.
             'approved_budget' => ['nullable', 'numeric', 'min:0'],
             'expenditure' => ['nullable', 'numeric', 'min:0'],
             'fund_utilization_rate' => ['nullable', 'string', 'max:50'],
@@ -128,7 +129,10 @@ class ProjectController extends Controller
             'source_of_funds' => ['nullable', 'string', 'max:255'],
             'partner' => ['nullable', 'string', 'max:255'],
             'status' => ['nullable', 'string', 'max:50'],
-            'documentation_report' => ['nullable', 'string'],
+
+            // ✅ documentation_report is now a FILE upload (stores path back into same column)
+            'documentation_report' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
+
             'code' => ['nullable', 'string', 'max:50'],
             'remarks' => ['nullable', 'string'],
         ]);
@@ -145,13 +149,14 @@ class ProjectController extends Controller
 
         // 2) Sanitize numeric strings (if user types "1,000.00")
         foreach (['approved_budget', 'expenditure'] as $money) {
-            if (isset($validated[$money])) {
+            if (array_key_exists($money, $validated) && $validated[$money] !== null && $validated[$money] !== '') {
                 $validated[$money] = (float) str_replace([',', ' '], '', (string) $validated[$money]);
             }
         }
 
         // 3) Handle file uploads → store paths on proposals table
-        //    Direct to public/uploads/agreements (no Laravel storage disk)
+        //    Direct to public/uploads/... (no Laravel storage disk)
+
         if ($request->hasFile('mouFile')) {
             $validated['mou_path'] = $this->moveToPublic($request->file('mouFile'), 'uploads/agreements');
         }
@@ -160,8 +165,12 @@ class ProjectController extends Controller
             $validated['moa_path'] = $this->moveToPublic($request->file('moaFile'), 'uploads/agreements');
         }
 
+        // ✅ documentation_report now becomes the uploaded file path
+        if ($request->hasFile('documentation_report')) {
+            $validated['documentation_report'] = $this->moveToPublic($request->file('documentation_report'), 'uploads/documentation');
+        }
+
         // 4) Auto-set MOA/MOU flag if any agreement data present
-        // ✅ replaced mou_link with drive_link
         $hasMoaMouData = !empty($validated['organization_name']) || !empty($validated['date_signed']) || !empty($validated['drive_link']) || !empty($validated['moa_link']) || !empty($validated['mou_path'] ?? null) || !empty($validated['moa_path'] ?? null);
 
         if ($hasMoaMouData) {
@@ -174,7 +183,6 @@ class ProjectController extends Controller
         }
 
         // 6) OPTIONAL: if drive_link is empty but moa_link exists, set drive_link = moa_link
-        // (keep this only if you want that behavior)
         if (empty($validated['drive_link']) && !empty($validated['moa_link'])) {
             $validated['drive_link'] = $validated['moa_link'];
         }
@@ -218,12 +226,14 @@ class ProjectController extends Controller
             'organization_name' => ['nullable', 'string', 'max:255'],
             'date_signed' => ['nullable', 'date'],
 
-            // FILES (same idea as store)
+            // FILES
             'mouFile' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
             'moaFile' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
 
+            // ✅ Documentation report is now a FILE upload (stores path in same column)
+            'documentation_report' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
+
             // LINKS
-            // ✅ mou_link removed, replaced by drive_link
             'moa_link' => ['nullable', 'string', 'max:2048'],
             'drive_link' => ['nullable', 'url', 'max:2048'],
 
@@ -250,7 +260,6 @@ class ProjectController extends Controller
             'source_of_funds' => ['nullable', 'string', 'max:255'],
             'partner' => ['nullable', 'string', 'max:255'],
             'status' => ['nullable', 'string', 'max:50'],
-            'documentation_report' => ['nullable', 'string'],
             'code' => ['nullable', 'string', 'max:50'],
             'remarks' => ['nullable', 'string'],
         ]);
@@ -266,23 +275,50 @@ class ProjectController extends Controller
 
         // ✅ Sanitize numeric strings ("1,000.00" → 1000.00)
         foreach (['approved_budget', 'expenditure'] as $money) {
-            if (isset($validated[$money])) {
+            if (array_key_exists($money, $validated) && $validated[$money] !== null && $validated[$money] !== '') {
                 $validated[$money] = (float) str_replace([',', ' '], '', (string) $validated[$money]);
             }
         }
 
-        // ✅ Handle MOU file upload on edit
+        // ✅ Handle MOU file upload on edit (optionally delete old file)
         if ($request->hasFile('mouFile')) {
+            if (!empty($project->mou_path)) {
+                $old = public_path($project->mou_path);
+                if (is_file($old)) {
+                    @unlink($old);
+                }
+            }
             $validated['mou_path'] = $this->moveToPublic($request->file('mouFile'), 'uploads/agreements');
         }
 
-        // ✅ Handle MOA file upload on edit
+        // ✅ Handle MOA file upload on edit (optionally delete old file)
         if ($request->hasFile('moaFile')) {
+            if (!empty($project->moa_path)) {
+                $old = public_path($project->moa_path);
+                if (is_file($old)) {
+                    @unlink($old);
+                }
+            }
             $validated['moa_path'] = $this->moveToPublic($request->file('moaFile'), 'uploads/agreements');
         }
 
+        // ✅ Handle Documentation Report upload on edit (optionally delete old file)
+        if ($request->hasFile('documentation_report')) {
+            if (!empty($project->documentation_report)) {
+                $old = public_path($project->documentation_report);
+                if (is_file($old)) {
+                    @unlink($old);
+                }
+            }
+
+            // store path back into SAME column (documentation_report)
+            $validated['documentation_report'] = $this->moveToPublic($request->file('documentation_report'), 'uploads/documentation');
+        } else {
+            // If no new file uploaded, don't overwrite existing path with null
+            unset($validated['documentation_report']);
+        }
+
         // ✅ Auto-set MOA/MOU flag if any agreement data present
-        // ✅ replaced mou_link with drive_link
         $hasMoaMouData = !empty($validated['organization_name'] ?? $project->organization_name) || !empty($validated['date_signed'] ?? $project->date_signed) || !empty($validated['drive_link'] ?? $project->drive_link) || !empty($validated['moa_link'] ?? $project->moa_link) || !empty($validated['mou_path'] ?? $project->mou_path) || !empty($validated['moa_path'] ?? $project->moa_path);
 
         if ($hasMoaMouData) {
@@ -294,9 +330,10 @@ class ProjectController extends Controller
             $validated['status'] = $project->status ?? 'Ongoing';
         }
 
-        // ✅ If drive_link empty but moa_link exists, mirror it (same trick as store)
-        if (empty($validated['drive_link']) && !empty($validated['moa_link'] ?? $project->moa_link)) {
-            $validated['drive_link'] = $validated['moa_link'] ?? $project->moa_link;
+        // ✅ If drive_link empty but moa_link exists, mirror it
+        $moaLinkFinal = $validated['moa_link'] ?? $project->moa_link;
+        if (empty($validated['drive_link']) && !empty($moaLinkFinal)) {
+            $validated['drive_link'] = $moaLinkFinal;
         }
 
         // ✅ Finally update the record

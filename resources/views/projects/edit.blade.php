@@ -103,20 +103,17 @@
                                 placeholder="Enter organization name">
                         </div>
 
-                          <div class="col-md-6">
-    <label class="form-label">Date Signed</label>
+                        <div class="col-md-6">
+                            <label class="form-label">Date Signed</label>
 
-    <div class="calendar-input-wrapper">
-        <input
-            type="date"
-            name="date_signed"
-            value="{{ old('date_signed', $project->date_signed) }}"
-            class="form-control calendar-form-input"
-        >
+                            <div class="calendar-input-wrapper">
+                                <input type="date" name="date_signed"
+                                    value="{{ old('date_signed', $project->date_signed) }}"
+                                    class="form-control calendar-form-input">
 
-        <i class="bi bi-calendar-event calendar-icon"></i>
-    </div>
-</div>
+                                <i class="bi bi-calendar-event calendar-icon"></i>
+                            </div>
+                        </div>
 
 
                         {{-- MOU File --}}
@@ -315,12 +312,32 @@
                         </div>
 
                         {{-- Documentation --}}
-                        <div class="col-md-12">
-                            <label class="form-label">Documentation Report</label>
-                            <input type="text" name="documentation_report"
-                                value="{{ old('documentation_report', $project->documentation_report) }}"
-                                class="form-control">
-                        </div>
+                       <div class="col-md-12">
+    <label class="form-label">Documentation Report</label>
+
+    {{-- Show existing document --}}
+    @if(!empty($project->documentation_report))
+        <div class="mb-2">
+            <a href="{{ asset($project->documentation_report) }}"
+               target="_blank"
+               class="btn btn-sm btn-outline-primary">
+                📄 View / Download Current Document
+            </a>
+        </div>
+    @endif
+
+    {{-- Upload / Replace document --}}
+    <input
+        type="file"
+        name="documentation_report"
+        class="form-control"
+        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+    >
+
+    <small class="text-muted">
+        Upload a new file to replace the existing documentation (PDF, DOC, DOCX, JPG, PNG).
+    </small>
+</div>
 
                         {{-- Remarks --}}
                         <div class="col-md-12">

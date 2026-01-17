@@ -294,10 +294,18 @@
                                             <span class="{{ $color }}">{{ $status }}</span>
                                         </td>
 
-                                        <td contenteditable="true" class="inline-cell text-start"
-                                            data-col="documentation_report">
-                                            {{ $proposal->documentation_report ?? '—' }}
-                                        </td>
+                                     <td class="text-start">
+                                        @if(!empty($proposal->documentation_report))
+                                            <a href="{{ asset($proposal->documentation_report) }}"
+                                            target="_blank"
+                                            class="text-decoration-none">
+                                                📎 Attached File
+                                            </a>
+                                        @else
+                                            —
+                                        @endif
+                                    </td>
+
 
                                         <td contenteditable="true" class="inline-cell text-start" data-col="remarks">
                                             {{ $proposal->remarks ?? '—' }}

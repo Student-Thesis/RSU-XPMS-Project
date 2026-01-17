@@ -72,7 +72,7 @@
                         {{-- Target Agenda --}}
                         <div class="col-md-6">
                             <label class="form-label">Target Agenda</label>
-                            <select name="target_agenda" class="form-select"> 
+                            <select name="target_agenda" class="form-select">
                                 <option value="">Select Target Agenda</option>
                                 @foreach ($targetAgendas as $agenda)
                                     <option value="{{ $agenda->name }}"
@@ -93,67 +93,58 @@
                                 value="{{ old('organization_name') }}" placeholder="Enter organization name">
                         </div>
 
-                      <div class="col-md-6">
-    <label class="form-label">Date Signed</label>
+                        <div class="col-md-6">
+                            <label class="form-label">Date Signed</label>
 
-    <div class="calendar-input-wrapper">
-        <input type="date"
-               name="date_signed"
-               value="{{ old('date_signed') }}"
-               class="form-control calendar-form-input">
+                            <div class="calendar-input-wrapper">
+                                <input type="date" name="date_signed" value="{{ old('date_signed') }}"
+                                    class="form-control calendar-form-input">
 
-        <i class="bi bi-calendar-event calendar-icon"></i>
-    </div>
-</div>
+                                <i class="bi bi-calendar-event calendar-icon"></i>
+                            </div>
+                        </div>
 
 
-                      {{-- MOU File --}}
-<div class="col-md-6">
-    <label class="form-label">MOU Document</label>
-    <input type="file"
-           name="mouFile"
-           class="form-control"
-           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-           data-max-size="10240">
-    <small class="text-muted">Max file size: 10 MB</small>
-</div>
+                        {{-- MOU File --}}
+                        <div class="col-md-6">
+                            <label class="form-label">MOU Document</label>
+                            <input type="file" name="mouFile" class="form-control"
+                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" data-max-size="10240">
+                            <small class="text-muted">Max file size: 10 MB</small>
+                        </div>
 
                         {{-- MOU Link --}}
-                       <div class="col-md-6">
-    <label class="form-label">Document Link</label>
+                        <div class="col-md-6">
+                            <label class="form-label">Document Link</label>
 
-    <input type="url"
-           name="drive_link"
-           id="drive_link"
-           class="form-control"
-           value="{{ old('drive_link') }}"
-           placeholder="https://example.com/your-document"
-           oninput="validateUrl(this)">
+                            <input type="url" name="drive_link" id="drive_link" class="form-control"
+                                value="{{ old('drive_link') }}" placeholder="https://example.com/your-document"
+                                oninput="validateUrl(this)">
 
-    <div class="invalid-feedback">
-        Please enter a valid link (must start with http:// or https://).
-    </div>
-</div>
+                            <div class="invalid-feedback">
+                                Please enter a valid link (must start with http:// or https://).
+                            </div>
+                        </div>
 
-<script>
-function validateUrl(input) {
-    const value = input.value.trim();
+                        <script>
+                            function validateUrl(input) {
+                                const value = input.value.trim();
 
-    if (value === '') {
-        input.classList.remove('is-valid', 'is-invalid');
-        return;
-    }
+                                if (value === '') {
+                                    input.classList.remove('is-valid', 'is-invalid');
+                                    return;
+                                }
 
-    try {
-        new URL(value); // browser-native URL validation
-        input.classList.add('is-valid');
-        input.classList.remove('is-invalid');
-    } catch {
-        input.classList.add('is-invalid');
-        input.classList.remove('is-valid');
-    }
-}
-</script>
+                                try {
+                                    new URL(value); // browser-native URL validation
+                                    input.classList.add('is-valid');
+                                    input.classList.remove('is-invalid');
+                                } catch {
+                                    input.classList.add('is-invalid');
+                                    input.classList.remove('is-valid');
+                                }
+                            }
+                        </script>
 
 
                         {{-- MOA File --}}
@@ -280,11 +271,16 @@ function validateUrl(input) {
                         </div> --}}
 
                         {{-- Documentation --}}
-                        <div class="col-md-12">
-                            <label class="form-label">Documentation Report</label>
-                            <input type="text" name="documentation_report" value="{{ old('documentation_report') }}"
-                                class="form-control">
-                        </div>
+                       <div class="col-md-12">
+        <label class="form-label">Documentation Report</label>
+        <input
+            type="file"
+            name="documentation_report"
+            class="form-control"
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+        >
+        <small class="text-muted">Allowed: PDF, DOC, DOCX, JPG, PNG (max 10MB)</small>
+    </div>
 
                         {{-- Remarks --}}
                         <div class="col-md-12">

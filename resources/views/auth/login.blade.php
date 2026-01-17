@@ -86,18 +86,28 @@
                     @csrf
 
                     {{-- Email --}}
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input id="email" type="text"
-                               class="form-control @error('email') is-invalid @enderror"
-                               name="email" value="{{ old('email') }}" required autofocus>
+                   <div class="mb-3">
+    <label for="email" class="form-label">Email Address</label>
 
-                        @error('email')
-                        <span class="invalid-feedback d-block">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                        @enderror
-                    </div>
+    <input
+        id="email"
+        type="text"
+        name="email"
+        value="{{ old('email') }}"
+        required
+        autofocus
+        class="form-control @error('email') is-invalid @enderror"
+        style="text-transform: lowercase;"
+        oninput="this.value = this.value.toLowerCase();"
+    >
+
+    @error('email')
+        <span class="invalid-feedback d-block">
+            <strong>{{ $message }}</strong>
+        </span>
+    @enderror
+</div>
+
 
                     {{-- Password --}}
                     <div class="mb-3">
