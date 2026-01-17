@@ -2,21 +2,30 @@
 
 @section('content')
     <div id="content">
-         
+
         <div class="midde_cont">
             <div class="container-fluid">
-                <div class="row column_title">
-                    <div class="col-md-12">
-                        <div class="page_title">
-                            <h2>Settings → Target Agendas</h2>
-                            <small class="text-muted">Manage the selectable list used in forms (e.g., “Environmental
-                                Awareness”).</small>
-                        </div>
-                        <a href="{{ route('settings_target_agendas.create') }}" class="btn btn-primary mb-2" style="margin:0; padding:5px;">
+                <div class="page_title d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <div>
+                        <h2 class="mb-0">Settings → Target Agendas</h2>
+                        <small class="text-muted">
+                            Manage the selectable list used in forms (e.g., “Environmental Awareness”).
+                        </small>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        {{-- ✅ BACK BUTTON --}}
+                        <a href="{{ route('settings') }}" class="btn btn-secondary btn-sm">
+                            <i class="fa fa-arrow-left"></i> Back to Settings
+                        </a>
+
+                        {{-- NEW AGENDA --}}
+                        <a href="{{ route('settings_target_agendas.create') }}" class="btn btn-primary btn-sm">
                             <i class="fa fa-plus"></i> New Agenda
                         </a>
                     </div>
                 </div>
+
 
                 @if (session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
@@ -41,23 +50,24 @@
                                         <td>{{ $item->name }}</td>
                                         <td class="text-muted">{{ $item->slug }}</td>
                                         <td>
-                                                {{ $item->is_active ? 'Yes' : 'No' }}
-                                          
+                                            {{ $item->is_active ? 'Yes' : 'No' }}
+
                                         </td>
                                         <td class="text-end">
-    <a href="{{ route('settings_target_agendas.edit', $item) }}" 
-       class="btn btn-sm btn-primary" style="margin:0; padding:5px;">
-        <i class="fa fa-pencil"></i> Edit
-    </a>
-    <form action="{{ route('settings_target_agendas.destroy', $item) }}" 
-          method="POST" class="d-inline"
-          onsubmit="return confirm('Delete this target agenda?')">
-        @csrf @method('DELETE')
-        <button type="submit" class="btn btn-sm btn-danger" style="margin:0; padding:5px;">
-            <i class="fa fa-trash"></i> Delete
-        </button>
-    </form>
-</td>
+                                            <a href="{{ route('settings_target_agendas.edit', $item) }}"
+                                                class="btn btn-sm btn-primary" style="margin:0; padding:5px;">
+                                                <i class="fa fa-pencil"></i> Edit
+                                            </a>
+                                            <form action="{{ route('settings_target_agendas.destroy', $item) }}"
+                                                method="POST" class="d-inline"
+                                                onsubmit="return confirm('Delete this target agenda?')">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                    style="margin:0; padding:5px;">
+                                                    <i class="fa fa-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        </td>
 
                                     </tr>
                                 @empty

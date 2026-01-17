@@ -3,27 +3,40 @@
 @section('content')
 
     {{-- PAGE HEADER --}}
-    <div class="app-content-header">
-        <div class="container-fluid">
-            <div class="row align-items-center">
+<div class="app-content-header">
+    <div class="container-fluid">
+        <div class="row align-items-center">
 
-                <div class="col-sm-6">
-                    <h3 class="mb-0">
-                        Department Permissions: {{ $department->name }}
-                    </h3>
-                </div>
+            {{-- LEFT: TITLE --}}
+            <div class="col-sm-6">
+                <h3 class="mb-0">
+                    Department Permissions: {{ $department->name }}
+                </h3>
+            </div>
 
-                <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
+            {{-- RIGHT: ACTION BUTTONS --}}
+            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
+                <div class="d-inline-flex flex-wrap gap-2">
+
+                    <a href="{{ route('departments.permissions.index') }}"
+   class="btn btn-secondary btn-sm">
+    <i class="bi bi-arrow-left me-1"></i>
+    Back to Permissions
+</a>
+
                     <a href="{{ route('departments.permissions.edit', $department) }}"
                        class="btn btn-danger btn-sm">
                         <i class="bi bi-sliders me-1"></i>
                         Edit Group Permissions
                     </a>
-                </div>
 
+                </div>
             </div>
+
         </div>
     </div>
+</div>
+
 
     {{-- PAGE CONTENT --}}
     <div class="app-content">

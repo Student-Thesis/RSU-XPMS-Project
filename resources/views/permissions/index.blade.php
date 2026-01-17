@@ -11,14 +11,13 @@
                     <h3 class="mb-0">Department Permissions</h3>
                 </div>
 
-                {{-- If you later have a Settings page route, you can add a back button here --}}
-                {{-- 
+              
                 <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                    <a href="{{ route('settings.index') }}" class="btn btn-light btn-sm">
-                        <i class="bi bi-gear me-1"></i> System Settings
+                       <a href="{{ route('settings') }}" class="btn btn-secondary btn-sm">
+                        <i class="bi bi-gear me-1"></i> Back to Settings
                     </a>
                 </div>
-                --}}
+               
 
             </div>
         </div>
