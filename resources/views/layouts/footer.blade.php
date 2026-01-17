@@ -260,6 +260,27 @@ document.addEventListener('click', function (e) {
 });
 </script>
 
+<style>
+    /* =====================================================
+   FORCE DROPDOWN ARROW FOR ALL SELECT (AdminLTE FIX)
+===================================================== */
+
+/* Reset browser appearance */
+select,
+.form-select,
+.form-control[type="select"],
+select.form-control,
+select.form-select {
+    -webkit-appearance: menulist !important;
+    -moz-appearance: menulist !important;
+    appearance: menulist !important;
+
+    background-image: none !important; /* remove AdminLTE fake bg */
+}
+
+
+
+</style>
  </body>
  <!--end::Body-->
 

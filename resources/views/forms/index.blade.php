@@ -71,16 +71,17 @@
                                                href="{{ route('forms.edit', $form->id) }}">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
-                                            <form action="{{ route('forms.destroy', $form) }}"
-                                                  method="POST"
-                                                  class="d-inline"
-                                                  onsubmit="return confirmDelete(event, this)">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-xs">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
+                                           <form action="{{ route('forms.destroy', $form->id) }}"
+      method="POST"
+      class="d-inline"
+      onsubmit="return confirmDelete(event, this)">
+    @csrf
+    @method('DELETE')
+    <button type="submit" class="btn btn-danger btn-xs">
+        <i class="bi bi-trash"></i>
+    </button>
+</form>
+
                                         </td>
                                     </tr>
                                 @empty

@@ -4,15 +4,53 @@
 @endphp
 
 <aside class="app-sidebar sidebar-bg shadow" data-bs-theme="dark">
-   <div class="sidebar-brand" style="background: green; height: 62px; display:flex; align-items:center; justify-content:center;">
-    <a href="{{ route('dashboard') }}" class="brand-link">
+ <div class="sidebar-brand esceo-brand">
+    <a href="{{ route('dashboard') }}" class="brand-link esceo-brand-link">
         <img src="{{ $basePath }}/images/logo/logonobg.png"
              alt="ESCEO Logo"
-             class="brand-image opacity-75 shadow"
-             style="height:55px; width:auto;" />
-        <span class="brand-text fw-light">ESCEO</span>
+             class="brand-image esceo-brand-image" />
+        <span class="brand-text esceo-brand-text">ESCEO</span>
     </a>
 </div>
+
+<style>
+    /* === ESCEO SIDEBAR BRAND OVERRIDE === */
+.esceo-brand {
+    height: 120px;                 /* extra breathing room */
+    background: #198754;           /* green */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* override AdminLTE brand-link */
+.esceo-brand-link {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 !important;
+}
+
+/* 100px logo */
+.esceo-brand-image {
+    height: 80px !important;
+    width: 80px !important;
+    max-height: none !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+}
+
+/* text next to logo */
+.esceo-brand-text {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+}
+
+</style>
+
 
 
     <div class="sidebar-wrapper">

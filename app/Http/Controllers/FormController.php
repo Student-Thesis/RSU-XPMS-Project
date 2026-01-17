@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class FormController extends Controller
-{
+{ 
     public function index()
     {
         $forms = RecordForm::query()
@@ -93,18 +93,18 @@ class FormController extends Controller
         return redirect()->route('forms.index')->with('success','Record updated.');
     }
 
-    public function destroy(RecordForm $record_form)
-    {
-        $dump = $record_form->toArray();
-        $record_form->delete();
+public function destroy(RecordForm $form)
+{
+    $dump = $form->toArray();
+    $form->delete();
 
-        // 🔐 log delete
-        $this->logActivity('Deleted Record Form', [
-            'form' => $dump,
-        ]);
+    $this->logActivity('Deleted Record Form', [
+        'form' => $dump,
+    ]);
 
-        return redirect()->route('forms.index')->with('success', 'Record deleted.');
-    }
+    return redirect()->route('forms.index')->with('success', 'Record deleted.');
+}
+
 
     /**
      * Local logger for this controller

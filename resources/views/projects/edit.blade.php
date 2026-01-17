@@ -117,27 +117,42 @@
 
 
                         {{-- MOU File --}}
-                        <div class="col-md-6">
-                            <label class="form-label">MOU Document</label>
+                       <div class="col-md-6">
+    <label class="form-label">MOU Document</label>
 
-                            <input type="file" name="mouFile" class="form-control"
-                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" data-max-size="10240">
+    <input type="file"
+           name="mouFile"
+           class="form-control"
+           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+           data-max-size="10240">
 
-                            <small class="text-muted">Max file size: 10 MB</small>
+    <small class="text-muted">Max file size: 10 MB</small>
 
-                            @if (!empty($project->mou_path))
-                                <div class="mt-1 small">
-                                    <strong>Current MOU File:</strong>
-                                    <a href="{{ asset($project->mou_path) }}" target="_blank" rel="noopener noreferrer">
-                                        View
-                                    </a>
-                                    &nbsp;|&nbsp;
-                                    <a href="{{ asset($project->mou_path) }}" download rel="noopener noreferrer">
-                                        Download
-                                    </a>
-                                </div>
-                            @endif
-                        </div>
+    {{-- Show existing MOU --}}
+    @if (!empty($project->mou_path))
+        @php
+            // normalize path (remove leading slash and accidental "public/")
+            $mouPath = ltrim($project->mou_path, '/');
+            $mouPath = str_starts_with($mouPath, 'public/')
+                ? substr($mouPath, 7)
+                : $mouPath;
+
+            $mouUrl = $basePath . '/' . $mouPath;
+        @endphp
+
+        <div class="mt-1 small">
+            <strong>Current MOU File:</strong>
+            <a href="{{ $mouUrl }}" target="_blank" rel="noopener noreferrer">
+                View
+            </a>
+            &nbsp;|&nbsp;
+            <a href="{{ $mouUrl }}" download rel="noopener noreferrer">
+                Download
+            </a>
+        </div>
+    @endif
+</div>
+
 
                         {{-- MOU Link --}}
                         {{-- <div class="col-md-6">
@@ -312,32 +327,29 @@
                         </div>
 
                         {{-- Documentation --}}
-                       <div class="col-md-12">
-    <label class="form-label">Documentation Report</label>
+                        <div class="col-md-12">
+                            <label class="form-label">Documentation Report</label>
 
-    {{-- Show existing document --}}
-    @if(!empty($project->documentation_report))
-        <div class="mb-2">
-            <a href="{{ asset($project->documentation_report) }}"
-               target="_blank"
-               class="btn btn-sm btn-outline-primary">
-                📄 View / Download Current Document
-            </a>
-        </div>
-    @endif
+                           {{-- Show existing document --}}
+                            @if (!empty($project->documentation_report))
+                                <div class="mb-2">
+                                    <a href="{{ $basePath . '/' . ltrim($project->documentation_report, '/') }}"
+                                    target="_blank"
+                                    class="btn btn-sm btn-outline-primary">
+                                        📄 View / Download Current Document
+                                    </a>
+                                </div>
+                            @endif
 
-    {{-- Upload / Replace document --}}
-    <input
-        type="file"
-        name="documentation_report"
-        class="form-control"
-        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-    >
 
-    <small class="text-muted">
-        Upload a new file to replace the existing documentation (PDF, DOC, DOCX, JPG, PNG).
-    </small>
-</div>
+                            {{-- Upload / Replace document --}}
+                            <input type="file" name="documentation_report" class="form-control"
+                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+
+                            <small class="text-muted">
+                                Upload a new file to replace the existing documentation (PDF, DOC, DOCX, JPG, PNG).
+                            </small>
+                        </div>
 
                         {{-- Remarks --}}
                         <div class="col-md-12">

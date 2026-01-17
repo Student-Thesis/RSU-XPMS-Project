@@ -27,15 +27,13 @@
 
             {{-- Validation Errors --}}
             @if ($errors->any())
-                <div class="alert alert-danger alert-dismissible fade show">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <ul class="mb-0">
                         @foreach ($errors->all() as $e)
                             <li>{{ $e }}</li>
                         @endforeach
                     </ul>
-                    <button type="button" class="close" data-dismiss="alert">
-                        <span>&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
 
@@ -119,10 +117,10 @@
                                             <label>User Role <span class="text-danger">*</span></label>
                                             <select class="form-control" name="user_type" required>
                                                 <option value="">-- Select Role --</option>
-                                                <option value="admin"        {{ old('user_type')=='admin'?'selected':'' }}>Admin</option>
-                                                <option value="user"         {{ old('user_type')=='user'?'selected':'' }}>User</option>
-                                                <option value="coordinator"  {{ old('user_type')=='coordinator'?'selected':'' }}>Coordinator</option>
-                                                <option value="manager"      {{ old('user_type')=='manager'?'selected':'' }}>Project Manager</option>
+                                                <option value="admin"       {{ old('user_type')=='admin'?'selected':'' }}>Admin</option>
+                                                <option value="user"        {{ old('user_type')=='user'?'selected':'' }}>User</option>
+                                                <option value="coordinator" {{ old('user_type')=='coordinator'?'selected':'' }}>Coordinator</option>
+                                                <option value="manager"     {{ old('user_type')=='manager'?'selected':'' }}>Project Manager</option>
                                             </select>
                                         </div>
                                     </div>

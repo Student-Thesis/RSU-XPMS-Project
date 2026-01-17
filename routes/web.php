@@ -108,6 +108,7 @@ Route::put('user/{user}', [DepartmentPermissionController::class, 'updateUser'])
     Route::get('/messages',  [MessagesController::class, 'index'])->middleware('dept.can:messages,view')->name('messages');
     Route::post('/messages/public', [MessagesController::class, 'storePublic'])->name('messages.public.store');
     Route::post('/messages/private', [MessagesController::class, 'storePrivate'])->name('messages.private.store');
+    Route::get('/proposals/{proposal}/json', [MessagesController::class, 'showJson'])->name('proposals.showJson');
 
     /* ================== NOTIFICATIONS ================== */
     Route::get('/notifications',      [NotificationController::class, 'index'])->middleware('dept.can:notifications,view')->name('notifications');
@@ -167,5 +168,7 @@ Route::put('user/{user}', [DepartmentPermissionController::class, 'updateUser'])
         Route::put('/{eventLocation}',      [EventLocationController::class, 'update'])->name('update');
         Route::delete('/{eventLocation}',   [EventLocationController::class, 'destroy'])->name('destroy');
     });
+
+  
 
 });
