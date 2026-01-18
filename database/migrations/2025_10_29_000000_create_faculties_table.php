@@ -87,6 +87,7 @@ return new class extends Migration {
             $table->unsignedInteger('moa_mou_q4')->default(0);
 
             $table->timestamps();
+            $table->unique('campus_college');
         });
     }
 

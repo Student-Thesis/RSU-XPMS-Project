@@ -18,7 +18,7 @@ class MessagesController extends Controller
         $pendingProposals = Proposal::with('user')->where('status', 'pending')->get();  
 
         // Public messages (everyone can see)
-        $publicMessages = PublicMessage::with('user')
+        $publicMessages = PublicMessage::with('user') 
             ->latest()
             ->take(100)
             ->get();

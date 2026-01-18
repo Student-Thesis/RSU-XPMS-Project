@@ -301,6 +301,14 @@
         #eventPriority option {
             color: #212529;
         }
+
+        /* ✅ Highlight overlay for selected date range */
+.fc .fc-highlight-range {
+    background: rgba(255, 193, 7, .25) !important; /* light yellow */
+    border: 1px solid rgba(255, 193, 7, .55) !important;
+    border-radius: 6px;
+}
+
     </style>
 @endpush
 
@@ -424,6 +432,18 @@
             // Optional: make titles a bit bolder
             el.style.fontWeight = '600';
         }
+
+        function qs(name) {
+  return new URLSearchParams(window.location.search).get(name);
+}
+
+// from dashboard link
+const DASH_DATE = qs('date');   // yyyy-mm-dd
+const DASH_EVENT_ID = qs('event'); // event id
+
+// highlight events list (as background overlays)
+let highlightedRanges = [];
+
 
         /* =========================================================
         FORM ELEMENTS
@@ -631,23 +651,109 @@
         /* =========================================================
         CALENDAR INIT
         ========================================================= */
-        document.addEventListener('DOMContentLoaded', () => {
-            projectCalendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-                initialView: 'dayGridMonth',
-                selectable: true,
-                events: '{{ route('calendar.events.index') }}',
+document.addEventListener('DOMContentLoaded', () => {
 
-                dateClick: info => openAddEventModal(info.dateStr),
-                eventClick: info => openEditEventModal(info.event),
+  projectCalendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+    initialView: 'dayGridMonth',
+    selectable: true,
+    events: '{{ route('calendar.events.index') }}',
 
-                // Force event colors every render (FIX)
-                eventDidMount: function(info) {
-                    const priority = info.event.extendedProps?.priority || 'Medium';
-                    paintCalendarEvent(info.el, priority);
-                }
-            });
+    dateClick: info => openAddEventModal(info.dateStr),
+    eventClick: info => openEditEventModal(info.event),
 
-            projectCalendar.render();
+    // ✅ After calendar renders, jump to requested date
+    viewDidMount: function() {
+      if (DASH_DATE) {
+        projectCalendar.gotoDate(DASH_DATE);
+      }
+    },
+
+    // ✅ Force event colors every render (your existing)
+    eventDidMount: function(info) {
+      const priority = info.event.extendedProps?.priority || 'Medium';
+      paintCalendarEvent(info.el, priority);
+    },
+
+    // ✅ When events are loaded, set highlight range and optionally open event
+    eventsSet: function(events) {
+      highlightedRanges = [];
+
+      // If dashboard passed an event id, find it
+      if (DASH_EVENT_ID) {
+        const ev = events.find(e => String(e.id) === String(DASH_EVENT_ID));
+        if (ev) {
+          const start = ev.startStr ? ev.startStr.substring(0, 10) : null;
+
+          // FullCalendar exclusive end: add +1 day for all-day range highlight
+          let end = null;
+          if (ev.endStr) {
+            end = ev.endStr.substring(0, 10);
+          }
+
+          highlightedRanges.push({
+            start: start,
+            end: end ? addOneDay(end) : addOneDay(start),
+          });
+
+          // ✅ auto open modal for that event
+          openEditEventModal(ev);
+        } else if (DASH_DATE) {
+          // fallback: highlight just the date
+          highlightedRanges.push({
+            start: DASH_DATE,
+            end: addOneDay(DASH_DATE),
+          });
+        }
+
+      } else if (DASH_DATE) {
+        // only date given
+        highlightedRanges.push({
+          start: DASH_DATE,
+          end: addOneDay(DASH_DATE),
         });
+      }
+
+      // refresh selections rendering
+      projectCalendar.render();
+    },
+
+    // ✅ draw highlight overlay(s)
+    selectAllow: function() { return true; },
+
+    // This renders background events (highlight blocks)
+    eventSources: [
+      {
+        url: '{{ route('calendar.events.index') }}',
+        method: 'GET',
+        failure: () => toast('Failed to load events', 'error')
+      },
+      {
+        events: function(fetchInfo, successCallback) {
+          // convert highlight ranges to background events
+          const bg = (highlightedRanges || []).map(r => ({
+            start: r.start,
+            end: r.end,
+            display: 'background',
+            classNames: ['fc-highlight-range']
+          }));
+          successCallback(bg);
+        }
+      }
+    ]
+  });
+
+  projectCalendar.render();
+
+  // ✅ If you want jump date right away (safe)
+  if (DASH_DATE) projectCalendar.gotoDate(DASH_DATE);
+});
+
+// helper: add 1 day to yyyy-mm-dd
+function addOneDay(ymd) {
+  const d = new Date(ymd + 'T00:00:00');
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().substring(0, 10);
+}
+
     </script>
 @endpush

@@ -64,8 +64,9 @@ Route::middleware(['auth'])->group(function () {
     });
 
     /* ================== PROPOSALS ================== */
-   Route::post('/proposals/{id}/approve', [ProposalController::class, 'approve'])
-        ->name('proposals.approve');
+    Route::post('/proposals/{id}/approve', [ProposalController::class, 'approve'])->name('proposals.approve');
+    Route::post('/proposals/{id}/reject', [ProposalController::class, 'reject'])->name('proposals.reject');
+
 
     /* ================== AGREEMENT / NOTIF ================== */
    

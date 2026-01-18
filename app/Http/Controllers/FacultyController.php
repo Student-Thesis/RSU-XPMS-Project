@@ -7,6 +7,7 @@ use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class FacultyController extends Controller
 {
@@ -20,7 +21,8 @@ class FacultyController extends Controller
         // 🔍 Case-sensitive search using BINARY
         if ($q) {
             $query->where(function ($w) use ($q) {
-                $w->whereRaw('BINARY campus_college LIKE ?', ["%{$q}%"])->orWhereRaw('BINARY num_faculties LIKE ?', ["%{$q}%"]);
+                $w->whereRaw('BINARY campus_college LIKE ?', ["%{$q}%"])
+                  ->orWhereRaw('BINARY num_faculties LIKE ?', ["%{$q}%"]);
             });
         }
 
@@ -45,7 +47,7 @@ class FacultyController extends Controller
 
     public function store(Request $request)
     {
-        $data = $this->validated($request);
+        $data = $this->validated($request); // create-mode unique validation included
 
         $faculty = Faculty::create($data);
 
@@ -64,7 +66,7 @@ class FacultyController extends Controller
 
     public function update(Request $request, Faculty $faculty)
     {
-        $data = $this->validated($request);
+        $data = $this->validated($request, $faculty); // update-mode: ignore current record
 
         $before = $faculty->toArray();
         $faculty->update($data);
@@ -93,12 +95,24 @@ class FacultyController extends Controller
         return redirect()->route('faculties.index')->with('success', 'Record deleted.');
     }
 
-    private function validated(Request $request): array
+    /**
+     * ✅ Validation with UNIQUE constraint on campus_college
+     * - store(): cannot add same campus_college again
+     * - update(): can keep same campus_college for the current row
+     */
+    private function validated(Request $request, ?Faculty $faculty = null): array
     {
         $int = 'nullable|integer|min:0';
 
         return $request->validate([
-            'campus_college' => ['required', 'string', 'max:255'],
+            // ✅ prevent duplicates
+            'campus_college' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('faculties', 'campus_college')->ignore($faculty?->id),
+            ],
+
             'num_faculties' => $int,
 
             'involved_extension_total' => $int,
@@ -160,6 +174,8 @@ class FacultyController extends Controller
             'moa_mou_q2' => $int,
             'moa_mou_q3' => $int,
             'moa_mou_q4' => $int,
+        ], [
+            'campus_college.unique' => 'This campus/college already exists. Please select a different one.',
         ]);
     }
 

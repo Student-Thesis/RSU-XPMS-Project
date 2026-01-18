@@ -365,7 +365,7 @@ class ProjectController extends Controller
         ]);
 
         // note: your route name here was 'projects.index' in original
-        return redirect()->route('projects.index')->with('success', 'Project deleted successfully.');
+        return redirect()->route('projects')->with('success', 'Project deleted successfully.');
     }
 
     /**

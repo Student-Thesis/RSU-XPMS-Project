@@ -15,27 +15,18 @@ use Illuminate\Support\Facades\Mail;
 
 class ProposalController extends Controller
 {
-   public function register()
-{
-    // Load from your settings tables
-    $classifications = SettingsClassification::active()
-        ->orderBy('name')
-        ->get();
+    public function register()
+    {
+        // Load from your settings tables
+        $classifications = SettingsClassification::active()->orderBy('name')->get();
 
-    $targetAgendas = SettingsTargetAgenda::active()
-        ->orderBy('name')
-        ->get();
+        $targetAgendas = SettingsTargetAgenda::active()->orderBy('name')->get();
 
-    // Get user id from session (set by RegisterController after successful registration)
-    $registeredUserId = session('registered_user_id');
+        // Get user id from session (set by RegisterController after successful registration)
+        $registeredUserId = session('registered_user_id');
 
-    return view('proposals.register', compact(
-        'classifications',
-        'targetAgendas',
-        'registeredUserId'
-    ));
-}
-
+        return view('proposals.register', compact('classifications', 'targetAgendas', 'registeredUserId'));
+    }
 
     public function index()
     {
@@ -53,7 +44,7 @@ class ProposalController extends Controller
         return view('proposals.create', compact('classifications'));
     }
 
-     /**
+    /**
      * Store a newly created proposal in storage.
      */
     public function store(Request $request)
@@ -70,7 +61,7 @@ class ProposalController extends Controller
                 'beneficiaries_how_many' => 'nullable|integer|min:0',
                 'budget_ps' => 'nullable|string|max:50',
                 'budget_mooe' => 'nullable|string|max:50',
-                'budget_co' => 'nullable|string|max:50', 
+                'budget_co' => 'nullable|string|max:50',
                 'partner' => 'nullable|string|max:255',
 
                 // this comes from the hidden field on the create page
@@ -105,7 +96,7 @@ class ProposalController extends Controller
 
             // Set user_id on proposal (this is what you asked)
             $data['user_id'] = $userId;
-            $data['status'] = "Pending";
+            $data['status'] = 'Pending';
 
             // We don't need this in the Proposal model itself
             unset($data['registered_user_id']);
@@ -330,6 +321,71 @@ class ProposalController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Proposal approved successfully.',
+        ]);
+    }
+
+    public function reject(Request $request, $id)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json(
+                [
+                    'ok' => false,
+                    'message' => 'Unauthenticated.',
+                ],
+                401,
+            );
+        }
+
+        if ($user->department_id != 1) {
+            return response()->json(
+                [
+                    'ok' => false,
+                    'message' => 'You are not allowed to reject proposals.',
+                ],
+                403,
+            );
+        }
+
+        $proposal = Proposal::findOrFail($id);
+
+        // ✅ ALREADY REJECTED (NOT AN ERROR)
+        if ($proposal->status === 'Rejected') {
+            return response()->json(
+                [
+                    'ok' => true,
+                    'already' => true,
+                    'message' => 'This proposal was already rejected.',
+                ],
+                200,
+            );
+        }
+
+        // ❌ BLOCK APPROVED
+        if ($proposal->status === 'Approved') {
+            return response()->json(
+                [
+                    'ok' => false,
+                    'message' => 'Approved proposals cannot be rejected.',
+                ],
+                422,
+            );
+        }
+
+        $proposal->status = 'Rejected';
+
+        if ($proposal->isFillable('rejected_by')) {
+            $proposal->rejected_by = $user->id;
+        }
+        if ($proposal->isFillable('rejected_at')) {
+            $proposal->rejected_at = now();
+        }
+
+        $proposal->save();
+
+        return response()->json([
+            'ok' => true,
+            'message' => 'Proposal rejected successfully.',
         ]);
     }
 }

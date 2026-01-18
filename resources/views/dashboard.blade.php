@@ -56,12 +56,21 @@
                     {{-- KPI CARDS (clickable -> go to faculties page and highlight columns) --}}
                     <div class="row g-3 text-center">
 
+                        @php
+                            // DO NOT name this $kpi (to avoid closure conflict)
+                            $num = function (string $key, int $decimals = 0) use ($kpi) {
+                                $value = (float) data_get($kpi, $key, 0);
+                                return number_format($value, $decimals, '.', ',');
+                            };
+                        @endphp
+
+
                         <div class="col-12 col-sm-6 col-md-4 col-lg-2-4">
                             <a href="{{ route('faculties.index', ['focus' => 'involved_extension']) }}" class="kpi-link">
                                 <div class="card kpi-card h-100">
                                     <div class="card-header">Involved in <br>Extension</div>
                                     <div class="card-body">
-                                        <p>{{ $num('involved_extension_total') }}</p>
+                                        <p>{{ $num('involved_extension_total', 2) }}</p>
                                     </div>
                                 </div>
                             </a>
@@ -201,6 +210,8 @@
                         <div class="card-header">
                             <div class="graph_head">
                                 <h4 class="kpi-title mb-2">KPI Summary by Campus ({{ $year }})</h4>
+                                <div class="p-2 small text-muted">Events loaded: {{ ($upcomingEvents ?? collect())->count() }}</div>
+
 
                                 <div class="row align-items-center g-2">
                                     <div class="col-md-5 col-sm-12">
@@ -375,9 +386,9 @@
                 }
 
                 /* ================================
-           ADMINLTE HARD OVERRIDE
-           Remove ANY default/pseudo radios
-        ================================ */
+               ADMINLTE HARD OVERRIDE
+               Remove ANY default/pseudo radios
+            ================================ */
 
                 /* hide the real radio no matter what AdminLTE does */
                 .chart-type-options .ct-radio {

@@ -237,8 +237,8 @@
                                         <td class="inline-cell" data-col="mou_path">
                                             @if (!empty($proposal->mou_path))
                                                 <a href="{{ asset($proposal->mou_path) }}" target="_blank"
-                                                    class="link-primary text-decoration-underline">
-                                                    {{ basename($proposal->mou_path) }}
+                                                    class="link-primary text-decoration-none">
+                                                    📎 Attached File
                                                 </a>
                                             @else
                                                 —
