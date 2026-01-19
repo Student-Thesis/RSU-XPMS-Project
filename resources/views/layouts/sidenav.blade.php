@@ -16,7 +16,7 @@
 <style>
     /* === ESCEO SIDEBAR BRAND OVERRIDE === */
 .esceo-brand {
-    height: 120px;                 /* extra breathing room */
+    height: 80px;                 /* extra breathing room */
     background: #198754;           /* green */
     display: flex;
     align-items: center;

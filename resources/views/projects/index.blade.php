@@ -234,16 +234,17 @@
                                         </td>
 
                                         {{-- 8. MOA/MOU --}}
-                                        <td class="inline-cell" data-col="mou_path">
-                                            @if (!empty($proposal->mou_path))
-                                                <a href="{{ asset($proposal->mou_path) }}" target="_blank"
-                                                    class="link-primary text-decoration-none">
-                                                    📎 Attached File
-                                                </a>
-                                            @else
-                                                —
-                                            @endif
-                                        </td>
+                                      <td class="inline-cell" data-col="mou_path">
+    @if (!empty($proposal->mou_path))
+        <a href="{{ $basePath . '/' . ltrim($proposal->mou_path, '/') }}"
+           target="_blank"
+           class="link-primary text-decoration-none">
+            📎 Attached File
+        </a>
+    @else
+        —
+    @endif
+</td>
 
 
                                         {{-- 9. Activity Design --}}
@@ -294,17 +295,18 @@
                                             <span class="{{ $color }}">{{ $status }}</span>
                                         </td>
 
-                                     <td class="text-start">
-                                        @if(!empty($proposal->documentation_report))
-                                            <a href="{{ asset($proposal->documentation_report) }}"
-                                            target="_blank"
-                                            class="text-decoration-none">
-                                                📎 Attached File
-                                            </a>
-                                        @else
-                                            —
-                                        @endif
-                                    </td>
+                                    <td class="text-start">
+    @if (!empty($proposal->documentation_report))
+        <a href="{{ $basePath . '/' . ltrim($proposal->documentation_report, '/') }}"
+           target="_blank"
+           class="text-decoration-none">
+            📎 Attached File
+        </a>
+    @else
+        —
+    @endif
+</td>
+
 
 
                                         <td contenteditable="true" class="inline-cell text-start" data-col="remarks">

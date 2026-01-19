@@ -326,8 +326,8 @@ class ProposalController extends Controller
 
     public function reject(Request $request, $id)
     {
-        $user = Auth::user();
-        if (!$user) {
+        $admin = Auth::user();
+        if (!$admin) {
             return response()->json(
                 [
                     'ok' => false,
@@ -337,7 +337,8 @@ class ProposalController extends Controller
             );
         }
 
-        if ($user->department_id != 1) {
+        // Only department 1 can reject
+        if ($admin->department_id != 1) {
             return response()->json(
                 [
                     'ok' => false,
@@ -349,7 +350,7 @@ class ProposalController extends Controller
 
         $proposal = Proposal::findOrFail($id);
 
-        // ✅ ALREADY REJECTED (NOT AN ERROR)
+        // Already rejected
         if ($proposal->status === 'Rejected') {
             return response()->json(
                 [
@@ -361,7 +362,7 @@ class ProposalController extends Controller
             );
         }
 
-        // ❌ BLOCK APPROVED
+        // Block approved
         if ($proposal->status === 'Approved') {
             return response()->json(
                 [
@@ -372,20 +373,52 @@ class ProposalController extends Controller
             );
         }
 
-        $proposal->status = 'Rejected';
+        DB::transaction(function () use ($proposal, $admin) {
+            // Reject proposal
+            $proposal->status = 'Rejected';
+            if ($proposal->isFillable('rejected_by')) {
+                $proposal->rejected_by = $admin->id;
+            }
+            if ($proposal->isFillable('rejected_at')) {
+                $proposal->rejected_at = now();
+            }
+            $proposal->save();
 
-        if ($proposal->isFillable('rejected_by')) {
-            $proposal->rejected_by = $user->id;
-        }
-        if ($proposal->isFillable('rejected_at')) {
-            $proposal->rejected_at = now();
-        }
+            // Get proposal owner
+            $proposalOwner = User::find($proposal->user_id);
 
-        $proposal->save();
+            if ($proposalOwner) {
+                // Send email BEFORE delete
+                if ($proposalOwner->email) {
+                    Mail::raw("Your proposal titled '{$proposal->title}' has been rejected.\n\nRejected by: XPMS Admin", function ($message) use ($proposalOwner) {
+                        $message->to($proposalOwner->email)->subject('Proposal Rejected');
+                    });
+                }
+
+                /* ===========================
+               SAFETY CHECKS
+               =========================== */
+
+                // ❌ never delete admins or staff
+                if (
+                    $proposalOwner->department_id == 1 || // admin
+                    $proposalOwner->id == $admin->id // self
+                ) {
+                    return;
+                }
+
+                // Optional: ensure user owns ONLY this proposal
+                $hasOtherProposals = Proposal::where('user_id', $proposalOwner->id)->where('id', '!=', $proposal->id)->exists();
+
+                if (!$hasOtherProposals) {
+                    $proposalOwner->delete(); // ✅ DELETE USER
+                }
+            }
+        });
 
         return response()->json([
             'ok' => true,
-            'message' => 'Proposal rejected successfully.',
+            'message' => 'Proposal rejected, notification sent, and user account deleted.',
         ]);
     }
 }

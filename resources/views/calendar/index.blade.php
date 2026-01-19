@@ -303,457 +303,394 @@
         }
 
         /* ✅ Highlight overlay for selected date range */
-.fc .fc-highlight-range {
-    background: rgba(255, 193, 7, .25) !important; /* light yellow */
-    border: 1px solid rgba(255, 193, 7, .55) !important;
-    border-radius: 6px;
-}
-
+        .fc .fc-highlight-range {
+            background: rgba(255, 193, 7, .25) !important;
+            /* light yellow */
+            border: 1px solid rgba(255, 193, 7, .55) !important;
+            border-radius: 6px;
+        }
     </style>
 @endpush
 
 {{-- ================= SCRIPTS ================= --}}
 @push('scripts')
-    <script>
-        window.CALENDAR_USER_ID = {{ auth()->id() ? (int) auth()->id() : 'null' }};
-    </script>
+<script>
+    window.CALENDAR_USER_ID = {!! auth()->id() ? (int) auth()->id() : 'null' !!};
+</script>
 
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
 
+<script>
+/* ===========================
+   QUERY PARAMS (from dashboard)
+=========================== */
+function qs(name) {
+    return new URLSearchParams(window.location.search).get(name);
+}
+const DASH_DATE     = qs('date');   // yyyy-mm-dd
+const DASH_EVENT_ID = qs('event');  // event id
 
+/* ===========================
+   GLOBAL STATE
+=========================== */
+let projectCalendar = null;
+let editingEventId = null;
+let viewingEventOwnerId = null;
 
-    <script>
-        /* =========================================================
-           REQUIREMENT: Make sure this exists in your Blade (once):
-           <script>window.CALENDAR_USER_ID = {{ (int) auth()->id() }};
-       
-        ========================================================= */
+/* ===========================
+   COLORS
+=========================== */
+const PRIORITY_COLORS = {
+    Low: 'rgb(21, 255, 0)',
+    Medium: 'rgb(221, 255, 0)',
+    High: 'rgb(255, 106, 0)',
+    Critical: 'red'
+};
 
-        /* =========================================================
-        GLOBAL STATE
-        ========================================================= */
-        let projectCalendar = null;
-        let editingEventId = null;
-        let viewingEventOwnerId = null;
-
-        /* =========================================================
-        DROPDOWN COLORS (SOURCE OF TRUTH)
-        ========================================================= */
-        const PRIORITY_COLORS = {
-            Low: 'rgb(21, 255, 0)',
-            Medium: 'rgb(221, 255, 0)',
-            High: 'rgb(255, 106, 0)',
-            Critical: 'red'
-        };
-
-        function priorityTextColor(priority) {
-            // dark text for Low/Medium/High
-            if (priority === 'Low' || priority === 'Medium' || priority === 'High') {
-                return '#212529';
-            }
-            // white for Critical
-            return '#ffffff';
-        }
-
-        /* =========================================================
-        HELPERS
-        ========================================================= */
-        function csrfToken() {
-            const meta = document.querySelector('meta[name="csrf-token"]');
-            if (meta?.content) return meta.content;
-
-            const input = document.querySelector('#eventForm input[name="_token"]');
-            return input?.value || '';
-        }
-
-        function isOwner(ownerId) {
-            return String(ownerId) === String(window.CALENDAR_USER_ID);
-        }
-
-        function toast(msg, type = 'success') {
-            if (window.Swal) {
-                Swal.fire({
-                    icon: type,
-                    title: msg,
-                    timer: 1600,
-                    showConfirmButton: false
-                });
-            } else {
-                alert(msg);
-            }
-        }
-
-        async function apiFetch(url, method, payload = null) {
-            const res = await fetch(url, {
-                method,
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken(),
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: payload ? JSON.stringify(payload) : null
-            });
-
-            const data = await res.json().catch(() => ({}));
-            if (!res.ok) throw new Error(data.message || 'Request failed');
-            return data;
-        }
-
-        /* =========================================================
-        FORCE EVENT COLORS (FIXES WHITE TEXT ISSUE)
-        ========================================================= */
-        function paintCalendarEvent(el, priority) {
-            if (!el) return;
-
-            const bg = PRIORITY_COLORS[priority] || PRIORITY_COLORS.Medium;
-            const fg = priorityTextColor(priority);
-
-            // Set bg/border
-            el.style.backgroundColor = bg;
-            el.style.borderColor = bg;
-
-            // IMPORTANT: Set FullCalendar CSS vars too (v6 uses these)
-            el.style.setProperty('--fc-event-bg-color', bg);
-            el.style.setProperty('--fc-event-border-color', bg);
-            el.style.setProperty('--fc-event-text-color', fg);
-
-            // Force all inner text nodes to follow
-            el.style.color = fg;
-
-            // Sometimes FullCalendar wraps content in different nodes
-            const nodes = el.querySelectorAll(
-                '.fc-event-title, .fc-event-time, .fc-event-main, .fc-event-main-frame, .fc-event-title-container, a, span, div'
-            );
-            nodes.forEach(n => {
-                n.style.color = fg;
-            });
-
-            // Optional: make titles a bit bolder
-            el.style.fontWeight = '600';
-        }
-
-        function qs(name) {
-  return new URLSearchParams(window.location.search).get(name);
+function priorityTextColor(priority) {
+    if (priority === 'Low' || priority === 'Medium' || priority === 'High') return '#212529';
+    return '#ffffff';
 }
 
-// from dashboard link
-const DASH_DATE = qs('date');   // yyyy-mm-dd
-const DASH_EVENT_ID = qs('event'); // event id
+/* ===========================
+   HELPERS
+=========================== */
+function csrfToken() {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    if (meta?.content) return meta.content;
+    const input = document.querySelector('#eventForm input[name="_token"]');
+    return input?.value || '';
+}
 
-// highlight events list (as background overlays)
-let highlightedRanges = [];
+function isOwner(ownerId) {
+    return String(ownerId) === String(window.CALENDAR_USER_ID);
+}
 
+function toast(msg, type = 'success') {
+    if (window.Swal) {
+        Swal.fire({ icon: type, title: msg, timer: 1600, showConfirmButton: false });
+    } else {
+        alert(msg);
+    }
+}
 
-        /* =========================================================
-        FORM ELEMENTS
-        ========================================================= */
-        const form = document.getElementById('eventForm');
+async function apiFetch(url, method, payload = null) {
+    const res = await fetch(url, {
+        method,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken(),
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: payload ? JSON.stringify(payload) : null
+    });
 
-        const eventTitle = document.getElementById('eventTitle');
-        const eventDescription = document.getElementById('eventDescription');
-        const eventDate = document.getElementById('eventDate');
-        const eventEndDate = document.getElementById('eventEndDate');
-        const eventType = document.getElementById('eventType');
-        const eventLocation = document.getElementById('eventLocation');
-        const eventVisibility = document.getElementById('eventVisibility');
-        const eventPriority = document.getElementById('eventPriority');
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || 'Request failed');
+    return data;
+}
 
-        const modal = document.getElementById('addEventModal');
-        const titleEl = document.getElementById('addEventModalTitle');
-        const submitBtn = document.getElementById('eventSubmitBtn');
-        const deleteBtn = document.getElementById('eventDeleteBtn');
-        const editBtn = document.getElementById('eventEditBtn');
-        const cancelBtn = document.getElementById('eventCancelBtn');
+/* ===========================
+   FORCE EVENT COLORS
+=========================== */
+function paintCalendarEvent(el, priority) {
+    if (!el) return;
 
-        /* =========================================================
-        PRIORITY DROPDOWN BG (you already do inline option colors,
-        but this keeps the select itself consistent if needed)
-        ========================================================= */
-        function applyPrioritySelectBG(value) {
-            const bg = PRIORITY_COLORS[value] || PRIORITY_COLORS.Medium;
-            // keep select readable like you want (dark for Low/Medium/High)
-            const fg = priorityTextColor(value || 'Medium');
+    const bg = PRIORITY_COLORS[priority] || PRIORITY_COLORS.Medium;
+    const fg = priorityTextColor(priority);
 
-            eventPriority.style.backgroundColor = bg;
-            eventPriority.style.color = fg;
-            eventPriority.style.borderColor = bg;
+    el.style.backgroundColor = bg;
+    el.style.borderColor = bg;
+
+    el.style.setProperty('--fc-event-bg-color', bg);
+    el.style.setProperty('--fc-event-border-color', bg);
+    el.style.setProperty('--fc-event-text-color', fg);
+
+    el.style.color = fg;
+
+    const nodes = el.querySelectorAll(
+        '.fc-event-title, .fc-event-time, .fc-event-main, .fc-event-main-frame, .fc-event-title-container, a, span, div'
+    );
+    nodes.forEach(n => n.style.color = fg);
+
+    el.style.fontWeight = '600';
+}
+
+/* ===========================
+   FORM ELEMENTS
+=========================== */
+const form            = document.getElementById('eventForm');
+const eventTitle      = document.getElementById('eventTitle');
+const eventDescription= document.getElementById('eventDescription');
+const eventDate       = document.getElementById('eventDate');
+const eventEndDate    = document.getElementById('eventEndDate');
+const eventType       = document.getElementById('eventType');
+const eventLocation   = document.getElementById('eventLocation');
+const eventVisibility = document.getElementById('eventVisibility');
+const eventPriority   = document.getElementById('eventPriority');
+
+const modal     = document.getElementById('addEventModal');
+const titleEl   = document.getElementById('addEventModalTitle');
+const submitBtn = document.getElementById('eventSubmitBtn');
+const deleteBtn = document.getElementById('eventDeleteBtn');
+const editBtn   = document.getElementById('eventEditBtn');
+const cancelBtn = document.getElementById('eventCancelBtn');
+
+function applyPrioritySelectBG(value) {
+    const bg = PRIORITY_COLORS[value] || PRIORITY_COLORS.Medium;
+    const fg = priorityTextColor(value || 'Medium');
+    eventPriority.style.backgroundColor = bg;
+    eventPriority.style.color = fg;
+    eventPriority.style.borderColor = bg;
+}
+
+/* ===========================
+   MODE
+=========================== */
+function setFormDisabled(disabled) {
+    form.querySelectorAll('input, textarea, select').forEach(el => el.disabled = disabled);
+}
+
+function setMode(mode, canEdit = true) {
+    editBtn.classList.add('d-none');
+    deleteBtn.classList.add('d-none');
+    submitBtn.classList.remove('d-none');
+
+    if (mode === 'add') {
+        setFormDisabled(false);
+        titleEl.textContent = 'Add New Project Event';
+        submitBtn.innerHTML = '<i class="bi bi-save"></i> Add Event';
+        cancelBtn.innerHTML = '<i class="bi bi-x-lg"></i> Cancel';
+    }
+
+    if (mode === 'view') {
+        setFormDisabled(true);
+        titleEl.textContent = 'Project Event Details';
+        submitBtn.classList.add('d-none');
+        if (canEdit) editBtn.classList.remove('d-none');
+        cancelBtn.innerHTML = '<i class="bi bi-x-lg"></i> Close';
+    }
+
+    if (mode === 'edit') {
+        setFormDisabled(false);
+        titleEl.textContent = 'Edit Project Event';
+        submitBtn.innerHTML = '<i class="bi bi-save"></i> Update Event';
+        deleteBtn.classList.remove('d-none');
+        cancelBtn.innerHTML = '<i class="bi bi-x-lg"></i> Cancel';
+    }
+}
+
+/* ===========================
+   MODAL
+=========================== */
+function openAddEventModal(dateStr = '') {
+    editingEventId = null;
+    viewingEventOwnerId = null;
+
+    form.reset();
+    eventDate.value = dateStr;
+    eventPriority.value = 'Medium';
+
+    applyPrioritySelectBG('Medium');
+    setMode('add');
+    modal.classList.add('show');
+}
+
+function openEditEventModal(fcEvent) {
+    editingEventId = fcEvent.id;
+
+    const p = fcEvent.extendedProps || {};
+    viewingEventOwnerId = p.created_by;
+
+    eventTitle.value = fcEvent.title || '';
+    eventDescription.value = p.description || '';
+    eventDate.value = p.range_start || (fcEvent.startStr ? fcEvent.startStr.substring(0, 10) : '');
+    eventEndDate.value = (p.range_end && p.range_end !== p.range_start) ? p.range_end : '';
+    eventType.value = p.type || '';
+    eventLocation.value = p.location || '';
+    eventVisibility.value = p.visibility || 'public';
+    eventPriority.value = p.priority || 'Medium';
+
+    applyPrioritySelectBG(eventPriority.value);
+
+    setMode('view', isOwner(viewingEventOwnerId));
+    modal.classList.add('show');
+}
+
+function enterEditMode() {
+    if (!isOwner(viewingEventOwnerId)) return;
+    setMode('edit');
+    applyPrioritySelectBG(eventPriority.value);
+}
+
+function closeAddEventModal() {
+    modal.classList.remove('show');
+    editingEventId = null;
+    viewingEventOwnerId = null;
+    setFormDisabled(false);
+}
+
+/* ===========================
+   CRUD
+=========================== */
+function getPayload() {
+    if (!eventTitle.value.trim()) throw new Error('Project Title is required.');
+    if (!eventDate.value) throw new Error('Date is required.');
+    if (!eventType.value) throw new Error('Project Type is required.');
+
+    return {
+        title: eventTitle.value.trim(),
+        description: eventDescription.value?.trim() || null,
+        start_date: eventDate.value,
+        end_date: eventEndDate.value || null,
+        type: eventType.value,
+        location: eventLocation.value?.trim() || null,
+        visibility: eventVisibility.value || 'public',
+        priority: eventPriority.value || 'Medium'
+    };
+}
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    try {
+        const payload = getPayload();
+
+        if (!editingEventId) {
+            await apiFetch(`{{ route('calendar.events.store') }}`, 'POST', payload);
+            toast('Event created');
+        } else {
+            if (!isOwner(viewingEventOwnerId)) throw new Error('You do not own this event.');
+            await apiFetch(`/calendar/events/${editingEventId}`, 'PUT', payload);
+            toast('Event updated');
         }
 
-        /* =========================================================
-        MODE HANDLING
-        ========================================================= */
-        function setFormDisabled(disabled) {
-            form.querySelectorAll('input, textarea, select')
-                .forEach(el => el.disabled = disabled);
-        }
-
-        function setMode(mode, canEdit = true) {
-            editBtn.classList.add('d-none');
-            deleteBtn.classList.add('d-none');
-            submitBtn.classList.remove('d-none');
-
-            if (mode === 'add') {
-                setFormDisabled(false);
-                titleEl.textContent = 'Add New Project Event';
-                submitBtn.innerHTML = '<i class="bi bi-save"></i> Add Event';
-                cancelBtn.innerHTML = '<i class="bi bi-x-lg"></i> Cancel';
-            }
-
-            if (mode === 'view') {
-                setFormDisabled(true);
-                titleEl.textContent = 'Project Event Details';
-                submitBtn.classList.add('d-none');
-                if (canEdit) editBtn.classList.remove('d-none');
-                cancelBtn.innerHTML = '<i class="bi bi-x-lg"></i> Close';
-            }
-
-            if (mode === 'edit') {
-                setFormDisabled(false);
-                titleEl.textContent = 'Edit Project Event';
-                submitBtn.innerHTML = '<i class="bi bi-save"></i> Update Event';
-                deleteBtn.classList.remove('d-none');
-                cancelBtn.innerHTML = '<i class="bi bi-x-lg"></i> Cancel';
-            }
-        }
-
-        /* =========================================================
-        MODAL
-        ========================================================= */
-        function openAddEventModal(dateStr = '') {
-            editingEventId = null;
-            viewingEventOwnerId = null;
-
-            form.reset();
-            eventDate.value = dateStr;
-            eventPriority.value = 'Medium';
-
-            applyPrioritySelectBG('Medium');
-            setMode('add');
-            modal.classList.add('show');
-        }
-
-        function openEditEventModal(fcEvent) {
-            editingEventId = fcEvent.id;
-
-            const p = fcEvent.extendedProps || {};
-            viewingEventOwnerId = p.created_by;
-
-            eventTitle.value = fcEvent.title || '';
-            eventDescription.value = p.description || '';
-            eventDate.value = p.range_start || (fcEvent.startStr ? fcEvent.startStr.substring(0, 10) : '');
-            eventEndDate.value = (p.range_end && p.range_end !== p.range_start) ? p.range_end : '';
-            eventType.value = p.type || '';
-            eventLocation.value = p.location || '';
-            eventVisibility.value = p.visibility || 'public';
-            eventPriority.value = p.priority || 'Medium';
-
-            applyPrioritySelectBG(eventPriority.value);
-
-            setMode('view', isOwner(viewingEventOwnerId));
-            modal.classList.add('show');
-        }
-
-        function enterEditMode() {
-            if (!isOwner(viewingEventOwnerId)) return;
-            setMode('edit');
-            applyPrioritySelectBG(eventPriority.value);
-        }
-
-        function closeAddEventModal() {
-            modal.classList.remove('show');
-            editingEventId = null;
-            viewingEventOwnerId = null;
-            setFormDisabled(false);
-        }
-
-        /* =========================================================
-        CRUD
-        ========================================================= */
-        function getPayload() {
-            if (!eventTitle.value.trim()) throw new Error('Project Title is required.');
-            if (!eventDate.value) throw new Error('Date is required.');
-            if (!eventType.value) throw new Error('Project Type is required.');
-
-            return {
-                title: eventTitle.value.trim(),
-                description: eventDescription.value?.trim() || null,
-                start_date: eventDate.value,
-                end_date: eventEndDate.value || null,
-                type: eventType.value,
-                location: eventLocation.value?.trim() || null,
-                visibility: eventVisibility.value || 'public',
-                priority: eventPriority.value || 'Medium'
-            };
-        }
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            try {
-                const payload = getPayload();
-
-                if (!editingEventId) {
-                    await apiFetch(`{{ route('calendar.events.store') }}`, 'POST', payload);
-                    toast('Event created');
-                } else {
-                    if (!isOwner(viewingEventOwnerId)) throw new Error('You do not own this event.');
-                    await apiFetch(`/calendar/events/${editingEventId}`, 'PUT', payload);
-                    toast('Event updated');
-                }
-
-                closeAddEventModal();
-                projectCalendar.refetchEvents();
-            } catch (err) {
-                toast(err.message || 'Something went wrong', 'error');
-            }
-        });
-
-        async function deleteEventFromEdit() {
-            if (!editingEventId) return;
-            if (!isOwner(viewingEventOwnerId)) {
-                toast('You do not own this event.', 'error');
-                return;
-            }
-
-            const go = async () => {
-                try {
-                    await apiFetch(`/calendar/events/${editingEventId}`, 'DELETE');
-                    toast('Event deleted');
-                    closeAddEventModal();
-                    projectCalendar.refetchEvents();
-                } catch (err) {
-                    toast(err.message || 'Delete failed', 'error');
-                }
-            };
-
-            if (window.Swal) {
-                const res = await Swal.fire({
-                    icon: 'warning',
-                    title: 'Delete this event?',
-                    text: 'This cannot be undone.',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, delete'
-                });
-                if (res.isConfirmed) go();
-            } else {
-                if (confirm('Delete this event?')) go();
-            }
-        }
-
-        /* =========================================================
-        LISTENERS
-        ========================================================= */
-        eventPriority.addEventListener('change', () => {
-            applyPrioritySelectBG(eventPriority.value);
-        });
-
-        /* =========================================================
-        CALENDAR INIT
-        ========================================================= */
-document.addEventListener('DOMContentLoaded', () => {
-
-  projectCalendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-    initialView: 'dayGridMonth',
-    selectable: true,
-    events: '{{ route('calendar.events.index') }}',
-
-    dateClick: info => openAddEventModal(info.dateStr),
-    eventClick: info => openEditEventModal(info.event),
-
-    // ✅ After calendar renders, jump to requested date
-    viewDidMount: function() {
-      if (DASH_DATE) {
-        projectCalendar.gotoDate(DASH_DATE);
-      }
-    },
-
-    // ✅ Force event colors every render (your existing)
-    eventDidMount: function(info) {
-      const priority = info.event.extendedProps?.priority || 'Medium';
-      paintCalendarEvent(info.el, priority);
-    },
-
-    // ✅ When events are loaded, set highlight range and optionally open event
-    eventsSet: function(events) {
-      highlightedRanges = [];
-
-      // If dashboard passed an event id, find it
-      if (DASH_EVENT_ID) {
-        const ev = events.find(e => String(e.id) === String(DASH_EVENT_ID));
-        if (ev) {
-          const start = ev.startStr ? ev.startStr.substring(0, 10) : null;
-
-          // FullCalendar exclusive end: add +1 day for all-day range highlight
-          let end = null;
-          if (ev.endStr) {
-            end = ev.endStr.substring(0, 10);
-          }
-
-          highlightedRanges.push({
-            start: start,
-            end: end ? addOneDay(end) : addOneDay(start),
-          });
-
-          // ✅ auto open modal for that event
-          openEditEventModal(ev);
-        } else if (DASH_DATE) {
-          // fallback: highlight just the date
-          highlightedRanges.push({
-            start: DASH_DATE,
-            end: addOneDay(DASH_DATE),
-          });
-        }
-
-      } else if (DASH_DATE) {
-        // only date given
-        highlightedRanges.push({
-          start: DASH_DATE,
-          end: addOneDay(DASH_DATE),
-        });
-      }
-
-      // refresh selections rendering
-      projectCalendar.render();
-    },
-
-    // ✅ draw highlight overlay(s)
-    selectAllow: function() { return true; },
-
-    // This renders background events (highlight blocks)
-    eventSources: [
-      {
-        url: '{{ route('calendar.events.index') }}',
-        method: 'GET',
-        failure: () => toast('Failed to load events', 'error')
-      },
-      {
-        events: function(fetchInfo, successCallback) {
-          // convert highlight ranges to background events
-          const bg = (highlightedRanges || []).map(r => ({
-            start: r.start,
-            end: r.end,
-            display: 'background',
-            classNames: ['fc-highlight-range']
-          }));
-          successCallback(bg);
-        }
-      }
-    ]
-  });
-
-  projectCalendar.render();
-
-  // ✅ If you want jump date right away (safe)
-  if (DASH_DATE) projectCalendar.gotoDate(DASH_DATE);
+        closeAddEventModal();
+        projectCalendar.refetchEvents();
+    } catch (err) {
+        toast(err.message || 'Something went wrong', 'error');
+    }
 });
 
-// helper: add 1 day to yyyy-mm-dd
-function addOneDay(ymd) {
-  const d = new Date(ymd + 'T00:00:00');
-  d.setDate(d.getDate() + 1);
-  return d.toISOString().substring(0, 10);
+async function deleteEventFromEdit() {
+    if (!editingEventId) return;
+    if (!isOwner(viewingEventOwnerId)) {
+        toast('You do not own this event.', 'error');
+        return;
+    }
+
+    const go = async () => {
+        try {
+            await apiFetch(`/calendar/events/${editingEventId}`, 'DELETE');
+            toast('Event deleted');
+            closeAddEventModal();
+            projectCalendar.refetchEvents();
+        } catch (err) {
+            toast(err.message || 'Delete failed', 'error');
+        }
+    };
+
+    if (window.Swal) {
+        const res = await Swal.fire({
+            icon: 'warning',
+            title: 'Delete this event?',
+            text: 'This cannot be undone.',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete'
+        });
+        if (res.isConfirmed) go();
+    } else {
+        if (confirm('Delete this event?')) go();
+    }
 }
 
-    </script>
+eventPriority.addEventListener('change', () => {
+    applyPrioritySelectBG(eventPriority.value);
+});
+
+/* ===========================
+   DASHBOARD TARGET LOGIC
+   - jump to date
+   - flash event
+   - auto-open modal (optional)
+=========================== */
+let dashOpenedOnce = false;
+
+function flashEventElementById(eventId) {
+    // find event element currently in DOM
+    const el = document.querySelector(`.fc-event[data-event-id="${eventId}"]`);
+    if (!el) return false;
+
+    el.classList.add('fc-flash-highlight');
+    setTimeout(() => el.classList.remove('fc-flash-highlight'), 2600);
+    return true;
+}
+
+function tryOpenDashEventOnce() {
+    if (dashOpenedOnce) return;
+    if (!DASH_EVENT_ID) return;
+
+    const ev = projectCalendar.getEventById(String(DASH_EVENT_ID));
+    if (!ev) return;
+
+    dashOpenedOnce = true;
+
+    // open modal
+    openEditEventModal(ev);
+
+    // flash highlight (might not be mounted yet, retry few times)
+    let tries = 0;
+    const t = setInterval(() => {
+        tries++;
+        const ok = flashEventElementById(DASH_EVENT_ID);
+        if (ok || tries >= 10) clearInterval(t);
+    }, 200);
+}
+
+/* ===========================
+   CALENDAR INIT (CLEAN)
+=========================== */
+document.addEventListener('DOMContentLoaded', () => {
+    const calEl = document.getElementById('calendar');
+    if (!calEl) {
+        console.error('Calendar container #calendar not found');
+        return;
+    }
+
+    projectCalendar = new FullCalendar.Calendar(calEl, {
+        initialView: 'dayGridMonth',
+        selectable: true,
+
+        // ✅ ONLY ONE source
+        events: '{{ route('calendar.events.index') }}',
+
+        dateClick: info => openAddEventModal(info.dateStr),
+        eventClick: info => openEditEventModal(info.event),
+
+        viewDidMount: function() {
+            if (DASH_DATE) projectCalendar.gotoDate(DASH_DATE);
+        },
+
+        eventDidMount: function(info) {
+            // your priority colors
+            const priority = info.event.extendedProps?.priority || 'Medium';
+            paintCalendarEvent(info.el, priority);
+
+            // help the DOM query find it reliably
+            info.el.setAttribute('data-event-id', String(info.event.id));
+
+            // if coming from dashboard, open & flash once it exists
+            if (DASH_EVENT_ID) {
+                // slight delay so DOM settles
+                setTimeout(() => tryOpenDashEventOnce(), 50);
+            }
+        }
+    });
+
+    projectCalendar.render();
+
+    if (DASH_DATE) projectCalendar.gotoDate(DASH_DATE);
+});
+</script>
 @endpush

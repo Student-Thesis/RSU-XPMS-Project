@@ -210,7 +210,8 @@
                         <div class="card-header">
                             <div class="graph_head">
                                 <h4 class="kpi-title mb-2">KPI Summary by Campus ({{ $year }})</h4>
-                                <div class="p-2 small text-muted">Events loaded: {{ ($upcomingEvents ?? collect())->count() }}</div>
+                                <div class="p-2 small text-muted">Events loaded:
+                                    {{ ($upcomingEvents ?? collect())->count() }}</div>
 
 
                                 <div class="row align-items-center g-2">
@@ -257,80 +258,85 @@
                 </div>
 
                 {{-- ✅ RIGHT: Upcoming Events --}}
-                <div class="col-12 col-lg-4">
-                    <div class="card card-info h-100">
-                        <div class="card-header">
-                            <h3 class="card-title mb-0">
-                                <i class="bi bi-calendar-event me-1"></i>
-                                Upcoming Events (7 days)
-                            </h3>
-                        </div>
-                        <div class="card-body p-0">
-                            @if (($upcomingEvents ?? collect())->isEmpty())
-                                <p class="text-muted p-3 mb-0">
-                                    No upcoming events in the next 7 days.
-                                </p>
-                            @else
-                                <ul class="list-group list-group-flush">
-                                    @foreach ($upcomingEvents as $event)
-                                        <li class="list-group-item d-flex flex-column">
-                                            {{-- Title --}}
-                                            <div class="fw-semibold">
-                                                {{ $event->title }}
-                                            </div>
+             {{-- ✅ RIGHT: Upcoming Events --}}
+<div class="col-12 col-lg-4">
+    <div class="card card-info h-100">
+        <div class="card-header">
+            <h3 class="card-title mb-0">
+                <i class="bi bi-calendar-event me-1"></i>
+                Upcoming Events (7 days)
+            </h3>
+        </div>
 
-                                            {{-- ✅ Description (new) --}}
-                                            @if (!empty($event->description))
-                                                <div class="small text-muted mt-1">
-                                                    {{ \Illuminate\Support\Str::limit(strip_tags($event->description), 120) }}
-                                                </div>
-                                            @endif
+        <div class="card-body p-0">
+            @if (($upcomingEvents ?? collect())->isEmpty())
+                <p class="text-muted p-3 mb-0">
+                    No upcoming events in the next 7 days.
+                </p>
+            @else
+                <ul class="list-group list-group-flush">
+                    @foreach ($upcomingEvents as $event)
+                        @php
+                            $start = \Carbon\Carbon::parse($event->start_date);
+                            $end = $event->end_date ? \Carbon\Carbon::parse($event->end_date) : null;
+                        @endphp
 
-                                            {{-- Date --}}
-                                            <div class="small text-muted mt-1">
-                                                @php
-                                                    $start = \Carbon\Carbon::parse($event->start_date);
-                                                    $end = $event->end_date
-                                                        ? \Carbon\Carbon::parse($event->end_date)
-                                                        : null;
-                                                @endphp
+                        <li class="list-group-item p-0">
+                            <a
+                                href="{{ route('calendar', ['date' => $start->toDateString(), 'event' => $event->id]) }}"
+                                class="d-block p-3 text-decoration-none text-reset upcoming-event-link"
+                            >
+                                <div class="fw-semibold">{{ $event->title }}</div>
 
-                                                <i class="bi bi-clock"></i>
-                                                {{ $start->format('M d, Y') }}
-                                                @if ($end && $end->toDateString() !== $start->toDateString())
-                                                    – {{ $end->format('M d, Y') }}
-                                                @endif
-                                            </div>
+                                @if (!empty($event->description))
+                                    <div class="small text-muted mt-1">
+                                        {{ \Illuminate\Support\Str::limit(strip_tags($event->description), 120) }}
+                                    </div>
+                                @endif
 
-                                            {{-- Location --}}
-                                            @if ($event->location)
-                                                <div class="small">
-                                                    <i class="bi bi-geo-alt"></i>
-                                                    {{ $event->location }}
-                                                </div>
-                                            @endif
+                                <div class="small text-muted mt-1">
+                                    <i class="bi bi-clock"></i>
+                                    {{ $start->format('M d, Y') }}
+                                    @if ($end && $end->toDateString() !== $start->toDateString())
+                                        – {{ $end->format('M d, Y') }}
+                                    @endif
+                                </div>
 
-                                            {{-- Badges --}}
-                                            <div class="mt-1">
-                                                @if ($event->visibility === 'private')
-                                                    <span class="badge bg-secondary">Private</span>
-                                                @else
-                                                    <span class="badge bg-success">Public</span>
-                                                @endif
+                                @if ($event->location)
+                                    <div class="small mt-1">
+                                        <i class="bi bi-geo-alt"></i>
+                                        {{ $event->location }}
+                                    </div>
+                                @endif
 
-                                                @if ($event->priority)
-                                                    <span class="badge bg-light text-dark border">
-                                                        {{ $event->priority }}
-                                                    </span>
-                                                @endif
-                                            </div>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+                                <div class="mt-2">
+                                    @if ($event->visibility === 'private')
+                                        <span class="badge bg-secondary">Private</span>
+                                    @else
+                                        <span class="badge bg-success">Public</span>
+                                    @endif
+
+                                    @if ($event->priority)
+                                        <span class="badge bg-light text-dark border">
+                                            {{ $event->priority }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
+    </div>
+</div>
+
+<style>
+    .upcoming-event-link:hover {
+        background: rgba(13, 110, 253, .06);
+    }
+</style>
+
 
             </div>
 
@@ -386,9 +392,9 @@
                 }
 
                 /* ================================
-               ADMINLTE HARD OVERRIDE
-               Remove ANY default/pseudo radios
-            ================================ */
+                   ADMINLTE HARD OVERRIDE
+                   Remove ANY default/pseudo radios
+                ================================ */
 
                 /* hide the real radio no matter what AdminLTE does */
                 .chart-type-options .ct-radio {
